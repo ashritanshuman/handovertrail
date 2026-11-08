@@ -22,3 +22,4 @@ def build_handover_snapshot(
         "claims_count": len(claims),
         "claims": claims
     }
+

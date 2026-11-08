@@ -264,3 +264,4 @@ handovertrail/
 - **Amreesh Sharma** - Data Engineering, Synthetic Planted Dataset & Security Audits
 
 For details on tools and AI models used during development, see [docs/AI_DISCLOSURE.md](docs/AI_DISCLOSURE.md).
+

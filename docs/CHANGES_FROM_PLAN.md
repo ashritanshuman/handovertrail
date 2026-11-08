@@ -29,3 +29,4 @@ This document tracks intentional architectural choices, optimizations, and minor
 - **Initial Context**: Ensuring claims match evidence units.
 - **Decision**: The verification engine is written entirely in deterministic Python logic (exact quote containment, whitespace normalization, conflict matching).
 - **Rationale**: "Never let an LLM grade its own homework." Strict deterministic code ensures that status `verified` cannot be hallucinated.
+

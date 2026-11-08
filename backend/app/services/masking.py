@@ -14,3 +14,4 @@ def mask_sensitive_content(text: str) -> str:
     masked = API_KEY_PATTERN.sub("[REDACTED_API_KEY]", text)
     masked = PHONE_PATTERN.sub("[REDACTED_PHONE]", masked)
     return masked
+

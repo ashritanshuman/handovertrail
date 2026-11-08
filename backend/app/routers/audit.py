@@ -19,3 +19,4 @@ def list_audit_trail(
     """
     logs = db.query(AuditLog).order_by(AuditLog.timestamp.desc()).limit(100).all()
     return logs
+

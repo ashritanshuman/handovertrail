@@ -97,3 +97,4 @@ def ingest_demo_data(data_dir: str) -> List[Dict[str, Any]]:
     all_units.extend(parse_meeting_notes(os.path.join(data_dir, "meeting_notes.md")))
     all_units.extend(parse_slack_export(os.path.join(data_dir, "slack_export.json")))
     return all_units
+

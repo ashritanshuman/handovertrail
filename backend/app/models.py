@@ -134,3 +134,4 @@ class AuditLog(Base):
     target_id = Column(String(100), nullable=False)
     timestamp = Column(DateTime(timezone=True), default=utc_now)
     details = Column(Text, default="", nullable=True)
+

@@ -167,3 +167,4 @@ For hackathon evaluation on Render/Railway:
 - The React application is compiled into static distribution files in `frontend/dist`.
 - FastAPI mounts `frontend/dist` as a static directory and provides a catch-all route serving `index.html` for client-side routing.
 - This guarantees **judges access a single URL** containing the fully functioning web application and API without multi-host CORS or deployment coordination friction.
+

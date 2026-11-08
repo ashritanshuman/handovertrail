@@ -20,3 +20,4 @@ def load_demo_data(
     """
     res = seed_database(db, force_reset=payload.force_reset)
     return res
+

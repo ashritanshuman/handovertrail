@@ -84,3 +84,4 @@ def filter_by_clearance(items: List[T], clearance: int) -> List[T]:
         if level <= clearance:
             filtered.append(item)
     return filtered
+

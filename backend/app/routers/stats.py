@@ -54,3 +54,4 @@ def get_handover_stats(
         readiness_percentage=readiness,
         can_approve=can_approve,
     )
+

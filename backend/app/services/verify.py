@@ -24,3 +24,4 @@ def verify_quote_against_evidence(quote: str, evidence_texts: List[str]) -> Tupl
             return True, ev_text
             
     return False, None
+

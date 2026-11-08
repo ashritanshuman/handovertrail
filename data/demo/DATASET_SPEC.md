@@ -32,3 +32,4 @@ The dataset contains ~52 distinct evidence units distributed across 4 authentic 
 | **(e) Level-3 Secrets & PII to Mask** | `#incident-response` (Slack) | Real-looking mock secret `sk_live_campusevents_99834289472398472398472398` and emergency SMS phone `+91-98765-43210`. | Masking service deterministically redacts tokens into `[REDACTED_API_KEY]` and `[REDACTED_PHONE]`. |
 | **(f) Buried Architectural Decision** | `#engineering` (Slack) | Riya's detailed breakdown explaining why SQLite with WAL mode was chosen over PostgreSQL for local ticketing throughput. | Extracted as a `decision` claim with exact quote match. |
 | **(g) Vague Unsupported Claim** | `TASK-118` (CSV) | "The mobile push notifications are fully certified for iOS 18 APNs with zero payload truncation issues." (Zero tests or logs attached). | Verification engine marks as `inferred` or flags for leaver substantiation. |
+

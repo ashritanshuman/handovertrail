@@ -18,3 +18,4 @@ def detect_conflicts(claims: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                     "statement_b": "Architecture Meeting 2026-09-15: We agreed to rotate external API keys quarterly (90 days) to avoid breaking webhook integrations."
                 }
     return claims
+

@@ -71,3 +71,4 @@ def test_lead_can_edit_and_approve(client):
     )
     assert res_approve.status_code == 200
     assert res_approve.json()["status"] == "approved"
+

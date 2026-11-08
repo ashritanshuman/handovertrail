@@ -74,3 +74,4 @@ npm run build
 | **Fake API Key & Phone (Level 3)** | Masked before returning to any standard API viewer | `test_secret_masking_applied` |
 | **Buried Chat Decision (SQLite WAL)** | Extracted with exact quote citation | `test_sqlite_wal_decision_extraction` |
 | **Vague Unsupported Statement** | Marked `inferred` or rejected due to lack of quote | `test_vague_claim_not_verified` |
+

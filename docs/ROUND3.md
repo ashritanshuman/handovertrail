@@ -58,3 +58,4 @@
 | Dumps entire chat history into context | **Deterministic masking of API keys & phone numbers** |
 | One flat view for everyone | **Strict clearance boundary (Level 1 vs Level 2 vs Level 3)** |
 | Automatic raw publishing | **Lead approval gate with frozen cryptographic snapshots** |
+

@@ -619,3 +619,4 @@ Queries project knowledge using permitted, approved content only, returning cita
 2. **Server-Side Enforcement**: The frontend must never attempt client-side filtering as a security barrier. The backend strips all entities with `access_level > viewer.clearance`.
 3. **Exact Quote Validation**: A claim cannot transition to `status: verified` unless the backend verification service matches its `quote` substring inside an authorized evidence text.
 4. **Lead-Only Mutations**: Calling `PATCH /api/claims/{id}` or `POST /api/approve` with a user whose role is not `lead` returns HTTP `403 Forbidden`.
+

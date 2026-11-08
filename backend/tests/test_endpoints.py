@@ -106,3 +106,4 @@ def test_full_handover_workflow(client):
     ask_data = res_ask.json()
     assert len(ask_data["citations"]) > 0
     assert "quarterly" in ask_data["answer"].lower()
+

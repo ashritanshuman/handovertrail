@@ -115,3 +115,4 @@ else:
             "docs": "/api/docs",
             "note": "Frontend not yet built. Run 'make build' or start Vite dev server on port 5173.",
         }
+

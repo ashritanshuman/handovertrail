@@ -5,3 +5,4 @@ def test_health_check(client):
     assert data["status"] == "ok"
     assert data["app"] == "HandoverTrail"
     assert "version" in data
+

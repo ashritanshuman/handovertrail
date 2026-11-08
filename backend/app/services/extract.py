@@ -219,3 +219,4 @@ def extract_claims_from_units(
     extracted_claims = detect_conflicts(extracted_claims)
 
     return extracted_claims
+

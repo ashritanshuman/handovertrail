@@ -20,3 +20,4 @@ def filter_entities_by_clearance(entities: List[T], user_clearance: int) -> List
 
 def can_view_entity(entity_access_level: int, user_clearance: int) -> bool:
     return entity_access_level <= user_clearance
+
