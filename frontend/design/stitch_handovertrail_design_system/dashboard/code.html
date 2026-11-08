@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HandoverTrail — CampusConnect Handover Dashboard</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#ffdbd0",
+            "on-secondary-container": "#7a5448",
+            "tertiary-fixed-dim": "#b1ceb1",
+            "on-tertiary": "#ffffff",
+            "inverse-on-surface": "#faeee8",
+            "on-primary-fixed": "#201b16",
+            "surface-tint": "#655d57",
+            "on-primary-container": "#b5aaa4",
+            "on-error-container": "#93000a",
+            "primary-fixed-dim": "#cfc4bd",
+            "primary-fixed": "#ece0d9",
+            "surface-variant": "#ece0da",
+            "on-tertiary-fixed-variant": "#334d36",
+            "inverse-primary": "#cfc4bd",
+            "secondary": "#7c5549",
+            "inverse-surface": "#352f2b",
+            "error-container": "#ffdad6",
+            "surface-container-high": "#f2e6e0",
+            "surface-container-highest": "#ece0da",
+            "secondary-fixed-dim": "#edbbac",
+            "on-primary": "#ffffff",
+            "outline-variant": "#d0c4bd",
+            "secondary-container": "#ffccbc",
+            "on-secondary-fixed-variant": "#613e33",
+            "background": "#fff8f5",
+            "tertiary-container": "#2d4630",
+            "error": "#ba1a1a",
+            "surface": "#fff8f5",
+            "surface-container": "#f7ece5",
+            "on-tertiary-container": "#97b398",
+            "surface-container-lowest": "#ffffff",
+            "surface-dim": "#e3d8d2",
+            "on-background": "#201a17",
+            "on-secondary-fixed": "#2f140b",
+            "on-surface-variant": "#4d4540",
+            "on-surface": "#201a17",
+            "primary": "#2f2925",
+            "surface-container-low": "#fdf1eb",
+            "tertiary": "#17301c",
+            "outline": "#7f756f",
+            "surface-bright": "#fff8f5",
+            "on-primary-fixed-variant": "#4d4540",
+            "on-tertiary-fixed": "#07200e",
+            "on-error": "#ffffff",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed": "#cceacc",
+            "primary-container": "#463f3a"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "gutter": "1.5rem",
+            "space-xl": "2.5rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "1rem",
+            "margin-tablet": "1.5rem",
+            "space-md": "1rem",
+            "margin": "3rem"
+          },
+          "fontFamily": {
+            "headline-page-mobile": [
+              "Inter"
+            ],
+            "label-mono-metadata": [
+              "Inter"
+            ],
+            "headline-section": [
+              "Inter"
+            ],
+            "body-medium": [
+              "Inter"
+            ],
+            "display-stat": [
+              "Inter"
+            ],
+            "headline-page": [
+              "Inter"
+            ],
+            "body-default": [
+              "Inter"
+            ],
+            "label-caption": [
+              "Inter"
+            ]
+          },
+          "fontSize": {
+            "headline-page-mobile": [
+              "22px",
+              {
+                "lineHeight": "28px",
+                "letterSpacing": "-0.015em",
+                "fontWeight": "600"
+              }
+            ],
+            "label-mono-metadata": [
+              "11px",
+              {
+                "lineHeight": "14px",
+                "letterSpacing": "0.04em",
+                "fontWeight": "600"
+              }
+            ],
+            "headline-section": [
+              "16px",
+              {
+                "lineHeight": "24px",
+                "letterSpacing": "-0.01em",
+                "fontWeight": "600"
+              }
+            ],
+            "body-medium": [
+              "14px",
+              {
+                "lineHeight": "22.4px",
+                "letterSpacing": "-0.005em",
+                "fontWeight": "500"
+              }
+            ],
+            "display-stat": [
+              "36px",
+              {
+                "lineHeight": "44px",
+                "letterSpacing": "-0.03em",
+                "fontWeight": "500"
+              }
+            ],
+            "headline-page": [
+              "28px",
+              {
+                "lineHeight": "36px",
+                "letterSpacing": "-0.02em",
+                "fontWeight": "600"
+              }
+            ],
+            "body-default": [
+              "14px",
+              {
+                "lineHeight": "22.4px",
+                "letterSpacing": "-0.005em",
+                "fontWeight": "400"
+              }
+            ],
+            "label-caption": [
+              "12px",
+              {
+                "lineHeight": "16px",
+                "letterSpacing": "0.01em",
+                "fontWeight": "500"
+              }
+            ]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-[#F4F3EE] text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- Top Navigation Bar (Shared Component Anchor) -->
+<header class="sticky top-4 z-40 mx-auto w-[calc(100%-2rem)] max-w-7xl rounded-xl border border-outline-variant bg-surface-container-lowest shadow-[0_4px_16px_-2px_rgba(70,63,58,0.08)]">
+<div class="flex justify-between items-center h-16 px-6">
+<!-- Brand & Global Tabs -->
+<div class="flex items-center gap-8">
+<span class="text-headline-section font-headline-section text-primary tracking-tight font-semibold select-none">
+          HandoverTrail
+        </span>
+<nav aria-label="Global Navigation" class="hidden md:flex items-center space-x-1">
+<!-- Active Tab: Dashboard -->
+<a class="bg-primary text-on-primary rounded-full px-4 py-1.5 text-label-caption font-label-caption transition-colors" href="#">
+            Dashboard
+          </a>
+<a class="text-outline hover:text-on-surface hover:bg-surface-container px-4 py-1.5 text-label-caption font-label-caption transition-colors rounded-full duration-150" href="#">
+            Review
+          </a>
+<a class="text-outline hover:text-on-surface hover:bg-surface-container px-4 py-1.5 text-label-caption font-label-caption transition-colors rounded-full duration-150" href="#">
+            Timeline
+          </a>
+<a class="text-outline hover:text-on-surface hover:bg-surface-container px-4 py-1.5 text-label-caption font-label-caption transition-colors rounded-full duration-150" href="#">
+            Gaps
+          </a>
+<a class="text-outline hover:text-on-surface hover:bg-surface-container px-4 py-1.5 text-label-caption font-label-caption transition-colors rounded-full duration-150" href="#">
+            Handover
+          </a>
+</nav>
+</div>
+<!-- Trailing Segment: Persona switcher & Actions -->
+<div class="flex items-center gap-3">
+<!-- Persona Selector Dropdown Pill -->
+<div class="hidden sm:flex items-center gap-2 border border-outline-variant rounded-full pl-3 pr-2 py-1 text-label-caption font-label-caption text-on-surface bg-surface-container-lowest">
+<span class="text-outline">View as:</span>
+<span class="font-medium text-primary">Riya Sharma (Leaver)</span>
+<span class="material-symbols-outlined text-[16px] text-outline leading-none" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Review Status Badge -->
+<span class="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-caption font-label-caption bg-[#E0AFA0]/20 text-primary border border-[#E0AFA0]/40">
+<span class="w-1.5 h-1.5 rounded-full bg-[#E0AFA0]"></span>
+          In review
+        </span>
+<div class="h-4 w-px bg-outline-variant mx-1 hidden sm:block"></div>
+<!-- Trailing Icon Actions -->
+<button aria-label="Notifications" class="p-1.5 text-outline hover:text-on-surface hover:bg-surface-container rounded-full transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+</button>
+<button aria-label="Help" class="p-1.5 text-outline hover:text-on-surface hover:bg-surface-container rounded-full transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+</button>
+<!-- Primary Action Button -->
+<button class="hidden md:inline-flex items-center px-4 py-1.5 rounded-lg bg-primary-container text-on-primary text-label-caption font-label-caption hover:bg-primary transition-all duration-150 active:scale-[0.98]" type="button">
+          Approve handover
+        </button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="w-full max-w-7xl mx-auto px-6 pt-8 pb-16 flex-grow">
+<!-- Editorial Page Header -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-8 border-b border-[#E7E4DE]">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-label-mono-metadata font-label-mono-metadata text-outline tracking-wider uppercase">Project dossier</span>
+<span class="text-outline text-label-mono-metadata">•</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-outline">Lead: Maya</span>
+</div>
+<h1 class="text-headline-page font-headline-page text-[#463F3A]">
+          CampusConnect handover
+        </h1>
+<p class="text-body-default font-body-default text-[#8A817C] mt-1">
+          Riya Sharma leaving, handover to Arjun
+        </p>
+</div>
+<div class="flex items-center gap-3">
+<button class="inline-flex items-center gap-2 px-[18px] py-[10px] rounded-[10px] bg-[#463F3A] hover:bg-[#37312D] active:bg-[#2B2724] text-white text-body-medium font-body-medium shadow-sm transition-all duration-150" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="autorenew">autorenew</span>
+<span>Run analysis</span>
+</button>
+</div>
+</section>
+<!-- Bento Grid Section -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 mt-8">
+<!-- Bento 1: Large Span Activity Chart (8 cols desktop) -->
+<article class="md:col-span-12 lg:col-span-8 bg-white border border-[#E7E4DE] rounded-[16px] p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col justify-between">
+<div>
+<div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-4 border-b border-[#E7E4DE]">
+<div>
+<h2 class="text-headline-section font-headline-section text-[#463F3A]">
+                Project activity
+              </h2>
+<p class="text-body-default font-body-default text-[#8A817C] mt-0.5">
+                Weekly ingested evidence items across Slack, GitHub PRs, and Notion RFCs
+              </p>
+</div>
+<div class="flex items-center gap-3 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">
+<span class="inline-flex items-center gap-1">
+<span class="w-2.5 h-2.5 rounded-sm bg-[#BCB8B1]"></span> Normal ingest
+              </span>
+<span class="inline-flex items-center gap-1">
+<span class="w-2.5 h-2.5 rounded-sm bg-[#E0AFA0]"></span> Freeze peak
+              </span>
+</div>
+</div>
+<!-- Minimal Weekly Bar Chart (W32 - W42) -->
+<div class="pt-8 pb-4">
+<div class="relative h-44 w-full flex items-end justify-between gap-2 px-2 sm:px-6">
+<!-- Subtle Hairline Horizontal Guidelines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none select-none">
+<div class="border-b border-[#E7E4DE] w-full flex justify-between">
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C] -mt-2.5 bg-white pr-1">60 items</span>
+</div>
+<div class="border-b border-[#E7E4DE] w-full flex justify-between">
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C] -mt-2.5 bg-white pr-1">40 items</span>
+</div>
+<div class="border-b border-[#E7E4DE] w-full flex justify-between">
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C] -mt-2.5 bg-white pr-1">20 items</span>
+</div>
+<div class="border-b border-[#E7E4DE] w-full flex justify-between">
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C] -mt-2.5 bg-white pr-1">0</span>
+</div>
+</div>
+<!-- Columns W32 through W42 -->
+<!-- W32 -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="w-full max-w-[28px] bg-[#BCB8B1] rounded-t-sm group-hover:bg-[#8A817C] transition-colors" style="height: 32%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">W32</span>
+</div>
+<!-- W33 -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="w-full max-w-[28px] bg-[#BCB8B1] rounded-t-sm group-hover:bg-[#8A817C] transition-colors" style="height: 40%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">W33</span>
+</div>
+<!-- W34 -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="w-full max-w-[28px] bg-[#BCB8B1] rounded-t-sm group-hover:bg-[#8A817C] transition-colors" style="height: 48%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">W34</span>
+</div>
+<!-- W35 -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="w-full max-w-[28px] bg-[#BCB8B1] rounded-t-sm group-hover:bg-[#8A817C] transition-colors" style="height: 42%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">W35</span>
+</div>
+<!-- W36 -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="w-full max-w-[28px] bg-[#BCB8B1] rounded-t-sm group-hover:bg-[#8A817C] transition-colors" style="height: 58%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">W36</span>
+</div>
+<!-- W37 -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="w-full max-w-[28px] bg-[#BCB8B1] rounded-t-sm group-hover:bg-[#8A817C] transition-colors" style="height: 52%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">W37</span>
+</div>
+<!-- W38 -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="w-full max-w-[28px] bg-[#BCB8B1] rounded-t-sm group-hover:bg-[#8A817C] transition-colors" style="height: 68%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">W38</span>
+</div>
+<!-- W39 (Peak Highlight: 64 items during feature freeze) -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="absolute -top-7 px-2 py-0.5 rounded bg-[#463F3A] text-white text-[10px] font-mono whitespace-nowrap shadow-sm">
+                  64 items (freeze)
+                </div>
+<div class="w-full max-w-[28px] bg-[#E0AFA0] rounded-t-sm ring-1 ring-[#E0AFA0]" style="height: 94%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#463F3A] font-bold">W39</span>
+</div>
+<!-- W40 -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="w-full max-w-[28px] bg-[#BCB8B1] rounded-t-sm group-hover:bg-[#8A817C] transition-colors" style="height: 55%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">W40</span>
+</div>
+<!-- W41 -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="w-full max-w-[28px] bg-[#BCB8B1] rounded-t-sm group-hover:bg-[#8A817C] transition-colors" style="height: 45%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">W41</span>
+</div>
+<!-- W42 -->
+<div class="relative z-10 flex-1 flex flex-col items-center group h-full justify-end">
+<div class="w-full max-w-[28px] bg-[#BCB8B1] rounded-t-sm group-hover:bg-[#8A817C] transition-colors" style="height: 38%;"></div>
+<span class="mt-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">W42</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quiet Query Row -->
+<div class="mt-6 pt-5 border-t border-[#E7E4DE]">
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+<div class="relative flex-grow">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[18px] text-[#8A817C]" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-4 rounded-[10px] border border-[#BCB8B1] bg-[#F4F3EE]/50 text-body-default font-body-default placeholder:text-[#8A817C] cursor-not-allowed" disabled="" placeholder="Ask the approved handover..." type="text"/>
+</div>
+<button class="h-10 px-5 rounded-[10px] bg-[#BCB8B1] text-white text-body-medium font-body-medium cursor-not-allowed opacity-60" disabled="" type="button">
+              Ask
+            </button>
+</div>
+<p class="text-label-caption font-label-caption text-[#8A817C] mt-2 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]" data-icon="lock">lock</span>
+            Available after approval
+          </p>
+</div>
+</article>
+<!-- Bento 2: Handover Readiness (Donut Breakdown) (4 cols desktop) -->
+<article class="md:col-span-12 lg:col-span-4 bg-white border border-[#E7E4DE] rounded-[16px] p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col justify-between">
+<div>
+<h2 class="text-headline-section font-headline-section text-[#463F3A]">
+            Handover readiness
+          </h2>
+<p class="text-body-default font-body-default text-[#8A817C] mt-0.5">
+            Verification status distribution
+          </p>
+<!-- Thin SVG Donut Chart -->
+<div class="relative flex justify-center items-center py-6">
+<svg class="w-44 h-44 -rotate-90 transform" viewbox="0 0 100 100">
+<!-- Background Ring -->
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#F4F3EE" stroke-width="6"></circle>
+<!-- Verified: 62% (Circumference ~ 251.2, 62% = 155.7) -->
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#5F7A61" stroke-dasharray="155.7 251.2" stroke-dashoffset="0" stroke-width="6"></circle>
+<!-- Inferred: 17% (42.7) -->
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#6B7F94" stroke-dasharray="42.7 251.2" stroke-dashoffset="-155.7" stroke-width="6"></circle>
+<!-- Conflicting: 8% (20.1) -->
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#C9822B" stroke-dasharray="20.1 251.2" stroke-dashoffset="-198.4" stroke-width="6"></circle>
+<!-- Missing: 13% (32.7) -->
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#8A817C" stroke-dasharray="32.7 251.2" stroke-dashoffset="-218.5" stroke-width="6"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+<span class="text-display-stat font-display-stat text-[#463F3A] leading-tight">48</span>
+<span class="text-label-caption font-label-caption text-[#8A817C]">Total claims</span>
+</div>
+</div>
+</div>
+<!-- Four Progress Breakdown Rows -->
+<div class="space-y-3 pt-2 border-t border-[#E7E4DE]">
+<!-- Verified -->
+<div class="flex items-center justify-between text-body-default font-body-default">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#5F7A61]" data-icon="check_circle">check_circle</span>
+<span class="text-primary font-medium">Verified</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-[#8A817C] text-label-mono-metadata font-label-mono-metadata">30 claims</span>
+<span class="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#5F7A61]/10 text-[#5F7A61] font-semibold">62%</span>
+</div>
+</div>
+<!-- Inferred -->
+<div class="flex items-center justify-between text-body-default font-body-default">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#6B7F94]" data-icon="lightbulb">lightbulb</span>
+<span class="text-primary font-medium">Inferred</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-[#8A817C] text-label-mono-metadata font-label-mono-metadata">8 claims</span>
+<span class="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#6B7F94]/10 text-[#6B7F94] font-semibold">17%</span>
+</div>
+</div>
+<!-- Conflicting -->
+<div class="flex items-center justify-between text-body-default font-body-default">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#C9822B]" data-icon="warning">warning</span>
+<span class="text-primary font-medium">Conflicting</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-[#8A817C] text-label-mono-metadata font-label-mono-metadata">4 claims</span>
+<span class="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#C9822B]/10 text-[#C9822B] font-semibold">8%</span>
+</div>
+</div>
+<!-- Missing evidence -->
+<div class="flex items-center justify-between text-body-default font-body-default">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#8A817C]" data-icon="help">help</span>
+<span class="text-primary font-medium">Missing evidence</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-[#8A817C] text-label-mono-metadata font-label-mono-metadata">6 claims</span>
+<span class="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#8A817C]/10 text-[#8A817C] font-semibold">13%</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Bento 3: Claims by Type (4 cols desktop) -->
+<article class="md:col-span-6 lg:col-span-4 bg-white border border-[#E7E4DE] rounded-[16px] p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col justify-between">
+<div>
+<div class="flex items-baseline justify-between pb-3 border-b border-[#E7E4DE]">
+<h2 class="text-headline-section font-headline-section text-[#463F3A]">Claims by type</h2>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">48 categorized items</span>
+</div>
+<div class="space-y-4 pt-5">
+<!-- Decisions: 16 -->
+<div>
+<div class="flex justify-between items-center text-body-default font-body-default mb-1.5">
+<span class="text-[#463F3A] font-medium">Decisions</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">16 claims</span>
+</div>
+<div class="w-full bg-[#F4F3EE] h-2 rounded-full overflow-hidden">
+<div class="bg-[#463F3A] h-full rounded-full" style="width: 33.3%;"></div>
+</div>
+</div>
+<!-- Tasks: 12 -->
+<div>
+<div class="flex justify-between items-center text-body-default font-body-default mb-1.5">
+<span class="text-[#463F3A] font-medium">Tasks</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">12 claims</span>
+</div>
+<div class="w-full bg-[#F4F3EE] h-2 rounded-full overflow-hidden">
+<div class="bg-[#463F3A] h-full rounded-full" style="width: 25%;"></div>
+</div>
+</div>
+<!-- Risks: 7 -->
+<div>
+<div class="flex justify-between items-center text-body-default font-body-default mb-1.5">
+<span class="text-[#463F3A] font-medium">Risks</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">7 claims</span>
+</div>
+<div class="w-full bg-[#F4F3EE] h-2 rounded-full overflow-hidden">
+<div class="bg-[#BCB8B1] h-full rounded-full" style="width: 14.5%;"></div>
+</div>
+</div>
+<!-- Dependencies: 6 -->
+<div>
+<div class="flex justify-between items-center text-body-default font-body-default mb-1.5">
+<span class="text-[#463F3A] font-medium">Dependencies</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">6 claims</span>
+</div>
+<div class="w-full bg-[#F4F3EE] h-2 rounded-full overflow-hidden">
+<div class="bg-[#BCB8B1] h-full rounded-full" style="width: 12.5%;"></div>
+</div>
+</div>
+<!-- Open questions: 4 -->
+<div>
+<div class="flex justify-between items-center text-body-default font-body-default mb-1.5">
+<span class="text-[#463F3A] font-medium">Open questions</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">4 claims</span>
+</div>
+<div class="w-full bg-[#F4F3EE] h-2 rounded-full overflow-hidden">
+<div class="bg-[#BCB8B1] h-full rounded-full" style="width: 8.3%;"></div>
+</div>
+</div>
+<!-- Contacts: 3 -->
+<div>
+<div class="flex justify-between items-center text-body-default font-body-default mb-1.5">
+<span class="text-[#463F3A] font-medium">Contacts</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">3 claims</span>
+</div>
+<div class="w-full bg-[#F4F3EE] h-2 rounded-full overflow-hidden">
+<div class="bg-[#BCB8B1] h-full rounded-full" style="width: 6.2%;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-4 mt-4 border-t border-[#E7E4DE] text-label-caption font-label-caption text-[#8A817C] flex items-center justify-between">
+<span>CampusConnect repository sync</span>
+<span class="font-mono text-[11px] text-[#463F3A]">rev-89e41b</span>
+</div>
+</article>
+<!-- Bento 4: Open Gaps (Soft blush-tinted card) (5 cols desktop) -->
+<article class="md:col-span-6 lg:col-span-5 bg-[#FDF5F2] border border-[#F0D5CD] rounded-[16px] p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-[#F0D5CD]">
+<div class="flex items-center gap-2">
+<h2 class="text-headline-section font-headline-section text-[#463F3A]">Open gaps</h2>
+<span class="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#C9822B]/15 text-[#C9822B] font-semibold">
+                3 unresolved
+              </span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-[#C9822B]" data-icon="rule">rule</span>
+</div>
+<div class="space-y-3.5 pt-4">
+<!-- Gap Item 1 -->
+<div class="p-3 bg-white border border-[#F0D5CD] rounded-[10px] space-y-1.5">
+<p class="text-body-default font-body-default text-[#463F3A] leading-relaxed">
+                "Issue #42 says the API key rotates monthly; the 12 Oct notes say quarterly. Which is correct?"
+              </p>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#C9822B]/12 text-[#C9822B]">
+<span class="material-symbols-outlined text-[13px]" data-icon="compare_arrows">compare_arrows</span>
+                  Conflicting credential policy
+                </span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">Auth module</span>
+</div>
+</div>
+<!-- Gap Item 2 -->
+<div class="p-3 bg-white border border-[#F0D5CD] rounded-[10px] space-y-1.5">
+<p class="text-body-default font-body-default text-[#463F3A] leading-relaxed">
+                "Push notification production APNS certificate is registered under personal Apple Developer account without backup admin."
+              </p>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#8A817C]/15 text-[#8A817C]">
+<span class="material-symbols-outlined text-[13px]" data-icon="lock_person">lock_person</span>
+                  Missing team access
+                </span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">DevOps</span>
+</div>
+</div>
+<!-- Gap Item 3 -->
+<div class="p-3 bg-white border border-[#F0D5CD] rounded-[10px] space-y-1.5">
+<p class="text-body-default font-body-default text-[#463F3A] leading-relaxed">
+                "Event discovery feed cache eviction interval defaults to 5 minutes, but pilot load testing document references 60 seconds."
+              </p>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#6B7F94]/15 text-[#6B7F94]">
+<span class="material-symbols-outlined text-[13px]" data-icon="speed">speed</span>
+                  Architectural mismatch
+                </span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">Backend</span>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-4 mt-2">
+<a class="inline-flex items-center gap-1.5 text-body-medium font-body-medium text-[#463F3A] hover:underline" href="#">
+<span>Review all gaps</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Bento 5: Next Step (3 cols desktop) -->
+<article class="md:col-span-12 lg:col-span-3 bg-white border border-[#E7E4DE] rounded-[16px] p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-[#E7E4DE]">
+<h2 class="text-headline-section font-headline-section text-[#463F3A]">Next step</h2>
+<span class="material-symbols-outlined text-[20px] text-[#8A817C]" data-icon="fact_check">fact_check</span>
+</div>
+<div class="pt-4 space-y-4">
+<div>
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#8A817C] uppercase tracking-wider">Pending sign-off</span>
+<p class="text-headline-section font-headline-section text-[#463F3A] mt-1 leading-snug">
+                14 claims need your review
+              </p>
+</div>
+<!-- Progress Indicator -->
+<div class="space-y-1.5 bg-[#F4F3EE] p-3 rounded-[10px] border border-[#E7E4DE]">
+<div class="flex justify-between items-center text-label-caption font-label-caption">
+<span class="text-[#463F3A] font-medium">Review state</span>
+<span class="text-[#8A817C] font-mono">9 of 14 reviewed</span>
+</div>
+<div class="w-full bg-[#BCB8B1]/40 h-2 rounded-full overflow-hidden">
+<div class="bg-[#5F7A61] h-full rounded-full" style="width: 64%;"></div>
+</div>
+<div class="flex justify-end">
+<span class="text-label-mono-metadata font-label-mono-metadata text-[#5F7A61] font-semibold">64% complete</span>
+</div>
+</div>
+<p class="text-body-default font-body-default text-[#8A817C]">
+              Review remaining claims to generate final handover certification.
+            </p>
+</div>
+</div>
+<div class="pt-6">
+<a class="w-full inline-flex justify-center items-center gap-2 px-[18px] py-[10px] rounded-[10px] bg-[#463F3A] hover:bg-[#37312D] active:bg-[#2B2724] text-white text-body-medium font-body-medium shadow-sm transition-all duration-150" href="#">
+<span>Go to review</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</article>
+</div>
+</main>
+<!-- Footer (Shared Component Anchor) -->
+<footer class="border-t border-outline-variant bg-surface">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-6 py-4 gap-2">
+<span class="text-label-mono-metadata font-label-mono-metadata font-semibold text-primary">
+        HandoverTrail — Synthetic demo data for verification review
+      </span>
+<div class="flex items-center space-x-6 text-label-mono-metadata font-label-mono-metadata text-outline">
+<a class="hover:text-primary underline transition-colors" href="#">Protocol Brief</a>
+<a class="hover:text-primary underline transition-colors" href="#">Audit Logs</a>
+<a class="hover:text-primary underline transition-colors" href="#">Export Artifact</a>
+<a class="hover:text-primary underline transition-colors" href="#">Security Specs</a>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HandoverTrail — Gaps &amp; Discrepancies</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary": "#ffffff",
+            "surface": "#fff8f5",
+            "surface-container": "#f7ece5",
+            "primary": "#2f2925",
+            "secondary-fixed": "#ffdbd0",
+            "surface-container-high": "#f2e6e0",
+            "surface-container-highest": "#ece0da",
+            "outline": "#7f756f",
+            "surface-dim": "#e3d8d2",
+            "background": "#fff8f5",
+            "on-primary-fixed": "#201b16",
+            "inverse-on-surface": "#faeee8",
+            "surface-variant": "#ece0da",
+            "tertiary-fixed": "#cceacc",
+            "surface-bright": "#fff8f5",
+            "tertiary-fixed-dim": "#b1ceb1",
+            "inverse-surface": "#352f2b",
+            "outline-variant": "#d0c4bd",
+            "on-background": "#201a17",
+            "tertiary": "#17301c",
+            "on-surface": "#201a17",
+            "on-primary-fixed-variant": "#4d4540",
+            "on-error": "#ffffff",
+            "primary-container": "#463f3a",
+            "on-surface-variant": "#4d4540",
+            "secondary-container": "#ffccbc",
+            "on-primary": "#ffffff",
+            "surface-tint": "#655d57",
+            "on-secondary": "#ffffff",
+            "error-container": "#ffdad6",
+            "secondary": "#7c5549",
+            "on-secondary-container": "#7a5448",
+            "on-primary-container": "#b5aaa4",
+            "on-tertiary-fixed": "#07200e",
+            "on-tertiary-fixed-variant": "#334d36",
+            "primary-fixed": "#ece0d9",
+            "inverse-primary": "#cfc4bd",
+            "error": "#ba1a1a",
+            "on-secondary-fixed-variant": "#613e33",
+            "on-tertiary-container": "#97b398",
+            "surface-container-low": "#fdf1eb",
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#93000a",
+            "primary-fixed-dim": "#cfc4bd",
+            "tertiary-container": "#2d4630",
+            "on-secondary-fixed": "#2f140b",
+            "secondary-fixed-dim": "#edbbac"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "margin-tablet": "1.5rem",
+            "space-xl": "2.5rem",
+            "margin": "3rem",
+            "gutter": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "1rem"
+          },
+          "fontFamily": {
+            "label-caption": ["Inter"],
+            "body-medium": ["Inter"],
+            "body-default": ["Inter"],
+            "label-mono-metadata": ["Inter"],
+            "display-stat": ["Inter"],
+            "headline-page-mobile": ["Inter"],
+            "headline-section": ["Inter"],
+            "headline-page": ["Inter"]
+          },
+          "fontSize": {
+            "label-caption": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-medium": ["14px", { "lineHeight": "22.4px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "body-default": ["14px", { "lineHeight": "22.4px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "label-mono-metadata": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "display-stat": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "500" }],
+            "headline-page-mobile": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "headline-section": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-page": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+      display: inline-block;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="bg-[#F4F3EE] text-on-surface antialiased min-h-screen flex flex-col font-body-default">
+<!-- TOP APP BAR -->
+<header class="sticky top-4 z-50 mx-auto w-[calc(100%-2rem)] max-w-7xl rounded-xl border border-outline-variant bg-surface-container-lowest shadow-[0_4px_16px_-2px_rgba(70,63,58,0.08)]">
+<div class="flex justify-between items-center h-16 px-6">
+<!-- Brand Logo -->
+<div class="flex items-center gap-3">
+<a class="text-headline-section font-headline-section text-primary tracking-tight font-semibold" href="#">
+          HandoverTrail
+        </a>
+</div>
+<!-- Segmented Navigation Cluster -->
+<nav class="hidden md:flex items-center gap-1 bg-[#F4F3EE] p-1 rounded-full border border-outline-variant">
+<a class="text-outline hover:text-on-surface px-4 py-1.5 text-label-caption font-label-caption transition-colors rounded-full" href="#">
+          Dashboard
+        </a>
+<a class="text-outline hover:text-on-surface px-4 py-1.5 text-label-caption font-label-caption transition-colors rounded-full" href="#">
+          Review
+        </a>
+<a class="text-outline hover:text-on-surface px-4 py-1.5 text-label-caption font-label-caption transition-colors rounded-full" href="#">
+          Timeline
+        </a>
+<!-- Active Tab: Gaps -->
+<a class="bg-primary-container text-on-primary rounded-full px-4 py-1.5 text-label-caption font-label-caption transition-colors" href="#">
+          Gaps
+        </a>
+<a class="text-outline hover:text-on-surface px-4 py-1.5 text-label-caption font-label-caption transition-colors rounded-full" href="#">
+          Handover
+        </a>
+</nav>
+<!-- Right cluster -->
+<div class="flex items-center gap-3">
+<!-- Persona Selector -->
+<div class="hidden lg:flex items-center gap-2 border border-outline-variant rounded-full px-3 py-1 bg-surface-container-lowest text-label-caption font-label-caption text-primary">
+<span class="w-2 h-2 rounded-full bg-[#E0AFA0]"></span>
+<span>View as: Riya Sharma (Leaver)</span>
+<span class="material-symbols-outlined text-[16px] text-outline">arrow_drop_down</span>
+</div>
+<!-- Global Status Pill -->
+<div class="hidden sm:inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-label-caption font-label-caption bg-[rgba(201,130,43,0.12)] text-[#C9822B]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#C9822B]"></span>
+<span>In review</span>
+</div>
+<!-- Action Icons -->
+<button class="p-1.5 text-outline hover:text-primary transition-colors" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="p-1.5 text-outline hover:text-primary transition-colors" title="Help &amp; Guidelines">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+<!-- Primary Action -->
+<button class="bg-[#463F3A] hover:bg-[#37312D] active:bg-[#2B2724] text-white px-4 py-2 rounded-[10px] text-label-caption font-label-caption transition-all">
+          Approve handover
+        </button>
+</div>
+</div>
+</header>
+<!-- SUBHEADER / CONTEXT DOSSIER BANNER -->
+<section class="max-w-7xl mx-auto w-full px-6 pt-8 pb-4">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-outline-variant pb-6">
+<div>
+<div class="flex items-center gap-2 text-label-mono-metadata font-label-mono-metadata text-outline tracking-wider uppercase mb-1">
+<span>PROJECT DOSSIER</span>
+<span class="text-outline-variant">•</span>
+<span>CAMPUS-CC-2024Q4</span>
+<span class="text-outline-variant">•</span>
+<span class="text-[#8A817C]">LEAVER: RIYA SHARMA</span>
+</div>
+<h1 class="text-headline-page font-headline-page text-primary tracking-tight">
+          Handover gaps &amp; discrepancies
+        </h1>
+<p class="text-body-default font-body-default text-outline mt-1 max-w-2xl">
+          Identified contradictions, missing knowledge, and questions requiring Riya Sharma's clarification before sign-off.
+        </p>
+</div>
+<!-- Stats Pill -->
+<div class="flex items-center gap-2 self-start md:self-auto bg-surface-container-lowest border border-outline-variant rounded-full px-4 py-2 shadow-[0_1px_2px_rgba(70,63,58,0.06)]">
+<span class="inline-flex items-center gap-1.5 text-label-caption font-label-caption text-[#C9822B]">
+<span class="w-2 h-2 rounded-full bg-[#C9822B]"></span>
+          3 open gaps
+        </span>
+<span class="text-outline-variant">·</span>
+<span class="inline-flex items-center gap-1.5 text-label-caption font-label-caption text-[#5F7A61]">
+<span class="w-2 h-2 rounded-full bg-[#5F7A61]"></span>
+          1 answered
+        </span>
+</div>
+</div>
+</section>
+<!-- MAIN EDITORIAL CONTENT CANVAS -->
+<main class="max-w-7xl mx-auto w-full px-6 py-6 flex-1 space-y-6">
+<!-- 1. FILTER & SUMMARY BAR -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-3 shadow-[0_1px_2px_rgba(70,63,58,0.06)]">
+<!-- Filter pills -->
+<div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+<button class="bg-[#463F3A] text-white px-3.5 py-1.5 rounded-full text-label-caption font-label-caption transition-colors">
+          All gaps (4)
+        </button>
+<button class="text-outline hover:text-on-surface hover:bg-surface-container px-3.5 py-1.5 rounded-full text-label-caption font-label-caption transition-colors">
+          Open conflicts (2)
+        </button>
+<button class="text-outline hover:text-on-surface hover:bg-surface-container px-3.5 py-1.5 rounded-full text-label-caption font-label-caption transition-colors">
+          Missing evidence (1)
+        </button>
+<button class="text-outline hover:text-on-surface hover:bg-surface-container px-3.5 py-1.5 rounded-full text-label-caption font-label-caption transition-colors">
+          Answered (1)
+        </button>
+</div>
+<!-- Quick Filter Search Input -->
+<div class="relative w-full sm:w-72">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-[10px] border border-outline-variant bg-surface-container-lowest text-body-default font-body-default text-primary focus:border-primary-container focus:ring-0 transition-colors" placeholder="Filter by keyword, RFC, or tag..." type="text"/>
+</div>
+</div>
+<!-- 2. CARD 1: PRIMARY CONFLICT CARD (UNRESOLVED) -->
+<article class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 sm:p-8 shadow-[0_1px_2px_rgba(70,63,58,0.06)] transition-all">
+<!-- Card Header -->
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-4 border-b border-outline-variant">
+<div>
+<div class="flex items-center gap-2.5 mb-1.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[rgba(201,130,43,0.12)] text-[#C9822B]">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+              Conflicting
+            </span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-outline">
+              GAP-081 • SEC-AUTH
+            </span>
+</div>
+<h2 class="text-headline-section font-headline-section text-primary tracking-tight">
+            API key rotation frequency policy mismatch
+          </h2>
+<p class="text-body-default font-body-default text-outline mt-1">
+            Infrastructure Terraform scripts and documentation state different rotation schedules for production API keys.
+          </p>
+</div>
+<div class="text-right text-label-mono-metadata font-label-mono-metadata text-outline shrink-0">
+<span>Flagged 10 Oct · High impact</span>
+</div>
+</div>
+<!-- Two-Column Side-by-Side Conflict Container -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+<!-- Box A -->
+<div class="bg-[#FAFAF8] border border-outline-variant rounded-xl p-5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant pb-2.5 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-outline">description</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-primary">Issue #42 (GitHub)</span>
+<span class="text-outline-variant">·</span>
+<span class="text-label-caption font-label-caption text-outline">Auth module ticket</span>
+</div>
+<span class="text-label-mono-metadata font-label-mono-metadata text-outline">28 Sep</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3.5 mb-3">
+<p class="text-body-default font-body-default text-primary italic">
+                “API keys must rotate every 30 days via automated Lambda hook as documented in security RFC #04.”
+              </p>
+</div>
+</div>
+<div class="flex items-center justify-between text-label-mono-metadata font-label-mono-metadata text-outline pt-2">
+<span>Author: Maya Lin (Tech Lead)</span>
+<span class="text-primary font-medium">Status: Marked as requirement</span>
+</div>
+</div>
+<!-- Box B -->
+<div class="bg-[#FAFAF8] border border-outline-variant rounded-xl p-5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant pb-2.5 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-outline">event_note</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-primary">Meeting notes, 12 Oct</span>
+<span class="text-outline-variant">·</span>
+<span class="text-label-caption font-label-caption text-outline">Sprint review discussion</span>
+</div>
+<span class="text-label-mono-metadata font-label-mono-metadata text-outline">12 Oct</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3.5 mb-3">
+<p class="text-body-default font-body-default text-primary italic">
+                “Vault TTL configured to 2160h (90 days / quarterly) because 30-day rotation causes student union CAS auth token invalidation timeouts.”
+              </p>
+</div>
+</div>
+<div class="flex items-center justify-between text-label-mono-metadata font-label-mono-metadata text-outline pt-2">
+<span>Author: Riya Sharma (Leaver)</span>
+<span class="text-[#C9822B] font-medium">Note: Not backported to docs</span>
+</div>
+</div>
+</div>
+<!-- Discrepancy Summary Highlight Inset -->
+<div class="bg-[rgba(224,175,160,0.12)] border-l-[3px] border-[#E0AFA0] rounded-r-lg p-4 mb-6">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary mt-0.5">difference</span>
+<p class="text-body-default font-body-default text-primary">
+<strong class="font-medium text-primary">Discrepancy:</strong> Production Vault TTL is set to 90 days, while Issue #42 compliance standard specifies 30 days. Arjun cannot proceed with automated pipeline handover until target cadence is ratified.
+          </p>
+</div>
+</div>
+<!-- Action Area: Riya's Resolution Input -->
+<div class="border-t border-outline-variant pt-5">
+<label class="block text-headline-section font-headline-section text-primary mb-1" for="gap-1-response">
+          Riya's answer <span class="text-label-caption font-label-caption text-outline font-normal">(Clarification for Arjun)</span>
+</label>
+<p class="text-label-caption font-label-caption text-outline mb-3">
+          Provide contextual rationale, configuration paths, or instructions to reconcile the live infrastructure with documentation.
+        </p>
+<div class="relative mb-3">
+<textarea class="w-full rounded-[10px] border border-outline-variant bg-surface-container-lowest p-3 text-body-default font-body-default text-primary placeholder-outline focus:border-primary-container focus:ring-0 transition-colors" id="gap-1-response" placeholder="Explain the intended rotation schedule or steps to align Vault config with RFC..." rows="3">The 90-day TTL was temporarily signed off in September to unblock the CAS v2 migration. In repo `campus-infra/terraform/modules/vault`, commit 8a9f3b sets the lease. Arjun should keep 90 days until CAS v3 rollout in November, then revert the hook to 30 days via `env.prod.tfvars`.</textarea>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<button class="bg-[#463F3A] hover:bg-[#37312D] text-white px-4 py-2 rounded-[10px] text-body-medium font-body-medium transition-colors">
+              Submit answer
+            </button>
+<button class="bg-surface-container-lowest hover:bg-[#F4F3EE] text-primary border border-outline-variant px-4 py-2 rounded-[10px] text-body-medium font-body-medium inline-flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-outline">attach_file</span>
+              Attach source note
+            </button>
+</div>
+<span class="text-label-mono-metadata font-label-mono-metadata text-outline">
+            Draft auto-saved 2 mins ago
+          </span>
+</div>
+</div>
+</article>
+<!-- 3. CARD 2: SECOND CONFLICT / GAP CARD (OPEN) -->
+<article class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 sm:p-8 shadow-[0_1px_2px_rgba(70,63,58,0.06)]">
+<!-- Card Header -->
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-4 border-b border-outline-variant">
+<div>
+<div class="flex items-center gap-2.5 mb-1.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[rgba(138,129,124,0.12)] text-[#8A817C]">
+<span class="material-symbols-outlined text-[14px]">help</span>
+              Missing evidence
+            </span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-outline">
+              GAP-082 • MOBILE-INFRA
+            </span>
+</div>
+<h2 class="text-headline-section font-headline-section text-primary tracking-tight">
+            APNS push notification agent certificate owner
+          </h2>
+<p class="text-body-default font-body-default text-outline mt-1">
+            Production iOS push notification broker credentials are bound to an individual leaver account rather than the team distribution group.
+          </p>
+</div>
+<div class="text-right text-label-mono-metadata font-label-mono-metadata text-outline shrink-0">
+<span>Flagged 13 Oct · Medium impact</span>
+</div>
+</div>
+<!-- Evidence Comparison Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+<!-- Evidence Item 1 -->
+<div class="bg-[#FAFAF8] border border-outline-variant rounded-xl p-5">
+<div class="flex items-center justify-between border-b border-outline-variant pb-2.5 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-outline">vpn_key</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-primary">Apple Dev Portal Audit</span>
+</div>
+<span class="text-label-mono-metadata font-label-mono-metadata text-outline">Verified live</span>
+</div>
+<p class="text-body-default font-body-default text-primary">
+            Certificate ID <code class="bg-[#E7E4DE] px-1 py-0.5 rounded text-label-mono-metadata font-label-mono-metadata">APNS-PROD-2024</code> is currently registered under personal account:
+          </p>
+<div class="mt-2.5 p-2.5 rounded bg-surface-container-lowest border border-outline-variant font-mono text-label-mono-metadata text-primary">
+            riya.sharma@campus.edu
+          </div>
+</div>
+<!-- Evidence Item 2 -->
+<div class="bg-[#FAFAF8] border border-outline-variant rounded-xl p-5">
+<div class="flex items-center justify-between border-b border-outline-variant pb-2.5 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-outline">checklist</span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-primary">Handover Checklist Item #7</span>
+</div>
+<span class="text-label-mono-metadata font-label-mono-metadata text-outline">SOP standard</span>
+</div>
+<p class="text-body-default font-body-default text-primary">
+            Compliance mandates production APNS credentials must reside under the managed engineering org account:
+          </p>
+<div class="mt-2.5 p-2.5 rounded bg-surface-container-lowest border border-outline-variant font-mono text-label-mono-metadata text-primary">
+            dev-admin@campusconnect.org
+          </div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="border-t border-outline-variant pt-5">
+<label class="block text-headline-section font-headline-section text-primary mb-1" for="gap-2-response">
+          Riya's answer
+        </label>
+<p class="text-label-caption font-label-caption text-outline mb-3">
+          Confirm status of account ownership transfer or invite key to Apple Business Manager team.
+        </p>
+<div class="relative mb-3">
+<textarea class="w-full rounded-[10px] border border-outline-variant bg-surface-container-lowest p-3 text-body-default font-body-default text-primary placeholder-outline focus:border-primary-container focus:ring-0 transition-colors" id="gap-2-response" placeholder="Specify whether developer role re-assignment ticket has been initiated..." rows="2"></textarea>
+</div>
+<div class="flex items-center gap-2">
+<button class="bg-[#463F3A] hover:bg-[#37312D] text-white px-4 py-2 rounded-[10px] text-body-medium font-body-medium transition-colors">
+            Submit answer
+          </button>
+<button class="bg-surface-container-lowest hover:bg-[#F4F3EE] text-primary border border-outline-variant px-4 py-2 rounded-[10px] text-body-medium font-body-medium inline-flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-outline">add_link</span>
+            Link ticket
+          </button>
+</div>
+</div>
+</article>
+<!-- 4. CARD 3: ANSWERED RESOLUTION CARD (GREEN "ANSWERED" TAG) -->
+<article class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 sm:p-8 shadow-[0_1px_2px_rgba(70,63,58,0.06)]">
+<!-- Card Header -->
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-4 border-b border-outline-variant">
+<div>
+<div class="flex items-center gap-2.5 mb-1.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[rgba(95,122,97,0.12)] text-[#5F7A61]">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+              Answered
+            </span>
+<span class="text-label-mono-metadata font-label-mono-metadata text-outline">
+              GAP-079 • REG-PIPELINE
+            </span>
+</div>
+<h2 class="text-headline-section font-headline-section text-primary tracking-tight">
+            Event registration Redis worker queue partition
+          </h2>
+<p class="text-body-default font-body-default text-outline mt-1">
+            Contradictory sources previously resolved: <span class="font-medium text-primary">Slack #backend discussion</span> vs <span class="font-medium text-primary">Pull Request #142</span>.
+          </p>
+</div>
+<div class="text-right text-label-mono-metadata font-label-mono-metadata text-[#5F7A61] shrink-0 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>Verified by Arjun (Successor) · 15 Oct, 09:40</span>
+</div>
+</div>
+<!-- Submitted Answer Inset (Quiet Warm Tint with blush accent) -->
+<div class="my-6 bg-[rgba(224,175,160,0.12)] border-l-[3px] border-[#E0AFA0] rounded-r-lg p-5">
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-caption font-label-caption font-medium text-primary">
+            Resolved by Riya Sharma on 14 Oct
+          </span>
+<a class="text-label-caption font-label-caption text-outline hover:text-primary underline" href="#">
+            Edit answer
+          </a>
+</div>
+<blockquote class="text-body-default font-body-default text-primary">
+          “The Redis queue was deliberately decoupled in PR #142 to isolate peak orientation ticket surges from core Postgres. Documentation updated in <code class="bg-[#FFFFFF] px-1.5 py-0.5 rounded border border-outline-variant text-label-mono-metadata">README-architecture.md</code> under Section 4.2.”
+        </blockquote>
+</div>
+<!-- Audit Metadata Footer of Card -->
+<div class="flex flex-wrap items-center justify-between text-label-mono-metadata font-label-mono-metadata text-outline pt-2 border-t border-outline-variant">
+<div class="flex items-center gap-4">
+<span class="inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-[#5F7A61]">task_alt</span>
+            PR #142 linked and merged
+          </span>
+<span class="inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-[#5F7A61]">task_alt</span>
+            Architecture brief synced
+          </span>
+</div>
+<div class="text-outline">
+          Sign-off token: <code class="font-mono text-outline">HASH_7b049a2f</code>
+</div>
+</div>
+</article>
+</main>
+<!-- FOOTER -->
+<footer class="bg-surface border-t border-outline-variant mt-12">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-6 py-4 gap-2">
+<div class="text-label-mono-metadata font-label-mono-metadata font-semibold text-primary">
+        HandoverTrail — Synthetic demo data for verification review
+      </div>
+<div class="flex items-center gap-6 text-label-mono-metadata font-label-mono-metadata text-outline">
+<a class="hover:text-primary underline transition-colors" href="#">Protocol Brief</a>
+<a class="hover:text-primary underline transition-colors" href="#">Audit Logs</a>
+<a class="hover:text-primary underline transition-colors" href="#">Export Artifact</a>
+<a class="hover:text-primary underline transition-colors" href="#">Security Specs</a>
+</div>
+</div>
+</footer>
+</body></html>
