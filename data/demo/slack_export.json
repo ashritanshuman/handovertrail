@@ -1,0 +1,134 @@
+[
+  {
+    "id": "ev-slack-001",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#engineering",
+    "location": "https://slack.com/archives/C01ENG01/p1693821000",
+    "author": "Riya Sharma",
+    "timestamp": "2026-09-04T10:12:00Z",
+    "text": "We evaluated both SQLite with WAL mode and PostgreSQL for our local checkout service. We decided on SQLite with WAL mode because WAL mode handles our 200 concurrent checkout queries with zero lock contention and avoids deploying a heavyweight RDS cluster during early pilot phases.",
+    "access_level": 1
+  },
+  {
+    "id": "ev-slack-002",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#engineering",
+    "location": "https://slack.com/archives/C01ENG01/p1694002000",
+    "author": "Arjun Rao",
+    "timestamp": "2026-09-06T14:40:00Z",
+    "text": "Confirmed: Frontend uses Tailwind CSS with shadcn UI components for rapid component styling.",
+    "access_level": 1
+  },
+  {
+    "id": "ev-slack-003",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#incident-response",
+    "location": "https://slack.com/archives/C02INC02/p1694200000",
+    "author": "Riya Sharma",
+    "timestamp": "2026-09-08T22:15:00Z",
+    "text": "URGENT TEST: SMS gateway webhook verification failed. For testing the staging webhook directly, use test key sk_live_campusevents_99834289472398472398472398 and ping on-call phone +91-98765-43210 for live delivery verification.",
+    "access_level": 3
+  },
+  {
+    "id": "ev-slack-004",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#incident-response",
+    "location": "https://slack.com/archives/C02INC02/p1694203600",
+    "author": "Maya Patel",
+    "timestamp": "2026-09-08T23:00:00Z",
+    "text": "Incident resolved: Twilio webhook endpoint URL had a trailing slash typo. Please rotate the test secret tomorrow morning.",
+    "access_level": 1
+  },
+  {
+    "id": "ev-slack-005",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#leads-private",
+    "location": "https://slack.com/archives/C03LEAD03/p1694500000",
+    "author": "Maya Patel",
+    "timestamp": "2026-09-12T16:00:00Z",
+    "text": "Confidential: Riya's transition plan approved. Notice period set to 6 weeks. Target successor is Arjun Rao. Arjun will need full walkthrough of Riya's sole-authored payment reconciliation codebase.",
+    "access_level": 2
+  },
+  {
+    "id": "ev-slack-006",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#leads-private",
+    "location": "https://slack.com/archives/C03LEAD03/p1694505000",
+    "author": "Riya Sharma",
+    "timestamp": "2026-09-12T16:45:00Z",
+    "text": "Agreed. I am preparing structured handover notes and will pair with Arjun on payment ledger idempotency and ticket lock lifecycles.",
+    "access_level": 2
+  },
+  {
+    "id": "ev-slack-007",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#engineering",
+    "location": "https://slack.com/archives/C01ENG01/p1694900000",
+    "author": "Riya Sharma",
+    "timestamp": "2026-09-17T09:20:00Z",
+    "text": "Open question for the team: Should we enforce a maximum 6-ticket limit per student account or make it configurable per event category?",
+    "access_level": 1
+  },
+  {
+    "id": "ev-slack-008",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#engineering",
+    "location": "https://slack.com/archives/C01ENG01/p1695200000",
+    "author": "Arjun Rao",
+    "timestamp": "2026-09-20T11:00:00Z",
+    "text": "Dependency reminder: Apple Developer Enterprise certificate renews on November 30. If it expires, iOS student testflight builds stop launching.",
+    "access_level": 1
+  },
+  {
+    "id": "ev-slack-009",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#engineering",
+    "location": "https://slack.com/archives/C01ENG01/p1695600000",
+    "author": "Riya Sharma",
+    "timestamp": "2026-09-25T14:10:00Z",
+    "text": "Regarding PR #88 WebSocket reservations: I abandoned PR #88 and recommend not deploying it due to socket leaks under abrupt client disconnection. PR #94 SSE is much safer.",
+    "access_level": 1
+  },
+  {
+    "id": "ev-slack-010",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#engineering",
+    "location": "https://slack.com/archives/C01ENG01/p1696000000",
+    "author": "Maya Patel",
+    "timestamp": "2026-09-29T10:00:00Z",
+    "text": "Primary contact for Stripe account escalations: Marcus Vance (marcus.vance@stripe-partner.com), our dedicated enterprise tier manager.",
+    "access_level": 1
+  },
+  {
+    "id": "ev-slack-011",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#leads-private",
+    "location": "https://slack.com/archives/C03LEAD03/p1696400000",
+    "author": "Maya Patel",
+    "timestamp": "2026-10-04T15:00:00Z",
+    "text": "HR update: Riya's transition bonus signoff complete. All handover documentation must be approved by me before final release.",
+    "access_level": 2
+  },
+  {
+    "id": "ev-slack-012",
+    "project_id": "campusconnect",
+    "source_type": "slack",
+    "source_ref": "#engineering",
+    "location": "https://slack.com/archives/C01ENG01/p1696800000",
+    "author": "Arjun Rao",
+    "timestamp": "2026-10-08T16:30:00Z",
+    "text": "Risk observation: If background worker crashes mid-batch, tickets remain in RESERVED state for 15 minutes until timeout garbage collector runs.",
+    "access_level": 1
+  }
+]
