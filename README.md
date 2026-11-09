@@ -245,18 +245,6 @@ handovertrail/
 
 ---
 
-## 10. Roadmap
-
-- [x] Multi-source ingestion & normalization
-- [x] Server-side clearance boundaries (Levels 1, 2, 3)
-- [x] Deterministic quote verifier & conflict detector
-- [x] Lead approval gating & frozen snapshots
-- [ ] Round 3: Live GitHub PR webhook listener
-- [ ] Round 3: Slack Bot for interactive leaver Q&A
-- [ ] Enterprise: SAML / Okta SSO integration with automated HR leaver triggers
-
----
-
 ## 11. Team TchieSharks
 
 - **Ashrit Anshuman Pradhan** - System Architecture, Backend & Verifier Engine
