@@ -47,8 +47,9 @@ export default {
         },
       },
       fontFamily: {
+        serif: ["Fraunces", "Georgia", "serif"],
         sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
+        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
       },
       fontSize: {
         "display-stat": ["36px", { lineHeight: "44px", letterSpacing: "-0.03em", fontWeight: "500" }],
