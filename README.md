@@ -7,7 +7,7 @@
 [![React](https://img.shields.io/badge/React-18.2+-61DAFB.svg?logo=react&logoColor=black)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-5.0+-646CFF.svg?logo=vite&logoColor=white)](https://vitejs.dev)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)](https://python.org)
-[![Anthropic Claude](https://img.shields.io/badge/Anthropic-Claude%20Sonnet%205.5-D97706.svg)](https://anthropic.com)
+[![Google Gemini](https://img.shields.io/badge/Google-Gemini%202.5%20Flash-4285F4.svg?logo=google&logoColor=white)](https://ai.google.dev)
 
 ---
 
@@ -67,7 +67,7 @@ flowchart TD
         end
         
         subgraph AIIntegration["AI Extraction Engine"]
-            Claude["Anthropic Claude Sonnet 5.5 (Structured Tool Output)"]
+            Gemini["Google Gemini API (gemini-2.5-flash via google-genai SDK)"]
             Cache["Deterministic Fallback Seed Cache"]
         end
     end
@@ -99,7 +99,7 @@ flowchart TD
   - `SQLAlchemy 2 + SQLite`: File-based SQLite with WAL mode for zero-setup local execution and single-instance cloud hosting.
   - `pytest + pytest-asyncio`: End-to-end regression and permission test suites.
 - **AI & Trust**:
-  - `Anthropic Claude Sonnet 5.5`: Structured extraction with strict JSON-schema tool outputs.
+  - `Google Gemini API (gemini-2.5-flash)`: Structured extraction with JSON schema output via the official `google-genai` SDK and deterministic seed fallback (`fixtures/claims_cache.json`).
   - `Deterministic Verifier`: Pure Python verification — **no LLM grades its own homework**.
 - **Deployment**:
   - Single Render/Railway web service: FastAPI serves the compiled React distribution from `frontend/dist` with client-side SPA routing fallback. Evaluators need only one URL.
