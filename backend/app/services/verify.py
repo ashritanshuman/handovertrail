@@ -5,9 +5,10 @@ from app.models import EvidenceUnit, Claim
 
 
 def normalize_text(text: str) -> str:
-    """Normalizes whitespace and converts to lower case for deterministic verification."""
+    """Normalizes whitespace and common formatting (backticks/quotes) for deterministic verification."""
     if not text:
         return ""
+    text = re.sub(r"[`'\"]", "", text)
     text = re.sub(r"\s+", " ", text)
     return text.strip().lower()
 
