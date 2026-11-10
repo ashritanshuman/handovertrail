@@ -56,22 +56,22 @@ export const FirstSevenDaysCard: React.FC<FirstSevenDaysCardProps> = ({ classNam
 
   return (
     <section
-      className={`bg-white border border-[#E7E4DE] rounded-2xl p-6 md:p-8 shadow-[0_1px_2px_rgba(70,63,58,0.06)] ${className}`}
+      className={`bg-white border border-[#d8d0c0] rounded-2xl p-6 md:p-8 shadow-[0_1px_2px_rgba(70,63,58,0.06)] ${className}`}
     >
-      <div className="flex items-center justify-between pb-4 mb-5 border-b border-[#E7E4DE]">
+      <div className="flex items-center justify-between pb-4 mb-5 border-b border-[#d8d0c0]">
         <div className="flex items-center gap-2.5">
-          <span className="w-6 h-6 rounded-md bg-[#F4F3EE] flex items-center justify-center text-label-mono-metadata font-label-mono-metadata text-[#463F3A] font-semibold">
+          <span className="w-6 h-6 rounded-md bg-[#F4F3EE] border border-[#d8d0c0] flex items-center justify-center text-label-mono-metadata font-label-mono-metadata text-[#241d18] font-semibold">
             01
           </span>
-          <h2 className="text-headline-section font-headline-section text-[#463F3A] font-medium">
+          <h2 className="text-headline-section font-headline-section text-[#241d18] font-semibold">
             First 7 days
           </h2>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">
+          <span className="text-label-mono-metadata font-label-mono-metadata text-[#6B635E] font-medium">
             {completedCount} OF {DEFAULT_TASKS.length} COMPLETED
           </span>
-          <span className="text-label-mono-metadata font-label-mono-metadata text-[#8A817C] hidden sm:inline">
+          <span className="text-label-mono-metadata font-label-mono-metadata text-[#6B635E] font-medium hidden sm:inline">
             · CRITICAL ORIENTATION PATH
           </span>
         </div>
@@ -88,8 +88,8 @@ export const FirstSevenDaysCard: React.FC<FirstSevenDaysCardProps> = ({ classNam
                 aria-label={`Mark "${item.text}" as ${isDone ? "incomplete" : "done"}`}
                 className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center transition-colors shrink-0 ${
                   isDone
-                    ? "bg-[#5F7A61] border-[#5F7A61] text-white"
-                    : "border-[#BCB8B1] hover:border-[#463F3A]"
+                    ? "bg-[#38523A] border-[#38523A] text-white"
+                    : "border-[#d8d0c0] hover:border-[#241d18]"
                 }`}
               >
                 {isDone && <Check size={12} strokeWidth={2.5} />}
@@ -98,18 +98,18 @@ export const FirstSevenDaysCard: React.FC<FirstSevenDaysCardProps> = ({ classNam
               <div className="flex-1">
                 <p
                   className={`text-body-default font-body-default leading-relaxed transition-all ${
-                    isDone ? "line-through text-[#8A817C]" : "text-[#463F3A] font-medium"
+                    isDone ? "line-through text-[#6B635E]" : "text-[#241d18] font-medium"
                   }`}
                 >
                   {item.text}
                 </p>
 
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono bg-[#F4F3EE] text-[#463F3A] border border-[#E7E4DE]">
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-mono bg-[#F4F3EE] text-[#241d18] border border-[#d8d0c0] font-medium">
                     {item.tag}
-                    <ExternalLink size={10} className="text-[#8A817C]" />
+                    <ExternalLink size={12} className="text-[#6B635E]" />
                   </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-[#F4F3EE] text-[#8A817C]">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-[#F4F3EE] text-[#5C544F] border border-[#d8d0c0] font-medium">
                     {item.category}
                   </span>
                 </div>

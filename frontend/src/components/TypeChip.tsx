@@ -20,7 +20,7 @@ export const TypeChip: React.FC<TypeChipProps> = ({ type, className = "" }) => {
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#F4F3EE] border border-[#E7E4DE] text-[#463F3A] text-label-caption font-label-caption ${className}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#F4F3EE] border border-[#d8d0c0] text-[#241d18] text-label-caption font-label-caption font-medium ${className}`}
     >
       {label}
     </span>

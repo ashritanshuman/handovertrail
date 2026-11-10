@@ -12,33 +12,33 @@ export const LandingNav: React.FC<LandingNavProps> = ({ onLoadDemo, isLoading })
     <header className="sticky top-6 mx-auto max-w-6xl z-50 px-4 sm:px-6">
       <nav
         aria-label="Landing Navigation"
-        className="bg-white/95 backdrop-blur-sm border border-[#E7E4DE] rounded-full px-6 py-3.5 shadow-[0_4px_20px_-4px_rgba(70,63,58,0.06)] flex items-center justify-between"
+        className="bg-white/95 backdrop-blur-sm border border-[#d8d0c0] rounded-full px-6 py-3.5 shadow-[0_4px_20px_-4px_rgba(70,63,58,0.06)] flex items-center justify-between"
       >
         {/* Left: HandoverTrail wordmark */}
         <Link
           to="/"
-          className="font-serif font-semibold text-xl tracking-tight text-[#463F3A] flex items-center gap-2 hover:opacity-90 transition-opacity"
+          className="font-serif font-semibold text-xl tracking-tight text-[#241d18] flex items-center gap-2 hover:text-[#413934] transition-colors"
         >
-          <span className="w-2 h-2 rounded-full bg-[#E0AFA0]"></span>
+          <span className="w-2 h-2 rounded-full bg-[#8d3b2a]"></span>
           <span>HandoverTrail</span>
         </Link>
 
         {/* Center Links */}
         <div className="hidden md:flex items-center gap-8">
           <a
-            className="text-sm font-medium text-[#8A817C] hover:text-[#463F3A] transition-colors"
+            className="text-base font-medium text-[#413934] hover:text-[#241d18] transition-colors"
             href="#how-it-works"
           >
             How it works
           </a>
           <a
-            className="text-sm font-medium text-[#8A817C] hover:text-[#463F3A] transition-colors"
+            className="text-base font-medium text-[#413934] hover:text-[#241d18] transition-colors"
             href="#features"
           >
             Features
           </a>
           <a
-            className="text-sm font-medium text-[#8A817C] hover:text-[#463F3A] transition-colors"
+            className="text-base font-medium text-[#413934] hover:text-[#241d18] transition-colors"
             href="#trust"
           >
             Trust
@@ -48,7 +48,7 @@ export const LandingNav: React.FC<LandingNavProps> = ({ onLoadDemo, isLoading })
         {/* Right: Actions */}
         <div className="flex items-center gap-4 sm:gap-5">
           <Link
-            className="text-sm font-medium text-[#8A817C] hover:text-[#463F3A] transition-colors hidden sm:block"
+            className="text-base font-medium text-[#413934] hover:text-[#241d18] transition-colors hidden sm:block"
             to="/dashboard"
           >
             Sign in
@@ -57,7 +57,7 @@ export const LandingNav: React.FC<LandingNavProps> = ({ onLoadDemo, isLoading })
             type="button"
             onClick={onLoadDemo}
             disabled={isLoading}
-            className="bg-[#463F3A] text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-[#352F2B] transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-75"
+            className="bg-[#2B2521] text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-[#1f1a17] transition-all shadow-sm flex items-center gap-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#2B2521] focus:ring-offset-2 disabled:bg-[#6B635E] disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>

@@ -30,12 +30,12 @@ export const ClaimsByTypeBars: React.FC<ClaimsByTypeBarsProps> = ({ stats, class
 
   return (
     <article
-      className={`bg-white border border-[#E7E4DE] rounded-2xl p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col justify-between ${className}`}
+      className={`bg-white border border-[#d8d0c0] rounded-2xl p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col justify-between ${className}`}
     >
       <div>
-        <div className="flex items-baseline justify-between pb-3 border-b border-[#E7E4DE]">
-          <h2 className="text-headline-section font-headline-section text-[#463F3A]">Claims by type</h2>
-          <span className="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">
+        <div className="flex items-baseline justify-between pb-3 border-b border-[#d8d0c0]">
+          <h2 className="text-headline-section font-headline-section text-[#241d18] font-semibold">Claims by type</h2>
+          <span className="text-label-mono-metadata font-label-mono-metadata text-[#6B635E] font-medium">
             {total} categorized items
           </span>
         </div>
@@ -46,15 +46,15 @@ export const ClaimsByTypeBars: React.FC<ClaimsByTypeBarsProps> = ({ stats, class
             return (
               <div key={item.label}>
                 <div className="flex justify-between items-center text-body-default font-body-default mb-1.5">
-                  <span className="text-[#463F3A] font-medium">{item.label}</span>
-                  <span className="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">
+                  <span className="text-[#241d18] font-semibold">{item.label}</span>
+                  <span className="text-label-mono-metadata font-label-mono-metadata text-[#6B635E]">
                     {item.count} claims
                   </span>
                 </div>
-                <div className="w-full bg-[#F4F3EE] h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-[#F4F3EE] h-2 rounded-full overflow-hidden border border-[#d8d0c0]">
                   <div
                     className={`h-full rounded-full transition-all duration-300 ${
-                      item.primary ? "bg-[#463F3A]" : "bg-[#BCB8B1]"
+                      item.primary ? "bg-[#241d18]" : "bg-[#6B635E]"
                     }`}
                     style={{ width: `${Math.max(pct, item.count > 0 ? 5 : 0)}%` }}
                   ></div>
@@ -65,9 +65,9 @@ export const ClaimsByTypeBars: React.FC<ClaimsByTypeBarsProps> = ({ stats, class
         </div>
       </div>
 
-      <div className="pt-4 mt-4 border-t border-[#E7E4DE] text-label-caption font-label-caption text-[#8A817C] flex items-center justify-between">
+      <div className="pt-4 mt-4 border-t border-[#d8d0c0] text-label-caption font-label-caption text-[#6B635E] flex items-center justify-between font-medium">
         <span>CampusConnect repository sync</span>
-        <span className="font-mono text-[11px] text-[#463F3A]">rev-89e41b</span>
+        <span className="font-mono text-xs text-[#241d18] px-1.5 py-0.5 rounded bg-[#F4F3EE] border border-[#d8d0c0]">rev-89e41b</span>
       </div>
     </article>
   );

@@ -38,18 +38,18 @@ export const InlineEditDialog: React.FC<InlineEditDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in">
-      <div className="bg-white border border-[#E7E4DE] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
-        <div className="flex items-center justify-between pb-3 border-b border-[#E7E4DE]">
+      <div className="bg-white border border-[#d8d0c0] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
+        <div className="flex items-center justify-between pb-3 border-b border-[#d8d0c0]">
           <div className="flex items-center gap-2">
-            <Edit2 size={18} className="text-[#463F3A]" />
-            <h3 className="text-headline-section font-headline-section text-[#463F3A] font-semibold">
+            <Edit2 size={18} className="text-[#241d18]" />
+            <h3 className="text-headline-section font-headline-section text-[#241d18] font-semibold">
               Edit Claim Details
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded text-[#8A817C] hover:text-[#463F3A]"
+            className="p-1 rounded text-[#6B635E] hover:text-[#241d18]"
           >
             <X size={18} />
           </button>
@@ -57,13 +57,13 @@ export const InlineEditDialog: React.FC<InlineEditDialogProps> = ({
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label className="block text-label-caption font-label-caption text-[#463F3A] font-medium mb-1.5">
+            <label className="block text-label-caption font-label-caption text-[#241d18] font-medium mb-1.5">
               Claim Type
             </label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as ClaimType)}
-              className="w-full rounded-[10px] border border-[#BCB8B1] p-2.5 text-body-default font-body-default text-[#463F3A] bg-white focus:border-[#463F3A] focus:outline-none"
+              className="w-full rounded-[10px] border border-[#d8d0c0] p-2.5 text-body-default font-body-default text-[#241d18] bg-white focus:border-[#241d18] focus:outline-none"
             >
               <option value="decision">Decision</option>
               <option value="task">Task</option>
@@ -75,41 +75,41 @@ export const InlineEditDialog: React.FC<InlineEditDialogProps> = ({
           </div>
 
           <div>
-            <label className="block text-label-caption font-label-caption text-[#463F3A] font-medium mb-1.5">
+            <label className="block text-label-caption font-label-caption text-[#241d18] font-medium mb-1.5">
               Claim Statement Text
             </label>
             <textarea
               rows={3}
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="w-full rounded-[10px] border border-[#BCB8B1] p-3 text-body-default font-body-default text-[#463F3A] focus:border-[#463F3A] focus:outline-none"
+              className="w-full rounded-[10px] border border-[#d8d0c0] p-3 text-body-default font-body-default text-[#241d18] focus:border-[#241d18] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-label-caption font-label-caption text-[#463F3A] font-medium mb-1.5">
+            <label className="block text-label-caption font-label-caption text-[#241d18] font-medium mb-1.5">
               Exact Supporting Quote
             </label>
             <input
               type="text"
               value={quote}
               onChange={(e) => setQuote(e.target.value)}
-              className="w-full rounded-[10px] border border-[#BCB8B1] p-2.5 text-body-default font-body-default text-[#463F3A] focus:border-[#463F3A] focus:outline-none"
+              className="w-full rounded-[10px] border border-[#d8d0c0] p-2.5 text-body-default font-body-default text-[#241d18] focus:border-[#241d18] focus:outline-none"
             />
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E7E4DE]">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#d8d0c0]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-[10px] border border-[#BCB8B1] text-[#463F3A] text-body-medium font-medium hover:bg-[#F4F3EE] transition-colors"
+              className="px-4 py-2 rounded-[10px] border border-[#d8d0c0] text-[#241d18] text-body-medium font-medium hover:bg-[#F4F3EE] transition-colors focus:outline-none focus:ring-2 focus:ring-[#241d18]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 rounded-[10px] bg-[#463F3A] hover:bg-[#37312D] text-white text-body-medium font-medium transition-colors"
+              className="px-5 py-2 rounded-[10px] bg-[#2B2521] hover:bg-[#1f1a17] text-white text-body-medium font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#2B2521] focus:ring-offset-2 disabled:bg-[#6B635E] disabled:cursor-not-allowed"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>

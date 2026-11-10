@@ -76,20 +76,20 @@ export const ReviewPage: React.FC = () => {
   return (
     <AppShell>
       {/* Page Header */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-[#E7E4DE]">
+      <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-[#d8d0c0]">
         <div>
-          <h1 className="text-headline-page font-headline-page text-[#463F3A] tracking-tight">
+          <h1 className="text-headline-page font-headline-page text-[#241d18] tracking-tight font-semibold">
             Review workspace
           </h1>
-          <p className="text-body-default font-body-default text-[#8A817C] mt-1">
+          <p className="text-body-default font-body-default text-[#5C544F] mt-1">
             CampusConnect project handover verification · {totalClaims} total claims extracted from Slack, PRs, and Notion
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-label-mono-metadata font-label-mono-metadata text-[#8A817C] uppercase tracking-wider">
+          <span className="text-label-mono-metadata font-label-mono-metadata text-[#6B635E] uppercase tracking-wider font-semibold">
             Session Ref:
           </span>
-          <span className="text-label-mono-metadata font-label-mono-metadata bg-white px-2 py-1 rounded border border-[#E7E4DE] text-[#463F3A]">
+          <span className="text-label-mono-metadata font-label-mono-metadata bg-white px-2 py-1 rounded border border-[#d8d0c0] text-[#241d18] font-medium">
             CAMPUS-CC-2024Q4
           </span>
         </div>
@@ -113,10 +113,10 @@ export const ReviewPage: React.FC = () => {
         {/* Center Pane: Claims Stream (5 cols on lg) */}
         <section className="col-span-12 lg:col-span-5 flex flex-col gap-4">
           {/* Controls Bar */}
-          <div className="bg-white border border-[#E7E4DE] rounded-xl px-5 py-3 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex items-center justify-between">
+          <div className="bg-white border border-[#d8d0c0] rounded-xl px-5 py-3 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <h2 className="text-headline-section font-headline-section text-[#463F3A]">Claims</h2>
-              <span className="px-2 py-0.5 rounded-full bg-[#F4F3EE] text-[#463F3A] text-label-caption font-label-caption">
+              <h2 className="text-headline-section font-headline-section text-[#241d18] font-semibold">Claims</h2>
+              <span className="px-2.5 py-0.5 rounded-full bg-[#F4F3EE] border border-[#d8d0c0] text-[#241d18] text-label-caption font-label-caption font-medium">
                 {filteredClaims.length} shown
               </span>
             </div>
@@ -125,8 +125,8 @@ export const ReviewPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setUnreviewedOnly(false)}
-                className={`px-2.5 py-1 rounded-md text-label-caption font-label-caption transition-colors ${
-                  !unreviewedOnly ? "bg-[#F4F3EE] text-[#463F3A] font-medium" : "text-[#8A817C] hover:text-[#463F3A]"
+                className={`px-3 py-1 rounded-md text-label-caption font-label-caption transition-colors ${
+                  !unreviewedOnly ? "bg-[#2B2521] text-white font-medium" : "text-[#413934] hover:text-[#241d18]"
                 }`}
               >
                 All
@@ -134,8 +134,8 @@ export const ReviewPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setUnreviewedOnly(true)}
-                className={`px-2.5 py-1 rounded-md text-label-caption font-label-caption transition-colors ${
-                  unreviewedOnly ? "bg-[#F4F3EE] text-[#463F3A] font-medium" : "text-[#8A817C] hover:text-[#463F3A]"
+                className={`px-3 py-1 rounded-md text-label-caption font-label-caption transition-colors ${
+                  unreviewedOnly ? "bg-[#2B2521] text-white font-medium" : "text-[#413934] hover:text-[#241d18]"
                 }`}
               >
                 Unreviewed
@@ -181,22 +181,22 @@ export const ReviewPage: React.FC = () => {
       </div>
 
       {/* Sticky Bottom Docked Bar */}
-      <footer className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E7E4DE] shadow-[0_-2px_10px_rgba(70,63,58,0.04)]">
+      <footer className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#d8d0c0] shadow-[0_-2px_10px_rgba(70,63,58,0.04)]">
         <div className="max-w-7xl mx-auto px-6 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
           {/* Left side: Review progress metric */}
           <div className="flex items-center gap-4 w-full md:w-auto">
             <div className="flex items-center gap-2">
-              <span className="text-body-medium font-body-medium text-[#463F3A] font-medium">
+              <span className="text-body-medium font-body-medium text-[#241d18] font-semibold">
                 {reviewedCount} of {totalClaims} reviewed
               </span>
-              <span className="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">
+              <span className="text-label-mono-metadata font-label-mono-metadata text-[#5C544F]">
                 ({reviewPct}%)
               </span>
             </div>
             {/* Thin progress bar */}
-            <div className="w-36 h-2 rounded-full bg-[#E7E4DE] overflow-hidden flex">
+            <div className="w-36 h-2 rounded-full bg-[#d8d0c0] overflow-hidden flex">
               <div
-                className="h-full bg-[#463F3A] rounded-full transition-all duration-300"
+                className="h-full bg-[#38523A] rounded-full transition-all duration-300"
                 style={{ width: `${reviewPct}%` }}
               ></div>
             </div>
@@ -206,7 +206,7 @@ export const ReviewPage: React.FC = () => {
           <div className="flex items-center gap-3 w-full md:w-auto justify-end">
             <Link
               to="/handover"
-              className="px-4 py-2 rounded-lg border border-[#BCB8B1] text-[#463F3A] text-body-medium font-body-medium hover:bg-[#F4F3EE] transition-colors"
+              className="px-4 py-2 rounded-lg border border-[#d8d0c0] text-[#241d18] text-body-medium font-body-medium hover:bg-[#F4F3EE] transition-colors focus:outline-none focus:ring-2 focus:ring-[#241d18]"
             >
               Export audit report
             </Link>
@@ -215,12 +215,12 @@ export const ReviewPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setConfirmApproveOpen(true)}
-                className="px-5 py-2 rounded-lg bg-[#463F3A] hover:bg-[#37312D] text-white text-body-medium font-body-medium transition-colors active:scale-[0.98]"
+                className="px-5 py-2 rounded-lg bg-[#2B2521] hover:bg-[#1f1a17] text-white text-body-medium font-body-medium transition-colors active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#2B2521] focus:ring-offset-2"
               >
                 Approve handover
               </button>
             ) : (
-              <div className="text-[12px] text-[#8A817C]">
+              <div className="text-xs text-[#5C544F] font-medium">
                 Approval restricted to Maya Patel (Lead)
               </div>
             )}

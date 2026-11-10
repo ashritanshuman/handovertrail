@@ -38,40 +38,40 @@ export const ProductMockup: React.FC = () => {
   return (
     <div className="mt-14 max-w-[1080px] mx-auto text-left relative animate-fade-in">
       {/* Floating Proof Chip 1: Top Left */}
-      <div className="absolute -top-4 -left-3 sm:-left-6 z-20 bg-white border border-[#E7E4DE] rounded-full px-3.5 py-1.5 shadow-[0_8px_20px_-4px_rgba(70,63,58,0.12)] flex items-center gap-2 text-xs font-medium text-[#463F3A]">
-        <span className="w-4 h-4 rounded-full bg-[#5F7A61]/15 text-[#5F7A61] flex items-center justify-center font-bold text-[10px]">
+      <div className="absolute -top-4 -left-3 sm:-left-6 z-20 bg-white border border-[#d8d0c0] rounded-full px-3.5 py-1.5 shadow-[0_8px_20px_-4px_rgba(70,63,58,0.12)] flex items-center gap-2 text-xs font-medium text-[#241d18]">
+        <span className="w-4 h-4 rounded-full bg-[#5F7A61]/15 text-[#38523A] flex items-center justify-center font-bold text-xs">
           ✓
         </span>
-        <span>Quote found in source</span>
+        <span className="font-semibold">Quote found in source</span>
       </div>
 
       {/* Floating Proof Chip 2: Right */}
-      <div className="absolute top-16 -right-3 sm:-right-6 z-20 bg-white border border-[#E7E4DE] rounded-full px-3.5 py-1.5 shadow-[0_8px_20px_-4px_rgba(70,63,58,0.12)] flex items-center gap-2 text-xs font-medium text-[#463F3A]">
-        <span className="w-2 h-2 rounded-full bg-[#C9822B]"></span>
-        <span className="font-mono text-[11px] text-[#C9822B] font-semibold">GAP-081</span>
-        <span className="text-[#8A817C] text-[11px]">30d vs 90d TTL</span>
+      <div className="absolute top-16 -right-3 sm:-right-6 z-20 bg-white border border-[#d8d0c0] rounded-full px-3.5 py-1.5 shadow-[0_8px_20px_-4px_rgba(70,63,58,0.12)] flex items-center gap-2 text-xs font-medium text-[#241d18]">
+        <span className="w-2 h-2 rounded-full bg-[#8F5105]"></span>
+        <span className="font-mono text-xs text-[#8F5105] font-semibold">GAP-081</span>
+        <span className="text-[#5C544F] text-xs font-medium">30d vs 90d TTL</span>
       </div>
 
       {/* Floating Proof Chip 3: Bottom Left */}
-      <div className="absolute -bottom-4 left-6 sm:left-12 z-20 bg-white border border-[#E7E4DE] rounded-full px-3.5 py-1.5 shadow-[0_8px_20px_-4px_rgba(70,63,58,0.12)] flex items-center gap-2 text-xs font-medium text-[#463F3A]">
-        <Lock size={13} className="text-[#8A817C]" />
-        <span>4 items hidden by access</span>
-        <span className="font-mono text-[10px] bg-[#F4F3EE] text-[#8A817C] px-1.5 py-0.5 rounded">
+      <div className="absolute -bottom-4 left-6 sm:left-12 z-20 bg-white border border-[#d8d0c0] rounded-full px-3.5 py-1.5 shadow-[0_8px_20px_-4px_rgba(70,63,58,0.12)] flex items-center gap-2 text-xs font-medium text-[#241d18]">
+        <Lock size={13} className="text-[#6B635E]" />
+        <span className="font-semibold">4 items hidden by access</span>
+        <span className="font-mono text-xs bg-[#F4F3EE] text-[#241d18] border border-[#d8d0c0] px-1.5 py-0.5 rounded font-medium">
           Role: Arjun Rao
         </span>
       </div>
 
       {/* Frame Container */}
-      <div className="rounded-2xl border border-[#E7E4DE] bg-white shadow-[0_24px_60px_-15px_rgba(70,63,58,0.12)] overflow-hidden">
+      <div className="rounded-2xl border border-[#d8d0c0] bg-white shadow-[0_24px_60px_-15px_rgba(70,63,58,0.12)] overflow-hidden">
         {/* Top Chrome */}
-        <div className="h-10 bg-[#FAF9F5] border-b border-[#E7E4DE] px-4 flex items-center justify-between">
+        <div className="h-10 bg-[#FAF9F5] border-b border-[#d8d0c0] px-4 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#E7E4DE]"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-[#E7E4DE]"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-[#E7E4DE]"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-[#d8d0c0]"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-[#d8d0c0]"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-[#d8d0c0]"></div>
           </div>
-          <div className="px-4 py-1 rounded-md bg-white border border-[#E7E4DE] text-[11px] font-mono text-[#8A817C] flex items-center gap-1.5">
-            <Lock size={12} className="text-[#8A817C]" />
+          <div className="px-4 py-1 rounded-md bg-white border border-[#d8d0c0] text-xs font-mono text-[#241d18] flex items-center gap-1.5 font-medium">
+            <Lock size={12} className="text-[#6B635E]" />
             <span>handovertrail.com/campusconnect/review</span>
           </div>
           <div className="w-12"></div>

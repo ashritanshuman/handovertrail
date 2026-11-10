@@ -4,24 +4,33 @@
 
 @layer base {
   :root {
+    --text-strong: #241d18ff;
+    --text-nav: #413934ff;
+    --text-body: #5C544F;
+    --text-muted: #6B635E;
+    --accent-text: #8d3b2aff;
+    --border: #d8d0c0ff;
+
     --bg-parchment: #F4F3EE;
     --bg-card: #FFFFFF;
-    --border-default: #E7E4DE;
-    --border-inactive: #BCB8B1;
-    --text-primary: #463F3A;
-    --text-secondary: #8A817C;
+    --border-default: var(--border);
+    --border-inactive: var(--border);
+    --text-primary: var(--text-strong);
+    --text-secondary: var(--text-body);
     --accent-blush: #E0AFA0;
     --accent-blush-tint: rgba(224, 175, 160, 0.12);
-    --status-verified: #5F7A61;
-    --status-inferred: #6B7F94;
-    --status-conflicting: #C9822B;
-    --status-missing: #8A817C;
+    --status-verified: #38523A;
+    --status-inferred: #3C5066;
+    --status-conflicting: #8F5105;
+    --status-missing: var(--text-muted);
   }
 
   body {
     background-color: var(--bg-parchment);
-    color: var(--text-primary);
+    color: var(--text-body);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
@@ -32,13 +41,13 @@
     background-color: #E0AFA0;
     padding: 2px 6px;
     border-radius: 4px;
-    color: #463F3A;
+    color: var(--text-strong);
     font-weight: 500;
   }
 }
 
 .bg-dot-pattern {
-  background-image: radial-gradient(#8A817C 0.75px, transparent 0.75px);
+  background-image: radial-gradient(var(--text-muted) 0.75px, transparent 0.75px);
   background-size: 24px 24px;
 }
 

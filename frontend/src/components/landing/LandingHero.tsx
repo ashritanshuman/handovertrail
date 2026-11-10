@@ -15,19 +15,19 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onLoadDemo, isLoading 
 
       <div className="relative max-w-5xl mx-auto text-center">
         {/* Outlined Pill Badge */}
-        <div className="border border-[#E7E4DE] bg-white text-xs font-mono uppercase tracking-wider text-[#8A817C] px-3.5 py-1.5 rounded-full inline-flex items-center gap-2 mb-6 shadow-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#E0AFA0]"></span>
+        <div className="border border-[#d8d0c0] bg-white text-xs font-mono uppercase tracking-wider text-[#6B635E] px-3.5 py-1.5 rounded-full inline-flex items-center gap-2 mb-6 shadow-sm font-semibold">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#8d3b2a]"></span>
           <span>Knowledge handover for project teams</span>
         </div>
 
         {/* Giant Editorial Serif Headline */}
-        <h1 className="text-4xl sm:text-6xl md:text-[72px] leading-[1.08] tracking-tight text-[#463F3A] font-serif font-normal max-w-4xl mx-auto">
+        <h1 className="text-4xl sm:text-6xl md:text-[72px] leading-[1.08] tracking-tight text-[#241d18] font-serif font-normal max-w-4xl mx-auto">
           Hand over what the documents{" "}
-          <span className="italic text-[#C97A63] font-serif">never captured.</span>
+          <span className="italic text-[#8d3b2a] font-serif">never captured.</span>
         </h1>
 
         {/* Subline */}
-        <p className="text-base sm:text-lg text-[#8A817C] max-w-[580px] mx-auto leading-relaxed mt-6 font-normal">
+        <p className="text-subline font-subline text-[#5C544F] max-w-[580px] mx-auto leading-relaxed mt-6 font-normal">
           HandoverTrail turns scattered repos, chats and meeting notes into a source-linked handover
           that a human approves and each person sees only what they are allowed to see.
         </p>
@@ -38,7 +38,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onLoadDemo, isLoading 
             type="button"
             onClick={onLoadDemo}
             disabled={isLoading}
-            className="w-full sm:w-auto bg-[#463F3A] text-white px-7 py-3.5 rounded-full font-medium text-base hover:bg-[#352F2B] transition-all shadow-sm inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+            className="w-full sm:w-auto bg-[#2B2521] text-white px-7 py-3.5 rounded-full font-medium text-base hover:bg-[#1f1a17] transition-all shadow-sm inline-flex items-center justify-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#2B2521] focus:ring-offset-2 disabled:bg-[#6B635E] disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
@@ -53,14 +53,14 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onLoadDemo, isLoading 
             )}
           </button>
           <a
-            className="w-full sm:w-auto border border-[#E7E4DE] bg-white text-[#463F3A] px-7 py-3.5 rounded-full font-medium text-base hover:bg-[#F4F3EE] transition-all inline-flex items-center justify-center"
+            className="w-full sm:w-auto border border-[#d8d0c0] bg-white text-[#241d18] px-7 py-3.5 rounded-full font-medium text-base hover:bg-[#F4F3EE] transition-all inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#241d18]"
             href="#how-it-works"
           >
             See how it works
           </a>
         </div>
 
-        <div className="text-[13px] text-[#8A817C] mt-3 font-mono">
+        <div className="text-xs text-[#6B635E] mt-3 font-mono">
           Synthetic demo data. No sign-up needed.
         </div>
 

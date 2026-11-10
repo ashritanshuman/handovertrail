@@ -53,46 +53,46 @@ export const ProgressStepsModal: React.FC<ProgressStepsModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in">
-      <div className="bg-white border border-[#E7E4DE] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
+      <div className="bg-white border border-[#d8d0c0] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E7E4DE]">
+        <div className="flex items-center justify-between pb-4 border-b border-[#d8d0c0]">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#E0AFA0]"></span>
-            <h3 className="text-headline-section font-headline-section text-[#463F3A] font-semibold">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#8d3b2a]"></span>
+            <h3 className="text-headline-section font-headline-section text-[#241d18] font-semibold">
               Handover Analysis Pipeline
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded text-[#8A817C] hover:text-[#463F3A] hover:bg-[#F4F3EE]"
+            className="p-1 rounded text-[#6B635E] hover:text-[#241d18] hover:bg-[#F4F3EE]"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Model disclosure badge (Trust moment #5) */}
-        <div className="my-4 p-3 rounded-xl bg-[#F4F3EE] border border-[#E7E4DE] flex items-center justify-between">
+        <div className="my-4 p-3 rounded-xl bg-[#F4F3EE] border border-[#d8d0c0] flex items-center justify-between">
           <div className="flex items-center gap-2">
             {isLiveModel ? (
-              <Sparkles size={16} className="text-[#5F7A61]" />
+              <Sparkles size={16} className="text-[#38523A]" />
             ) : (
-              <Database size={16} className="text-[#6B7F94]" />
+              <Database size={16} className="text-[#3C5066]" />
             )}
             <div>
-              <div className="text-[12px] font-medium text-[#463F3A]">
+              <div className="text-xs font-semibold text-[#241d18]">
                 {isLiveModel ? "Live Anthropic Model (Claude 3.5 Sonnet)" : "Verified Demo Cache (Instant)"}
               </div>
-              <div className="text-[11px] text-[#8A817C]">
+              <div className="text-xs text-[#5C544F]">
                 Deterministic Python code executes quote verification and permission gates.
               </div>
             </div>
           </div>
           <span
-            className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold ${
+            className={`text-xs font-mono uppercase px-2 py-0.5 rounded font-bold ${
               isLiveModel
-                ? "bg-[#5F7A61]/15 text-[#5F7A61]"
-                : "bg-[#6B7F94]/15 text-[#6B7F94]"
+                ? "bg-[#5F7A61]/15 text-[#38523A]"
+                : "bg-[#6B7F94]/15 text-[#3C5066]"
             }`}
           >
             {isLiveModel ? "Live API" : "Cached Ingest"}
@@ -109,26 +109,26 @@ export const ProgressStepsModal: React.FC<ProgressStepsModalProps> = ({
               <div key={step.title} className="flex items-start gap-3">
                 <div className="pt-0.5">
                   {isDone ? (
-                    <div className="w-5 h-5 rounded-full bg-[#5F7A61] flex items-center justify-center text-white">
+                    <div className="w-5 h-5 rounded-full bg-[#38523A] flex items-center justify-center text-white">
                       <Check size={12} strokeWidth={2.5} />
                     </div>
                   ) : isCurrent ? (
-                    <div className="w-5 h-5 rounded-full border-2 border-[#463F3A] flex items-center justify-center">
-                      <RotateCw size={10} className="animate-spin text-[#463F3A]" />
+                    <div className="w-5 h-5 rounded-full border-2 border-[#241d18] flex items-center justify-center">
+                      <RotateCw size={10} className="animate-spin text-[#241d18]" />
                     </div>
                   ) : (
-                    <div className="w-5 h-5 rounded-full border border-[#BCB8B1] bg-[#F4F3EE]" />
+                    <div className="w-5 h-5 rounded-full border border-[#d8d0c0] bg-[#F4F3EE]" />
                   )}
                 </div>
                 <div>
                   <div
                     className={`text-body-default font-medium leading-tight ${
-                      isDone || isCurrent ? "text-[#463F3A]" : "text-[#8A817C]"
+                      isDone || isCurrent ? "text-[#241d18]" : "text-[#6B635E]"
                     }`}
                   >
                     {step.title}
                   </div>
-                  <div className="text-[12px] text-[#8A817C] mt-0.5">{step.desc}</div>
+                  <div className="text-xs text-[#5C544F] mt-0.5">{step.desc}</div>
                 </div>
               </div>
             );
@@ -137,30 +137,30 @@ export const ProgressStepsModal: React.FC<ProgressStepsModalProps> = ({
 
         {/* Completed summary banner */}
         {isFinished && (
-          <div className="mt-5 p-3.5 rounded-xl bg-[#5F7A61]/10 border border-[#5F7A61]/30 animate-fade-in">
-            <div className="flex items-center justify-between text-label-caption font-label-caption text-[#5F7A61]">
+          <div className="mt-5 p-3.5 rounded-xl bg-[#5F7A61]/10 border border-[#5F7A61]/35 animate-fade-in">
+            <div className="flex items-center justify-between text-label-caption font-label-caption text-[#38523A]">
               <span className="font-semibold">Analysis complete in 1,420ms</span>
               <span>100% verified against sources</span>
             </div>
-            <div className="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-[#5F7A61]/20 text-[12px] text-[#463F3A]">
+            <div className="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-[#5F7A61]/25 text-xs text-[#241d18]">
               <div>
-                <span className="text-[#8A817C] block text-[10px] uppercase">Extracted</span>
+                <span className="text-[#6B635E] block text-xs uppercase font-medium">Extracted</span>
                 <span className="font-semibold">{stats.extracted} claims</span>
               </div>
               <div>
-                <span className="text-[#8A817C] block text-[10px] uppercase">Verified</span>
-                <span className="font-semibold text-[#5F7A61]">{stats.verified} claims</span>
+                <span className="text-[#6B635E] block text-xs uppercase font-medium">Verified</span>
+                <span className="font-semibold text-[#38523A]">{stats.verified} claims</span>
               </div>
               <div>
-                <span className="text-[#8A817C] block text-[10px] uppercase">Conflicts</span>
-                <span className="font-semibold text-[#C9822B]">{stats.conflicting} gaps</span>
+                <span className="text-[#6B635E] block text-xs uppercase font-medium">Conflicts</span>
+                <span className="font-semibold text-[#8F5105]">{stats.conflicting} gaps</span>
               </div>
             </div>
           </div>
         )}
 
         {/* Action Button */}
-        <div className="mt-6 pt-4 border-t border-[#E7E4DE] flex justify-end gap-3">
+        <div className="mt-6 pt-4 border-t border-[#d8d0c0] flex justify-end gap-3">
           {isFinished ? (
             <button
               type="button"
@@ -168,7 +168,7 @@ export const ProgressStepsModal: React.FC<ProgressStepsModalProps> = ({
                 onComplete();
                 onClose();
               }}
-              className="px-5 py-2 rounded-[10px] bg-[#463F3A] hover:bg-[#37312D] text-white text-body-medium font-medium transition-colors"
+              className="px-5 py-2 rounded-[10px] bg-[#2B2521] hover:bg-[#1f1a17] text-white text-body-medium font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#2B2521] focus:ring-offset-2"
             >
               View updated workspace
             </button>
@@ -176,7 +176,7 @@ export const ProgressStepsModal: React.FC<ProgressStepsModalProps> = ({
             <button
               type="button"
               disabled
-              className="px-5 py-2 rounded-[10px] bg-[#BCB8B1] text-white text-body-medium font-medium opacity-60 cursor-not-allowed"
+              className="px-5 py-2 rounded-[10px] bg-[#6B635E] text-[#F4F3EE] text-body-medium font-medium cursor-not-allowed"
             >
               Running verification...
             </button>

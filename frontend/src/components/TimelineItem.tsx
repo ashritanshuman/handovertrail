@@ -25,51 +25,51 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
         <div
           className={`w-4 h-4 rounded-full border-2 bg-white transition-colors flex items-center justify-center ${
             isConflict
-              ? "border-[#E0AFA0] bg-[#E0AFA0]/20"
-              : "border-[#BCB8B1] group-hover:border-[#463F3A]"
+              ? "border-[#8d3b2a] bg-[#8d3b2a]/15"
+              : "border-[#d8d0c0] group-hover:border-[#241d18]"
           }`}
         >
           <div
             className={`w-1.5 h-1.5 rounded-full ${
-              isConflict ? "bg-[#C9822B]" : "bg-[#5F7A61]"
+              isConflict ? "bg-[#8F5105]" : "bg-[#38523A]"
             }`}
           ></div>
         </div>
       </div>
 
       {/* Event Card */}
-      <div className="flex-1 bg-white border border-[#E7E4DE] rounded-2xl p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] hover:border-[#BCB8B1] transition-colors">
+      <div className="flex-1 bg-white border border-[#d8d0c0] rounded-2xl p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] hover:border-[#6B635E] transition-colors">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-[12px] font-mono uppercase px-2 py-0.5 rounded bg-[#F4F3EE] border border-[#E7E4DE] text-[#463F3A]">
+            <span className="text-xs font-mono uppercase px-2 py-0.5 rounded bg-[#F4F3EE] border border-[#d8d0c0] text-[#241d18] font-medium">
               {eventType}
             </span>
             <StatusBadge status={status} size="sm" />
           </div>
-          <span className="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">
+          <span className="text-label-mono-metadata font-label-mono-metadata text-[#6B635E] font-medium">
             {event.date}
           </span>
         </div>
 
-        <h3 className="text-headline-section font-headline-section text-[#463F3A] mb-2 font-medium">
+        <h3 className="text-headline-section font-headline-section text-[#241d18] mb-2 font-medium">
           {event.title}
         </h3>
 
-        <p className="text-body-default font-body-default text-[#463F3A] mb-3 leading-relaxed">
+        <p className="text-body-default font-body-default text-[#5C544F] mb-3 leading-relaxed">
           {event.summary}
         </p>
 
         {/* Inset Annotation / Provenance if conflict */}
         {isConflict && (
-          <div className="bg-[#E0AFA0]/12 border-l-2 border-[#E0AFA0] rounded-r-lg px-3.5 py-2.5 mb-3 text-label-caption text-[#463F3A]">
+          <div className="bg-[#E0AFA0]/15 border-l-2 border-[#8d3b2a] rounded-r-lg px-3.5 py-2.5 mb-3 text-label-caption text-[#241d18] font-medium">
             Needs clarification prior to credential handover sign-off.
           </div>
         )}
 
         {/* Footer & Source link */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-[#E7E4DE] text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-[#d8d0c0] text-label-mono-metadata font-label-mono-metadata text-[#6B635E]">
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1">
+            <span className="inline-flex items-center gap-1 font-medium">
               <FileText size={13} />
               {event.source_ref}
             </span>
@@ -78,7 +78,7 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
           <button
             type="button"
             onClick={() => onSelectSource && onSelectSource(event)}
-            className="inline-flex items-center gap-1 text-[#463F3A] hover:underline transition-colors"
+            className="inline-flex items-center gap-1 text-[#241d18] hover:underline transition-colors font-medium"
           >
             <span>View source link</span>
             <ExternalLink size={12} />

@@ -18,22 +18,22 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <div
-      className={`bg-white border border-[#E7E4DE] rounded-2xl p-8 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col items-center justify-center text-center ${className}`}
+      className={`bg-white border border-[#d8d0c0] rounded-2xl p-8 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col items-center justify-center text-center ${className}`}
     >
-      <div className="w-12 h-12 rounded-full bg-[#F4F3EE] flex items-center justify-center text-[#8A817C] mb-3">
+      <div className="w-12 h-12 rounded-full bg-[#F4F3EE] flex items-center justify-center text-[#6B635E] mb-3">
         <FolderSearch size={22} strokeWidth={1.5} />
       </div>
-      <h3 className="text-headline-section font-headline-section text-[#463F3A] font-medium mb-1">
+      <h3 className="text-headline-section font-headline-section text-[#241d18] font-medium mb-1">
         {title}
       </h3>
-      <p className="text-body-default font-body-default text-[#8A817C] max-w-sm mb-4 leading-relaxed text-[13px]">
+      <p className="text-body-default font-body-default text-[#5C544F] max-w-sm mb-4 leading-relaxed text-base">
         {description}
       </p>
       {actionText && onAction && (
         <button
           type="button"
           onClick={onAction}
-          className="px-4 py-2 rounded-[10px] bg-[#463F3A] hover:bg-[#37312D] text-white text-body-medium font-medium transition-colors"
+          className="px-4 py-2 rounded-[10px] bg-[#2B2521] hover:bg-[#1f1a17] text-white text-body-medium font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#2B2521] focus:ring-offset-2"
         >
           {actionText}
         </button>

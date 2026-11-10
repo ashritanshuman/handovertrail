@@ -19,17 +19,17 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
       <div className="w-10 h-10 rounded-full bg-[#BA1A1A]/10 text-[#BA1A1A] flex items-center justify-center mb-3">
         <AlertCircle size={20} strokeWidth={1.75} />
       </div>
-      <h3 className="text-headline-section font-headline-section text-[#463F3A] font-medium mb-1">
+      <h3 className="text-headline-section font-headline-section text-[#241d18] font-medium mb-1">
         Unable to load data
       </h3>
-      <p className="text-body-default font-body-default text-[#8A817C] max-w-sm mb-4 text-[13px]">
+      <p className="text-body-default font-body-default text-[#5C544F] max-w-sm mb-4 text-base">
         {message}
       </p>
       {onRetry && (
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-[10px] bg-[#463F3A] hover:bg-[#37312D] text-white text-body-medium font-medium transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-[10px] bg-[#2B2521] hover:bg-[#1f1a17] text-white text-body-medium font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#2B2521] focus:ring-offset-2"
         >
           <RotateCw size={14} />
           <span>Retry connection</span>

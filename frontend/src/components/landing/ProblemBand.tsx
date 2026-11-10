@@ -9,7 +9,7 @@ export const ProblemBand: React.FC = () => {
           <h2 className="text-3xl md:text-4xl font-serif font-normal text-white tracking-tight">
             When someone leaves, the reasoning leaves with them.
           </h2>
-          <p className="text-[#BCB8B1] text-sm md:text-base mt-4 font-normal max-w-xl mx-auto leading-relaxed">
+          <p className="text-subline font-subline text-[#F4F3EE] mt-4 font-normal max-w-xl mx-auto leading-relaxed">
             Technical specifications record what was built. They rarely capture the discarded
             alternatives, hidden trade-offs, and critical operational quirks.
           </p>
@@ -17,28 +17,28 @@ export const ProblemBand: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 relative">
           {/* Col 1 */}
-          <div className="md:pr-6 md:border-r md:border-[#BCB8B1]/20 flex flex-col">
-            <div className="w-10 h-10 rounded-full bg-white/5 border border-[#BCB8B1]/20 flex items-center justify-center text-[#E0AFA0] mb-5">
+          <div className="md:pr-6 md:border-r md:border-white/20 flex flex-col">
+            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/20 flex items-center justify-center text-[#E0AFA0] mb-5">
               <MessageSquare size={18} strokeWidth={1.5} />
             </div>
-            <h3 className="text-lg font-serif font-medium text-white mb-2">
+            <h3 className="text-xl font-serif font-medium text-white mb-2">
               Decisions buried in chat threads
             </h3>
-            <p className="text-[#BCB8B1] text-xs sm:text-sm leading-relaxed">
+            <p className="text-base text-[#E7E4DE] leading-relaxed">
               Rationale lost in Slack channels and ephemeral 1:1 huddles that successors never
               search. Months later, teams repeat the same painful architectural dead-ends.
             </p>
           </div>
 
           {/* Col 2 */}
-          <div className="md:pr-6 md:border-r md:border-[#BCB8B1]/20 flex flex-col">
-            <div className="w-10 h-10 rounded-full bg-white/5 border border-[#BCB8B1]/20 flex items-center justify-center text-[#E0AFA0] mb-5">
+          <div className="md:pr-6 md:border-r md:border-white/20 flex flex-col">
+            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/20 flex items-center justify-center text-[#E0AFA0] mb-5">
               <Wrench size={18} strokeWidth={1.5} />
             </div>
-            <h3 className="text-lg font-serif font-medium text-white mb-2">
+            <h3 className="text-xl font-serif font-medium text-white mb-2">
               Work half finished and unowned
             </h3>
-            <p className="text-[#BCB8B1] text-xs sm:text-sm leading-relaxed">
+            <p className="text-base text-[#E7E4DE] leading-relaxed">
               Shadow infrastructure, branch overrides, and partial migrations forgotten after the
               farewell email. New owners spend weeks deducing who owns what service.
             </p>
@@ -46,13 +46,13 @@ export const ProblemBand: React.FC = () => {
 
           {/* Col 3 */}
           <div className="flex flex-col">
-            <div className="w-10 h-10 rounded-full bg-white/5 border border-[#BCB8B1]/20 flex items-center justify-center text-[#E0AFA0] mb-5">
+            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/20 flex items-center justify-center text-[#E0AFA0] mb-5">
               <KeyRound size={18} strokeWidth={1.5} />
             </div>
-            <h3 className="text-lg font-serif font-medium text-white mb-2">
+            <h3 className="text-xl font-serif font-medium text-white mb-2">
               Risks only one person knew
             </h3>
-            <p className="text-[#BCB8B1] text-xs sm:text-sm leading-relaxed">
+            <p className="text-base text-[#E7E4DE] leading-relaxed">
               Expiring credentials, hardcoded vendor tokens, and manual quarterly interventions
               undocumented until a production certificate quietly expires on a weekend.
             </p>

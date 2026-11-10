@@ -33,13 +33,13 @@ export const ReadinessDonut: React.FC<ReadinessDonutProps> = ({ stats, className
 
   return (
     <article
-      className={`bg-white border border-[#E7E4DE] rounded-2xl p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col justify-between ${className}`}
+      className={`bg-white border border-[#d8d0c0] rounded-2xl p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col justify-between ${className}`}
     >
       <div>
-        <h2 className="text-headline-section font-headline-section text-[#463F3A]">
+        <h2 className="text-headline-section font-headline-section text-[#241d18] font-semibold">
           Handover readiness
         </h2>
-        <p className="text-body-default font-body-default text-[#8A817C] mt-0.5">
+        <p className="text-body-default font-body-default text-[#5C544F] mt-0.5">
           Verification status distribution
         </p>
 
@@ -56,7 +56,7 @@ export const ReadinessDonut: React.FC<ReadinessDonutProps> = ({ stats, className
                 cy="50"
                 fill="transparent"
                 r="40"
-                stroke="#5F7A61"
+                stroke="#38523A"
                 strokeDasharray={`${vDash} ${C}`}
                 strokeDashoffset={vOffset}
                 strokeWidth="6"
@@ -70,7 +70,7 @@ export const ReadinessDonut: React.FC<ReadinessDonutProps> = ({ stats, className
                 cy="50"
                 fill="transparent"
                 r="40"
-                stroke="#6B7F94"
+                stroke="#3C5066"
                 strokeDasharray={`${iDash} ${C}`}
                 strokeDashoffset={iOffset}
                 strokeWidth="6"
@@ -84,7 +84,7 @@ export const ReadinessDonut: React.FC<ReadinessDonutProps> = ({ stats, className
                 cy="50"
                 fill="transparent"
                 r="40"
-                stroke="#C9822B"
+                stroke="#8F5105"
                 strokeDasharray={`${cDash} ${C}`}
                 strokeDashoffset={cOffset}
                 strokeWidth="6"
@@ -98,7 +98,7 @@ export const ReadinessDonut: React.FC<ReadinessDonutProps> = ({ stats, className
                 cy="50"
                 fill="transparent"
                 r="40"
-                stroke="#8A817C"
+                stroke="#6B635E"
                 strokeDasharray={`${mDash} ${C}`}
                 strokeDashoffset={mOffset}
                 strokeWidth="6"
@@ -107,27 +107,27 @@ export const ReadinessDonut: React.FC<ReadinessDonutProps> = ({ stats, className
           </svg>
 
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-display-stat font-display-stat text-[#463F3A] leading-tight">
+            <span className="text-display-stat font-display-stat text-[#241d18] leading-tight font-medium">
               {total}
             </span>
-            <span className="text-label-caption font-label-caption text-[#8A817C]">Total claims</span>
+            <span className="text-label-caption font-label-caption text-[#6B635E] font-medium">Total claims</span>
           </div>
         </div>
       </div>
 
       {/* Four Progress Breakdown Rows */}
-      <div className="space-y-3 pt-2 border-t border-[#E7E4DE]">
+      <div className="space-y-3 pt-2 border-t border-[#d8d0c0]">
         {/* Verified */}
         <div className="flex items-center justify-between text-body-default font-body-default">
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={16} className="text-[#5F7A61]" />
-            <span className="text-[#463F3A] font-medium">Verified</span>
+            <CheckCircle2 size={16} className="text-[#38523A]" />
+            <span className="text-[#241d18] font-medium">Verified</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#8A817C] text-label-mono-metadata font-label-mono-metadata">
+            <span className="text-[#6B635E] text-label-mono-metadata font-label-mono-metadata font-medium">
               {verified} claims
             </span>
-            <span className="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#5F7A61]/10 text-[#5F7A61] font-semibold">
+            <span className="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#5F7A61]/12 text-[#38523A] border border-[#5F7A61]/35 font-semibold">
               {Math.round(vPct)}%
             </span>
           </div>
@@ -136,14 +136,14 @@ export const ReadinessDonut: React.FC<ReadinessDonutProps> = ({ stats, className
         {/* Inferred */}
         <div className="flex items-center justify-between text-body-default font-body-default">
           <div className="flex items-center gap-2">
-            <Info size={16} className="text-[#6B7F94]" />
-            <span className="text-[#463F3A] font-medium">Inferred</span>
+            <Info size={16} className="text-[#3C5066]" />
+            <span className="text-[#241d18] font-medium">Inferred</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#8A817C] text-label-mono-metadata font-label-mono-metadata">
+            <span className="text-[#6B635E] text-label-mono-metadata font-label-mono-metadata font-medium">
               {inferred} claims
             </span>
-            <span className="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#6B7F94]/10 text-[#6B7F94] font-semibold">
+            <span className="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#6B7F94]/12 text-[#3C5066] border border-[#6B7F94]/35 font-semibold">
               {Math.round(iPct)}%
             </span>
           </div>
@@ -152,14 +152,14 @@ export const ReadinessDonut: React.FC<ReadinessDonutProps> = ({ stats, className
         {/* Conflicting */}
         <div className="flex items-center justify-between text-body-default font-body-default">
           <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-[#C9822B]" />
-            <span className="text-[#463F3A] font-medium">Conflicting</span>
+            <AlertTriangle size={16} className="text-[#8F5105]" />
+            <span className="text-[#241d18] font-medium">Conflicting</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#8A817C] text-label-mono-metadata font-label-mono-metadata">
+            <span className="text-[#6B635E] text-label-mono-metadata font-label-mono-metadata font-medium">
               {conflicting} claims
             </span>
-            <span className="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#C9822B]/10 text-[#C9822B] font-semibold">
+            <span className="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#C9822B]/12 text-[#8F5105] border border-[#C9822B]/35 font-semibold">
               {Math.round(cPct)}%
             </span>
           </div>
@@ -168,14 +168,14 @@ export const ReadinessDonut: React.FC<ReadinessDonutProps> = ({ stats, className
         {/* Missing Evidence */}
         <div className="flex items-center justify-between text-body-default font-body-default">
           <div className="flex items-center gap-2">
-            <HelpCircle size={16} className="text-[#8A817C]" />
-            <span className="text-[#463F3A] font-medium">Missing evidence</span>
+            <HelpCircle size={16} className="text-[#6B635E]" />
+            <span className="text-[#241d18] font-medium">Missing evidence</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#8A817C] text-label-mono-metadata font-label-mono-metadata">
+            <span className="text-[#6B635E] text-label-mono-metadata font-label-mono-metadata font-medium">
               {missing} claims
             </span>
-            <span className="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#8A817C]/10 text-[#8A817C] font-semibold">
+            <span className="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#6B635E]/12 text-[#6B635E] border border-[#d8d0c0] font-semibold">
               {Math.round(mPct)}%
             </span>
           </div>

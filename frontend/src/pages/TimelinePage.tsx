@@ -58,17 +58,17 @@ export const TimelinePage: React.FC = () => {
   return (
     <AppShell>
       {/* Header */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-[#E7E4DE]">
+      <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-[#d8d0c0]">
         <div>
-          <div className="flex items-center gap-2 text-label-mono-metadata font-label-mono-metadata text-[#8A817C] tracking-wider uppercase mb-1">
+          <div className="flex items-center gap-2 text-label-mono-metadata font-label-mono-metadata text-[#6B635E] tracking-wider uppercase mb-1">
             <span>PROJECT DOSSIER</span>
-            <span className="text-[#BCB8B1]">•</span>
+            <span className="text-[#d8d0c0]">•</span>
             <span>CAMPUS-CC-2024Q4</span>
           </div>
-          <h1 className="text-headline-page font-headline-page text-[#463F3A] tracking-tight">
+          <h1 className="text-headline-page font-headline-page text-[#241d18] tracking-tight">
             Chronological handover timeline
           </h1>
-          <p className="text-body-default font-body-default text-[#8A817C] mt-1">
+          <p className="text-body-default font-body-default text-[#5C544F] mt-1">
             Audit-grade history of engineering decisions, infrastructure PRs, and cross-source verification milestones.
           </p>
         </div>
@@ -76,13 +76,13 @@ export const TimelinePage: React.FC = () => {
         {/* Search & Filter */}
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
           <div className="relative w-full sm:w-64">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A817C]" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B635E]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search milestones..."
-              className="w-full h-10 pl-9 pr-3 rounded-[10px] border border-[#BCB8B1] bg-white text-body-default font-body-default text-[#463F3A] focus:border-[#463F3A] focus:outline-none"
+              className="w-full h-10 pl-9 pr-3 rounded-[10px] border border-[#d8d0c0] bg-white text-body-default font-body-default text-[#241d18] focus:border-[#2B2521] focus:outline-none focus:ring-1 focus:ring-[#2B2521]"
             />
           </div>
 
@@ -92,8 +92,8 @@ export const TimelinePage: React.FC = () => {
               onClick={() => setFilterType("all")}
               className={`px-3 py-1.5 rounded-full text-label-caption font-label-caption transition-colors ${
                 filterType === "all"
-                  ? "bg-[#463F3A] text-white font-medium"
-                  : "bg-white text-[#8A817C] border border-[#E7E4DE]"
+                  ? "bg-[#2B2521] text-white font-medium"
+                  : "bg-white text-[#5C544F] border border-[#d8d0c0] hover:text-[#241d18]"
               }`}
             >
               All
@@ -103,8 +103,8 @@ export const TimelinePage: React.FC = () => {
               onClick={() => setFilterType("verified")}
               className={`px-3 py-1.5 rounded-full text-label-caption font-label-caption transition-colors ${
                 filterType === "verified"
-                  ? "bg-[#5F7A61] text-white font-medium"
-                  : "bg-white text-[#8A817C] border border-[#E7E4DE]"
+                  ? "bg-[#38523A] text-white font-medium"
+                  : "bg-white text-[#5C544F] border border-[#d8d0c0] hover:text-[#38523A]"
               }`}
             >
               Verified
@@ -114,8 +114,8 @@ export const TimelinePage: React.FC = () => {
               onClick={() => setFilterType("conflicting")}
               className={`px-3 py-1.5 rounded-full text-label-caption font-label-caption transition-colors ${
                 filterType === "conflicting"
-                  ? "bg-[#C9822B] text-white font-medium"
-                  : "bg-white text-[#8A817C] border border-[#E7E4DE]"
+                  ? "bg-[#8F5105] text-white font-medium"
+                  : "bg-white text-[#5C544F] border border-[#d8d0c0] hover:text-[#8F5105]"
               }`}
             >
               Conflicting
@@ -142,17 +142,17 @@ export const TimelinePage: React.FC = () => {
               {Object.entries(groupedByMonth).map(([month, events]) => (
                 <div key={month} className="relative">
                   {/* Vertical connecting line */}
-                  <div className="absolute left-[19px] top-12 bottom-0 w-[2px] bg-[#E7E4DE]"></div>
+                  <div className="absolute left-[19px] top-12 bottom-0 w-[2px] bg-[#d8d0c0]"></div>
 
                   {/* Month Header */}
                   <div className="flex items-center gap-3 mb-6 pl-12">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#E7E4DE] shadow-xs">
-                      <Calendar size={14} className="text-[#463F3A]" />
-                      <span className="text-headline-section font-headline-section text-[#463F3A] text-sm font-semibold">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#d8d0c0] shadow-xs">
+                      <Calendar size={14} className="text-[#241d18]" />
+                      <span className="text-headline-section font-headline-section text-[#241d18] text-sm font-semibold">
                         {month}
                       </span>
                     </div>
-                    <span className="text-label-mono-metadata font-label-mono-metadata text-[#8A817C]">
+                    <span className="text-label-mono-metadata font-label-mono-metadata text-[#6B635E]">
                       {events.length} recorded events
                     </span>
                   </div>

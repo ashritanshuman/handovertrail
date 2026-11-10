@@ -37,7 +37,7 @@ export const StartPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#F4F3EE] text-[#463F3A] font-sans antialiased min-h-screen selection:bg-[#E0AFA0]/30 selection:text-[#352F2B]">
+    <div className="bg-[#F4F3EE] text-[#241d18] font-sans antialiased min-h-screen selection:bg-[#E0AFA0]/30 selection:text-[#241d18]">
       {/* Optional Top Error Banner */}
       {error && (
         <div
@@ -49,7 +49,7 @@ export const StartPage: React.FC = () => {
           <button
             type="button"
             onClick={handleLoadDemo}
-            className="underline ml-2 hover:text-[#352F2B]"
+            className="underline ml-2 hover:text-[#241d18] focus:outline-none focus:ring-1 focus:ring-[#BA1A1A]"
           >
             Retry
           </button>

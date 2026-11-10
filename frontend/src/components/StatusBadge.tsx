@@ -20,9 +20,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   if (normStatus === "verified") {
     return (
       <span
-        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[#5F7A61]/12 text-[#5F7A61] border border-[#5F7A61]/30 font-medium ${className}`}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[#5F7A61]/12 text-[#38523A] border border-[#5F7A61]/35 font-medium ${className}`}
       >
-        <Check size={iconSize} strokeWidth={2} />
+        <Check size={iconSize} strokeWidth={2} className="text-[#38523A]" />
         <span>Verified</span>
       </span>
     );
@@ -31,9 +31,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   if (normStatus === "inferred") {
     return (
       <span
-        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[#6B7F94]/12 text-[#6B7F94] border border-[#6B7F94]/30 font-medium ${className}`}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[#6B7F94]/12 text-[#3C5066] border border-[#6B7F94]/35 font-medium ${className}`}
       >
-        <Info size={iconSize} strokeWidth={1.75} />
+        <Info size={iconSize} strokeWidth={1.75} className="text-[#3C5066]" />
         <span>Inferred</span>
       </span>
     );
@@ -42,9 +42,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   if (normStatus === "conflicting") {
     return (
       <span
-        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[#C9822B]/12 text-[#C9822B] border border-[#C9822B]/30 font-medium ${className}`}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[#C9822B]/12 text-[#8F5105] border border-[#C9822B]/35 font-medium ${className}`}
       >
-        <AlertTriangle size={iconSize} strokeWidth={1.75} />
+        <AlertTriangle size={iconSize} strokeWidth={1.75} className="text-[#8F5105]" />
         <span>Conflicting</span>
       </span>
     );
@@ -53,9 +53,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   // Missing or default
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[#8A817C]/12 text-[#8A817C] border border-[#8A817C]/30 font-medium ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-caption font-label-caption bg-[#6B635E]/12 text-[#6B635E] border border-[#d8d0c0] font-medium ${className}`}
     >
-      <HelpCircle size={iconSize} strokeWidth={1.75} />
+      <HelpCircle size={iconSize} strokeWidth={1.75} className="text-[#6B635E]" />
       <span>Missing evidence</span>
     </span>
   );
