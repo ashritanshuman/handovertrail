@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { RotateCw, X, Sparkles, Database, Check } from "lucide-react";
+import { Logo } from "./Logo";
 
 interface ProgressStepsModalProps {
   isOpen: boolean;
@@ -56,8 +57,8 @@ export const ProgressStepsModal: React.FC<ProgressStepsModalProps> = ({
       <div className="bg-white border border-[#d8d0c0] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[#d8d0c0]">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#8d3b2a]"></span>
+          <div className="flex items-center gap-2.5">
+            <Logo size={20} />
             <h3 className="text-headline-section font-headline-section text-[#241d18] font-semibold">
               Handover Analysis Pipeline
             </h3>

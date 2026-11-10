@@ -8,8 +8,9 @@
 [![Vite](https://img.shields.io/badge/Vite-5.0+-646CFF.svg?logo=vite&logoColor=white)](https://vitejs.dev)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)](https://python.org)
 [![Google Gemini](https://img.shields.io/badge/Google-Gemini%202.5%20Flash-4285F4.svg?logo=google&logoColor=white)](https://ai.google.dev)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-46E3B7.svg?logo=render&logoColor=white)](https://handovertrail-uv3i.onrender.com/)
 
-🌐 **Live Deployment**: One-click unified service on Render / Railway (FastAPI serves compiled React SPA from `frontend/dist`).
+🌐 **Live Deployment**: [https://handovertrail-uv3i.onrender.com/](https://handovertrail-uv3i.onrender.com/) — Hosted on Render as a unified single-container service (FastAPI + React SPA).
 
 ---
 

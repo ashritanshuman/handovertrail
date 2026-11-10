@@ -10,6 +10,7 @@ import {
   Info,
 } from "lucide-react";
 import { useHandover, USERS } from "../context/HandoverContext";
+import { Logo } from "./Logo";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -65,11 +66,12 @@ export const AppShell: React.FC<AppShellProps> = ({ children, minimal = false })
         <div className="flex justify-between items-center h-16 px-6">
           {/* Brand Anchor */}
           <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-2 group">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#8d3b2a] group-hover:scale-110 transition-transform"></span>
-              <span className="text-headline-section font-headline-section text-[#241d18] tracking-tight font-semibold">
-                HandoverTrail
-              </span>
+            <Link to="/" className="flex items-center gap-2 group hover:opacity-90 transition-opacity">
+              <Logo
+                size={24}
+                showWordmark={true}
+                wordmarkClassName="text-headline-section font-headline-section text-[#241d18] tracking-tight font-semibold"
+              />
             </Link>
             <span className="text-[#6B635E] select-none">/</span>
             <span className="text-label-mono-metadata font-label-mono-metadata text-[#5C544F] font-medium">

@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { Logo } from "../Logo";
 
 interface FinalCTAProps {
   onLoadDemo: () => void;
@@ -10,6 +11,9 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onLoadDemo, isLoading }) => 
   return (
     <section className="px-6 pb-20" id="demo">
       <div className="bg-[#F7EFEA] border border-[#d8d0c0] rounded-3xl p-10 md:p-16 text-center max-w-5xl mx-auto shadow-sm">
+        <div className="flex justify-center mb-4">
+          <Logo size={40} />
+        </div>
         <h2 className="text-3xl sm:text-5xl font-serif text-[#241d18] font-normal tracking-tight mb-4">
           See a handover you can trust.
         </h2>

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { Logo } from "../Logo";
 
 interface LandingNavProps {
   onLoadDemo: () => void;
@@ -17,10 +18,9 @@ export const LandingNav: React.FC<LandingNavProps> = ({ onLoadDemo, isLoading })
         {/* Left: HandoverTrail wordmark */}
         <Link
           to="/"
-          className="font-serif font-semibold text-xl tracking-tight text-[#241d18] flex items-center gap-2 hover:text-[#413934] transition-colors"
+          className="flex items-center hover:opacity-90 transition-opacity"
         >
-          <span className="w-2 h-2 rounded-full bg-[#8d3b2a]"></span>
-          <span>HandoverTrail</span>
+          <Logo size={24} showWordmark={true} wordmarkClassName="font-serif font-semibold text-xl tracking-tight text-[#241d18]" />
         </Link>
 
         {/* Center Links */}

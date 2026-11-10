@@ -1,5 +1,6 @@
 import React from "react";
 import { FolderSearch } from "lucide-react";
+import { Logo } from "./Logo";
 
 interface EmptyStateProps {
   title: string;
@@ -7,6 +8,8 @@ interface EmptyStateProps {
   actionText?: string;
   onAction?: () => void;
   className?: string;
+  showBrand?: boolean;
+  icon?: React.ReactNode;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
@@ -15,14 +18,22 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   actionText,
   onAction,
   className = "",
+  showBrand = false,
+  icon,
 }) => {
   return (
     <div
       className={`bg-white border border-[#d8d0c0] rounded-2xl p-8 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col items-center justify-center text-center ${className}`}
     >
-      <div className="w-12 h-12 rounded-full bg-[#F4F3EE] flex items-center justify-center text-[#6B635E] mb-3">
-        <FolderSearch size={22} strokeWidth={1.5} />
-      </div>
+      {showBrand ? (
+        <div className="mb-4">
+          <Logo size={40} />
+        </div>
+      ) : (
+        <div className="w-12 h-12 rounded-full bg-[#F4F3EE] flex items-center justify-center text-[#6B635E] mb-3">
+          {icon || <FolderSearch size={22} strokeWidth={1.5} />}
+        </div>
+      )}
       <h3 className="text-headline-section font-headline-section text-[#241d18] font-medium mb-1">
         {title}
       </h3>

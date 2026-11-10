@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Logo } from "../Logo";
 
 export const LandingFooter: React.FC = () => {
   return (
@@ -7,10 +8,7 @@ export const LandingFooter: React.FC = () => {
       <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-center gap-6">
         {/* Left: Wordmark & build credit */}
         <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#8d3b2a]"></span>
-            <span className="font-serif font-semibold text-lg text-[#241d18]">HandoverTrail</span>
-          </div>
+          <Logo size={22} showWordmark={true} wordmarkClassName="font-serif font-semibold text-lg text-[#241d18]" />
           <span className="hidden sm:inline text-[#6B635E]">·</span>
           <span className="text-xs font-mono text-[#6B635E] font-medium">Built by TechieSharks</span>
         </div>

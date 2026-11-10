@@ -1,24 +1,33 @@
 import React from "react";
 import { AlertCircle, RotateCw } from "lucide-react";
+import { Logo } from "./Logo";
 
 interface ErrorStateProps {
   message: string;
   onRetry?: () => void;
   className?: string;
+  showBrand?: boolean;
 }
 
 export const ErrorState: React.FC<ErrorStateProps> = ({
   message,
   onRetry,
   className = "",
+  showBrand = false,
 }) => {
   return (
     <div
       className={`bg-white border border-[#BA1A1A]/20 rounded-2xl p-6 shadow-[0_1px_2px_rgba(70,63,58,0.06)] flex flex-col items-center justify-center text-center ${className}`}
     >
-      <div className="w-10 h-10 rounded-full bg-[#BA1A1A]/10 text-[#BA1A1A] flex items-center justify-center mb-3">
-        <AlertCircle size={20} strokeWidth={1.75} />
-      </div>
+      {showBrand ? (
+        <div className="mb-4">
+          <Logo size={40} />
+        </div>
+      ) : (
+        <div className="w-10 h-10 rounded-full bg-[#BA1A1A]/10 text-[#BA1A1A] flex items-center justify-center mb-3">
+          <AlertCircle size={20} strokeWidth={1.75} />
+        </div>
+      )}
       <h3 className="text-headline-section font-headline-section text-[#241d18] font-medium mb-1">
         Unable to load data
       </h3>

@@ -18,5 +18,6 @@ export * from "./ConfirmDialog";
 export * from "./InlineEditDialog";
 export * from "./EmptyState";
 export * from "./ErrorState";
+export * from "./Logo";
 export * from "./Skeletons";
 

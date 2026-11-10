@@ -104,7 +104,7 @@ async def safe_global_exception_handler(request: Request, exc: Exception):
 
 
 # Health endpoint
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 def health_check():
     return {
         "status": "ok",
@@ -148,7 +148,7 @@ if os.path.exists(frontend_dist_path) and os.path.exists(os.path.join(frontend_d
         app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
 
     # Catch-all route to serve SPA index.html for React Router
-    @app.get("/{full_path:path}")
+    @app.api_route("/{full_path:path}", methods=["GET", "HEAD"])
     async def serve_spa(request: Request, full_path: str):
         if full_path.startswith("api/") or full_path == "health":
             return JSONResponse(status_code=404, content={"detail": "Not Found"})
