@@ -20,7 +20,7 @@ export const LandingNav: React.FC<LandingNavProps> = ({ onLoadDemo, isLoading })
           to="/"
           className="flex items-center hover:opacity-90 transition-opacity"
         >
-          <Logo size={24} showWordmark={true} wordmarkClassName="font-serif font-semibold text-xl tracking-tight text-[#241d18]" />
+          <Logo size={34} showWordmark={true} wordmarkClassName="font-serif font-semibold text-xl tracking-tight text-[#241d18]" />
         </Link>
 
         {/* Center Links */}

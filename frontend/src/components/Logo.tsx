@@ -10,11 +10,11 @@ export interface LogoProps {
 }
 
 const SIZE_MAP: Record<string, number> = {
-  xs: 18,
-  sm: 24,
-  md: 32,
-  lg: 40,
-  xl: 48,
+  xs: 22,
+  sm: 30,
+  md: 38,
+  lg: 48,
+  xl: 60,
 };
 
 export const Logo: React.FC<LogoProps> = ({
@@ -25,7 +25,7 @@ export const Logo: React.FC<LogoProps> = ({
   imgClassName = "",
   onClick,
 }) => {
-  const pixelSize = typeof size === "number" ? size : SIZE_MAP[size] || 32;
+  const pixelSize = typeof size === "number" ? size : SIZE_MAP[size] || 38;
 
   return (
     <div

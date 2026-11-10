@@ -8,7 +8,7 @@ export const LandingFooter: React.FC = () => {
       <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-center gap-6">
         {/* Left: Wordmark & build credit */}
         <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
-          <Logo size={22} showWordmark={true} wordmarkClassName="font-serif font-semibold text-lg text-[#241d18]" />
+          <Logo size={28} showWordmark={true} wordmarkClassName="font-serif font-semibold text-lg text-[#241d18]" />
           <span className="hidden sm:inline text-[#6B635E]">·</span>
           <span className="text-xs font-mono text-[#6B635E] font-medium">Built by TechieSharks</span>
         </div>

@@ -68,7 +68,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children, minimal = false })
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-2 group hover:opacity-90 transition-opacity">
               <Logo
-                size={24}
+                size={32}
                 showWordmark={true}
                 wordmarkClassName="text-headline-section font-headline-section text-[#241d18] tracking-tight font-semibold"
               />

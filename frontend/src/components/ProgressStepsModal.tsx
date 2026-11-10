@@ -58,7 +58,7 @@ export const ProgressStepsModal: React.FC<ProgressStepsModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[#d8d0c0]">
           <div className="flex items-center gap-2.5">
-            <Logo size={20} />
+            <Logo size={26} />
             <h3 className="text-headline-section font-headline-section text-[#241d18] font-semibold">
               Handover Analysis Pipeline
             </h3>
