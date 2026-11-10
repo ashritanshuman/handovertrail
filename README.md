@@ -9,6 +9,8 @@
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)](https://python.org)
 [![Google Gemini](https://img.shields.io/badge/Google-Gemini%202.5%20Flash-4285F4.svg?logo=google&logoColor=white)](https://ai.google.dev)
 
+🌐 **Live Deployment**: One-click unified service on Render / Railway (FastAPI serves compiled React SPA from `frontend/dist`).
+
 ---
 
 ## 1. The Problem
@@ -39,9 +41,10 @@ HandoverTrail ingests project exports (Git, Jira, Meeting Notes, Slack), extract
 | **Lead Approval Gate** | **Built** | Freezes immutable versioned snapshot (`1.0.0`). Only leads can approve. |
 | **Successor Onboarding & Acknowledgement** | **Built** | Role-tailored view for successors with cryptographic acknowledgement logging. |
 | **Immutable Audit Trail** | **Built** | Tamper-evident log of all extractions, edits, approvals, and acknowledgements. |
-| **Citations-Only Q&A (`/api/ask`)** | **Round 3** | Interactive assistant answering strictly from approved, permitted content with exact citations. |
-| **Automated GitHub PR Ingestion Hook** | **Round 3** | Live webhook integration to ingest repository activities in real-time. |
-| **Slack Interactive Sign-off Bot** | **Round 3** | Direct Slack notifications prompting leads and leavers to resolve gaps. |
+| **Citations-Only Q&A (`/api/ask`)** | **Built** | Interactive assistant answering strictly from approved, permitted content with exact citations. |
+
+> [!NOTE]
+> For planned post-MVP extensions (GitHub PR webhooks, Slack interactive sign-off bot, visual diffs), see [docs/ROUND3.md](docs/ROUND3.md).
 
 ---
 
