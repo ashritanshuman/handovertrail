@@ -19,6 +19,7 @@ router = APIRouter(prefix="/api", tags=["Handover"])
 
 
 @router.post("/approve")
+@router.post("/handover/approve")
 def approve_handover(
     payload: HandoverApproveRequest,
     db: Session = Depends(get_db),
@@ -200,6 +201,7 @@ def get_approved_handover(
 
 
 @router.post("/acknowledge")
+@router.post("/handover/acknowledge")
 def acknowledge_handover(
     payload: AcknowledgeRequest,
     db: Session = Depends(get_db),
@@ -209,24 +211,27 @@ def acknowledge_handover(
     Records successor receipt and acknowledgement of the approved handover.
     Idempotent.
     """
-    hv = (
-        db.query(HandoverVersion)
-        .filter(
-            (HandoverVersion.id == payload.handover_version_id)
-            | (HandoverVersion.id.like(f"{payload.handover_version_id}%"))
-            | (HandoverVersion.version == payload.handover_version_id.replace("hv-v", ""))
+    hv = None
+    if payload.handover_version_id:
+        hv = (
+            db.query(HandoverVersion)
+            .filter(
+                (HandoverVersion.id == payload.handover_version_id)
+                | (HandoverVersion.id.like(f"{payload.handover_version_id}%"))
+                | (HandoverVersion.version == payload.handover_version_id.replace("hv-v", ""))
+            )
+            .first()
         )
-        .first()
-    )
     if not hv:
         # Fallback to latest approved version
         hv = db.query(HandoverVersion).order_by(HandoverVersion.approved_at.desc()).first()
         if not hv:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Handover version '{payload.handover_version_id}' not found.",
+                detail=f"Handover version '{payload.handover_version_id or 'latest'}' not found.",
             )
 
+    note_text = payload.notes or payload.note or ""
     ack_id = f"ack-{current_user.id}-{hv.id}"
     ack = (
         db.query(Acknowledgement)
@@ -243,7 +248,7 @@ def acknowledge_handover(
             version_id=hv.id,
             user_id=current_user.id,
             at=datetime.now(timezone.utc),
-            note=payload.note or "",
+            note=note_text,
         )
         db.add(ack)
     else:

@@ -124,7 +124,7 @@ class QuestionAnswerRequest(BaseModel):
 
 # ------------------ HANDOVER VERSION ------------------
 class HandoverApproveRequest(BaseModel):
-    project_id: str
+    project_id: str = "campusconnect"
     notes: Optional[str] = ""
     acknowledge_unresolved: bool = False
 
@@ -145,8 +145,9 @@ class HandoverVersionRead(BaseModel):
 
 
 class AcknowledgeRequest(BaseModel):
-    handover_version_id: str
+    handover_version_id: Optional[str] = None
     note: Optional[str] = ""
+    notes: Optional[str] = None
 
 
 # ------------------ STATS ------------------

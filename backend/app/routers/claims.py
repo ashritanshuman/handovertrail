@@ -2,6 +2,7 @@ import uuid
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
+from sqlalchemy import or_, func
 from app.db import get_db
 from app.models import Claim, EvidenceUnit, User, AuditLog
 from app.schemas import ClaimRead, ClaimDetail, ClaimPatchRequest, EvidenceUnitRead, ConflictDetail
@@ -80,7 +81,7 @@ def get_claim(
     If the claim does not exist or exceeds the viewer's clearance, returns 404 (never 403)
     so existence of privileged content is never revealed.
     """
-    claim = db.query(Claim).filter(Claim.id == claim_id).first()
+    claim = db.query(Claim).filter(or_(Claim.id == claim_id, func.lower(Claim.id) == claim_id.lower())).first()
     if not claim or claim.access_level > current_user.clearance:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -132,6 +133,38 @@ def get_claim(
     )
 
 
+@router.get("/{claim_id}/evidence", response_model=List[EvidenceUnitRead])
+def get_claim_evidence(
+    claim_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Returns supporting evidence units for a single claim, strictly filtered by viewer clearance.
+    Returns 404 if claim does not exist or exceeds caller clearance.
+    """
+    claim = db.query(Claim).filter(or_(Claim.id == claim_id, func.lower(Claim.id) == claim_id.lower())).first()
+    if not claim or claim.access_level > current_user.clearance:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Claim '{claim_id}' not found.",
+        )
+
+    ev_ids = claim.evidence_ids or []
+    if not ev_ids:
+        return []
+
+    evidence_records = (
+        db.query(EvidenceUnit)
+        .filter(
+            EvidenceUnit.id.in_(ev_ids),
+            EvidenceUnit.access_level <= current_user.clearance,
+        )
+        .all()
+    )
+    return [EvidenceUnitRead.model_validate(e) for e in evidence_records]
+
+
 @router.patch("/{claim_id}")
 def update_claim(
     claim_id: str,
@@ -145,7 +178,7 @@ def update_claim(
     Edits set origin='human' and review_state='edited', bump version, re-run verification,
     and write audit_log with before/after snapshots.
     """
-    claim = db.query(Claim).filter(Claim.id == claim_id).first()
+    claim = db.query(Claim).filter(or_(Claim.id == claim_id, func.lower(Claim.id) == claim_id.lower())).first()
     if not claim:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

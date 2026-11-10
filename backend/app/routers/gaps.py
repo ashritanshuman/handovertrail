@@ -3,6 +3,7 @@ import uuid
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
+from sqlalchemy import or_, func
 from app.db import get_db
 from app.models import Question, User, AuditLog, EvidenceUnit
 from app.schemas import QuestionRead, QuestionAnswerRequest
@@ -41,7 +42,7 @@ def answer_gap(
     (source_type: 'exit_interview', author: current_user.name, access_level: 2)
     that the lead can use to resolve conflicts.
     """
-    gap = db.query(Question).filter(Question.id == gap_id).first()
+    gap = db.query(Question).filter(or_(Question.id == gap_id, func.lower(Question.id) == gap_id.lower())).first()
     if not gap:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
