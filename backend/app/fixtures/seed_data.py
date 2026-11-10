@@ -10,9 +10,9 @@ from app.models import (
     Question,
     HandoverVersion,
     AuditLog,
+    ExtractionRun,
 )
 from app.services.ingest import ingest_demo_data
-from app.services.masking import mask_sensitive_content
 from app.services.extract import extract_claims_from_units
 from app.services.gaps import identify_knowledge_gaps
 from app.security import SEEDED_USERS
@@ -22,6 +22,7 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
     """
     Clears existing records and seeds the full synthetic CampusConnect project,
     users, evidence units, claims, and open knowledge gaps.
+    Idempotent and resets cleanly.
     """
     if force_reset:
         db.query(AuditLog).delete()
@@ -29,6 +30,7 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
         db.query(Claim).delete()
         db.query(EvidenceUnit).delete()
         db.query(HandoverVersion).delete()
+        db.query(ExtractionRun).delete()
         db.query(Project).delete()
         db.query(User).delete()
         db.commit()
@@ -63,23 +65,21 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
     # 3. Ingest Demo Evidence Units
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     demo_dir = os.path.join(base_dir, "data", "demo")
-    
-    # Fallback to local if running in nested path
+
+    if not os.path.exists(demo_dir):
+        demo_dir = os.path.join(os.path.dirname(__file__), "demo")
     if not os.path.exists(demo_dir):
         demo_dir = os.path.join(os.getcwd(), "data", "demo")
-    if not os.path.exists(demo_dir):
-        demo_dir = os.path.join(os.path.dirname(__file__), "..", "..", "..", "data", "demo")
 
     raw_units = ingest_demo_data(demo_dir)
     ev_models = []
     for raw in raw_units:
-        masked_text = mask_sensitive_content(raw.get("text", ""))
         ts_str = raw.get("timestamp")
         try:
             ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00")) if ts_str else datetime.now(timezone.utc)
         except Exception:
             ts = datetime.now(timezone.utc)
-            
+
         unit = EvidenceUnit(
             id=raw["id"],
             project_id="campusconnect",
@@ -88,8 +88,9 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
             location=raw.get("location", ""),
             author=raw.get("author", "Team"),
             timestamp=ts,
-            text=masked_text,
+            text=raw.get("text", ""),
             access_level=int(raw.get("access_level", 1)),
+            redactions_json=raw.get("redactions_json", []),
         )
         ev_models.append(unit)
         db.merge(unit)
@@ -111,6 +112,7 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
             review_state=c.get("review_state", "draft"),
             version=c.get("version", 1),
             origin=c.get("origin", "cache"),
+            conflict_group_id=c.get("conflict_group_id"),
         )
         db.merge(claim_obj)
     db.commit()
@@ -121,6 +123,7 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
         q_obj = Question(
             id=g["id"],
             claim_id=g.get("claim_id"),
+            kind=g.get("kind", "conflict"),
             text=g["text"],
             state=g.get("state", "open"),
             asked_by=g.get("asked_by", "system"),
@@ -129,13 +132,23 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
         db.merge(q_obj)
     db.commit()
 
+    # Record initial extraction run
+    run = ExtractionRun(
+        id=f"run-{uuid.uuid4().hex[:12]}",
+        origin="cache",
+        started_at=datetime.now(timezone.utc),
+        finished_at=datetime.now(timezone.utc),
+        counts_json={"claims": len(claims_data), "units": len(ev_models)},
+    )
+    db.add(run)
+
     # 6. Audit Log Entry
     audit = AuditLog(
         id=f"aud-{uuid.uuid4().hex[:12]}",
-        user_id="maya",
+        actor="maya",
         action="LOAD_DEMO",
-        target_type="project",
-        target_id="campusconnect",
+        entity="project",
+        entity_id="campusconnect",
         details=f"Loaded {len(ev_models)} evidence units, {len(claims_data)} claims, {len(gaps_data)} gaps.",
     )
     db.add(audit)

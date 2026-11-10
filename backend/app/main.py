@@ -31,6 +31,7 @@ from app.routers import (
     handover,
     audit,
     ask,
+    sources,
 )
 
 
@@ -125,6 +126,7 @@ app.include_router(stats.router)
 app.include_router(handover.router)
 app.include_router(audit.router)
 app.include_router(ask.router)
+app.include_router(sources.router)
 
 
 # Static File Serving & Single-Service SPA Routing

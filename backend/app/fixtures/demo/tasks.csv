@@ -1,0 +1,16 @@
+id,project_id,source_ref,location,author,timestamp,text,access_level
+ev-task-001,campusconnect,TASK-101,Jira Board/Sprint 24,Riya Sharma,2026-09-02T10:00:00Z,"Decision: Standardized on FastAPI for all backend endpoints due to automatic OpenAPI spec generation and Pydantic v2 performance.",1
+ev-task-002,campusconnect,TASK-102,Jira Board/Sprint 24,Maya Patel,2026-09-05T14:20:00Z,"Task: Set up automated GitHub Actions workflow for linting, security scanning, and pytest coverage.",1
+ev-task-003,campusconnect,TASK-103,Jira Board/Sprint 25,Arjun Rao,2026-09-08T09:15:00Z,"Task: Build student event discovery feed UI with filter tags for clubs, sports, and cultural fests.",1
+ev-task-004,campusconnect,TASK-104,Jira Board/Sprint 25,Riya Sharma,2026-09-11T16:00:00Z,"Task: Implement core payment reconciliation service. Assigned solely to Riya Sharma with high complexity and no secondary reviewer.",1
+ev-task-005,campusconnect,TASK-105,Jira Board/Sprint 26,Maya Patel,2026-09-14T11:45:00Z,"Risk: Stripe test mode webhooks randomly drop under burst simulation. Must implement exponential retry ledger.",1
+ev-task-006,campusconnect,TASK-106,Jira Board/Sprint 26,Riya Sharma,2026-09-17T13:30:00Z,"Dependency: University LDAP server maintenance scheduled every Sunday 2 AM to 4 AM will cause auth failures.",1
+ev-task-007,campusconnect,TASK-107,Jira Board/Sprint 27,Arjun Rao,2026-09-19T15:10:00Z,"Task: Add dark mode toggle and responsive mobile layout for student ticketing checkout.",1
+ev-task-008,campusconnect,TASK-108,Jira Board/Sprint 27,Riya Sharma,2026-09-23T10:00:00Z,"Open Question: How should multi-seat group reservations handle partial payment failures when one card declines?",1
+ev-task-009,campusconnect,TASK-109,Jira Board/Sprint 28,Maya Patel,2026-09-27T17:00:00Z,"Contact: Campus security lead Officer David Martinez (david.martinez@university.edu) handles fire code venue limits.",1
+ev-task-010,campusconnect,TASK-110,Jira Board/Sprint 28,Riya Sharma,2026-10-01T14:20:00Z,"Task: Deploy Redis cluster for session caching and rate-limiting brute-force login attempts.",1
+ev-task-011,campusconnect,TASK-111,Jira Board/Sprint 29,Arjun Rao,2026-10-05T09:30:00Z,"Task: Integrate PDF ticket QR code generation using reportlab library.",1
+ev-task-012,campusconnect,TASK-112,Jira Board/Sprint 29,Maya Patel,2026-10-09T16:40:00Z,"Risk: In-person gate scanner battery drain and offline sync failure during outdoor stadium concerts.",1
+ev-task-013,campusconnect,TASK-113,Jira Board/Sprint 30,Riya Sharma,2026-10-13T11:00:00Z,"Decision: Store QR code signing keys in AWS KMS with automatic annual rotation.",1
+ev-task-014,campusconnect,TASK-118,Jira Board/Sprint 30,Riya Sharma,2026-10-15T15:00:00Z,"The mobile push notifications are fully certified for iOS 18 APNs with zero payload truncation issues.",1
+

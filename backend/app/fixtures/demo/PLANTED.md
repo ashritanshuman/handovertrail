@@ -1,0 +1,18 @@
+# CampusConnect Synthetic Demo Dataset - Planted Items
+
+This document records the deliberately planted test cases and verification challenges in the synthetic demo dataset for **CampusConnect**, departing staff engineer **Riya Sharma**, team lead **Maya Patel**, and incoming successor **Arjun Rao**.
+
+---
+
+## 1. Planted Items and Locations
+
+| Item | Challenge Type | Source Location | Description | Expected Verification & Engine Behavior |
+|---|---|---|---|---|
+| **(a) CONFLICT** | Key Rotation Contradiction | `github_export.json` (`ev-github-004`, Issue #42) vs `meeting_notes.md` (`ev-notes-002`, 12 Oct meeting notes, para 3) | Issue #42 specifies **monthly (30-day)** API key rotation for payment provider. 12 Oct meeting notes document consensus on **quarterly (90-day)** rotation to prevent breaking partner webhooks. | Rule-based engine marks both claims as `status: conflicting` with shared `conflict_group_id`. Blocks handover approval until resolved or acknowledged. |
+| **(b) Abandoned PR** | Unresolved Review Comment | `github_export.json` (`ev-github-009`, PR #88) & `tasks.csv` (`TASK-112`) | Riya authored WebSocket reservation count pub-sub in PR #88. Maya left an unresolved comment about socket leaks on sudden client disconnects. Riya abandoned the branch. | Flags open knowledge gap in `/api/gaps`. Leaver can provide exit interview answer explaining replacement with SSE polling in PR #94. |
+| **(c) Single-Owner Risk** | Bus-Factor / Knowledge SPoF | `github_export.json` (`ev-github-002`, PR #72), `tasks.csv` (`TASK-104`), `meeting_notes.md` (`ev-notes-003`) | Payment reconciliation ledger and Stripe webhook idempotency module authored and deployed solely by Riya with zero secondary review. | Extracted as a high-priority `risk` claim (bus factor 1). Derives action item in First 7 Days plan for successor. |
+| **(d) Level-2 Lead-Only HR Thread** | Permission / Clearance Isolation | `slack_export.json` (`ev-slack-005`, `#leads-private`) | Confidential discussion between Maya and Riya regarding resignation notice, transition plan, and bonus signoff. | Marked `access_level: 2`. Visible only to Maya (Clearance 2) and Riya (Clearance 2). Completely excluded from Arjun (Clearance 1). |
+| **(e) Fake API Key & Phone Number** | Pre-Storage PII Masking | `slack_export.json` (`ev-slack-003`, `#incident-response`) | Staging mock key `sk_live_campusevents_99834289472398472398472398` and emergency phone `+91-98765-43210`. | Masked *before storage* by `services/masking.py` into `[REDACTED:api_key]` / `[REDACTED:phone]`. Unit marked `access_level: 3`. Secrets never stored in DB or returned. |
+| **(f) Buried Decision** | Chat Architectural Rationale | `slack_export.json` (`ev-slack-001`, `#engineering`) | Riya explains why SQLite with WAL mode was chosen over PostgreSQL for local ticketing throughput and simpler ops. | Extracted as a `decision` claim with exact verbatim quote matching `ev-slack-001`. |
+| **(g) Vague Unsupported Claim** | Missing Evidence | `tasks.csv` (`TASK-118`) | "The mobile push notifications are fully certified for iOS 18 APNs with zero payload truncation issues." | Claim has no verifiable code/log quote; engine marks status as `missing` or `inferred`, generating a gap question. |
+| **(h) Canary Strings** | Leak Detection Benchmark | `slack_export.json` (`ev-slack-003` & `ev-slack-005`) | `CANARY-LEVEL3-DO-NOT-LEAK` in confidential level-3 unit; `CANARY-LEVEL2-HR` in lead-only level-2 thread. | Tested in test suite: verified that neither canary string ever appears in any endpoint response requested as successor Arjun (Clearance 1). |

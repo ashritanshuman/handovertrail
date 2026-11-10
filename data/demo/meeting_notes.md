@@ -12,9 +12,9 @@ The team ratified the service architecture for CampusConnect. Frontend will use 
 
 ---
 
-## Unit ev-notes-002: Security Review & Key Rotation Consensus
-- **Date**: 2026-09-15T15:00:00Z
-- **Location**: Meeting Rooms/Security-Pod
+## Unit ev-notes-002: Security Review & Key Rotation Consensus (12 Oct)
+- **Date**: 2026-10-12T15:00:00Z
+- **Location**: notes 12 Oct, para 3
 - **Author**: Maya Patel
 - **Access Level**: 1
 
