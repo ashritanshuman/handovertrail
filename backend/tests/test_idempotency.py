@@ -23,3 +23,4 @@ def test_demo_load_idempotency(client):
     clm2 = client.get("/api/claims", headers={"X-User-Id": "maya"}).json()
     assert len(clm1) == len(clm2)
     assert [c["id"] for c in clm1] == [c["id"] for c in clm2]
+

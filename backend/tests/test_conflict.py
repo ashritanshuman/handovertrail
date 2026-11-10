@@ -14,3 +14,4 @@ def test_planted_conflict_detection(client):
     assert conf_claim["conflict_details"] is not None
     assert "monthly" in conf_claim["conflict_details"]["statement_a"].lower()
     assert "quarterly" in conf_claim["conflict_details"]["statement_b"].lower()
+

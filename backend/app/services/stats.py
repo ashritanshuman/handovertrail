@@ -62,3 +62,4 @@ def compute_handover_stats(db: Session, current_user: User) -> Dict[str, Any]:
         "extraction_origin": extraction_origin,
         "weekly_activity": dict(weekly_activity),
     }
+

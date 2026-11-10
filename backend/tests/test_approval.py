@@ -39,3 +39,4 @@ def test_approval_blocker_and_resolution(client):
     )
     assert res_clean.status_code == 200
     assert res_clean.json()["status"] == "approved"
+

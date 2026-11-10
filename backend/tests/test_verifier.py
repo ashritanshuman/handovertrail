@@ -58,3 +58,4 @@ def test_verifier_whitespace_and_case_variants():
     )
     assert status == "verified"
     assert level == 1
+

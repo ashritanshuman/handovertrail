@@ -29,3 +29,4 @@ def test_planted_secrets_absent_from_db_and_api(client, db_session):
         text = resp.text
         assert planted_secret not in text, f"Secret leaked in endpoint {ep}"
         assert planted_phone not in text, f"Phone leaked in endpoint {ep}"
+

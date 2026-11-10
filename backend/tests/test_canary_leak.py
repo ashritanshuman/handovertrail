@@ -49,3 +49,4 @@ def test_canary_leak_protection(client):
     res_probe = client.get("/api/evidence/ev-slack-003", headers={"X-User-Id": "arjun"})
     assert res_probe.status_code == 404
     assert canary_l3 not in res_probe.text
+
