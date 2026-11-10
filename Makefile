@@ -1,4 +1,4 @@
-.PHONY: setup dev build test seed clean help
+.PHONY: setup dev run build test seed clean help
 
 PYTHON ?= python3.12
 PORT ?= 8080
@@ -7,6 +7,7 @@ help:
 	@echo "HandoverTrail Makefile Targets:"
 	@echo "  make setup   - Set up backend virtualenv and install npm dependencies"
 	@echo "  make dev     - Run backend (FastAPI) and frontend (Vite) concurrently"
+	@echo "  make run     - Run backend server with uvicorn"
 	@echo "  make build   - Build frontend static assets into frontend/dist"
 	@echo "  make test    - Run backend pytest test suite"
 	@echo "  make seed    - Seed SQLite database with synthetic CampusConnect dataset"
@@ -25,6 +26,10 @@ dev:
 	npx concurrently -k -n "backend,frontend" -c "blue,magenta" \
 		"cd backend && ./venv/bin/uvicorn app.main:app --host 0.0.0.0 --port $(PORT) --reload" \
 		"cd frontend && BACKEND_PORT=$(PORT) npm run dev"
+
+run:
+	@echo "==> Running backend server on port $(PORT)..."
+	cd backend && ./venv/bin/uvicorn app.main:app --host 0.0.0.0 --port $(PORT)
 
 build:
 	@echo "==> Building frontend distribution..."

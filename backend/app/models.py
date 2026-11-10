@@ -1,6 +1,5 @@
 from datetime import datetime, timezone
-import json
-from typing import List, Optional
+from typing import List, Optional, Any
 from sqlalchemy import (
     Column,
     String,
@@ -10,7 +9,7 @@ from sqlalchemy import (
     ForeignKey,
     JSON,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, synonym
 from app.db import Base
 
 
@@ -41,6 +40,7 @@ class Project(Base):
 
     evidence_units = relationship("EvidenceUnit", back_populates="project", cascade="all, delete-orphan")
     claims = relationship("Claim", back_populates="project", cascade="all, delete-orphan")
+    questions = relationship("Question", back_populates="project", cascade="all, delete-orphan")
     handover_versions = relationship("HandoverVersion", back_populates="project", cascade="all, delete-orphan")
 
 
@@ -49,15 +49,21 @@ class EvidenceUnit(Base):
 
     id = Column(String(50), primary_key=True, index=True)  # 'ev-github-001'
     project_id = Column(String(50), ForeignKey("projects.id"), nullable=False, index=True)
-    source_type = Column(String(50), nullable=False)  # 'github', 'jira', 'meeting_notes', 'slack'
+    source_type = Column(String(50), nullable=False)  # 'github', 'jira', 'meeting_notes', 'slack', 'exit_interview'
     source_ref = Column(String(100), nullable=False)  # 'Issue #42', 'TASK-104', etc.
     location = Column(String(255), nullable=True)
     author = Column(String(100), nullable=False)
     timestamp = Column(DateTime(timezone=True), default=utc_now)
     text = Column(Text, nullable=False)
     access_level = Column(Integer, default=1, nullable=False)  # 1, 2, 3
+    redactions_json = Column(JSON, default=list, nullable=False)  # [{"type": "api_key", "count": 1}]
 
     project = relationship("Project", back_populates="evidence_units")
+
+    def __init__(self, **kwargs):
+        if "redactions_json" not in kwargs:
+            kwargs["redactions_json"] = []
+        super().__init__(**kwargs)
 
 
 class Claim(Base):
@@ -75,6 +81,9 @@ class Claim(Base):
     review_state = Column(String(50), default="draft", nullable=False)  # 'draft', 'confirmed', 'rejected', 'edited'
     version = Column(Integer, default=1, nullable=False)
     origin = Column(String(20), default="llm", nullable=False)  # 'llm', 'cache', 'human'
+    conflict_group_id = Column(String(50), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=utc_now)
+    updated_at = Column(DateTime(timezone=True), default=utc_now, onupdate=utc_now)
 
     project = relationship("Project", back_populates="claims")
     questions = relationship("Question", back_populates="claim", cascade="all, delete-orphan")
@@ -84,16 +93,24 @@ class Question(Base):
     __tablename__ = "questions"
 
     id = Column(String(50), primary_key=True, index=True)  # 'gap-001'
+    project_id = Column(String(50), ForeignKey("projects.id"), default="campusconnect", nullable=False, index=True)
     claim_id = Column(String(50), ForeignKey("claims.id"), nullable=True, index=True)
+    kind = Column(String(50), default="conflict", nullable=False)  # 'conflict', 'missing', 'low_evidence'
     text = Column(Text, nullable=False)
     answer = Column(Text, nullable=True)
-    state = Column(String(50), default="open", nullable=False)  # 'open', 'answered', 'dismissed'
-    asked_by = Column(String(50), default="system", nullable=False)
     answered_by = Column(String(50), nullable=True)
-    created_at = Column(DateTime(timezone=True), default=utc_now)
+    state = Column(String(50), default="open", nullable=False)  # 'open', 'answered'
+    asked_by = Column(String(50), default="system", nullable=True)
     answered_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=utc_now)
 
+    project = relationship("Project", back_populates="questions")
     claim = relationship("Claim", back_populates="questions")
+
+    def __init__(self, **kwargs):
+        if "project_id" not in kwargs:
+            kwargs["project_id"] = "campusconnect"
+        super().__init__(**kwargs)
 
 
 class HandoverVersion(Base):
@@ -115,23 +132,45 @@ class Acknowledgement(Base):
     __tablename__ = "acknowledgements"
 
     id = Column(String(50), primary_key=True, index=True)
-    handover_version_id = Column(String(50), ForeignKey("handover_versions.id"), nullable=False, index=True)
+    version_id = Column(String(50), ForeignKey("handover_versions.id"), nullable=False, index=True)
     user_id = Column(String(50), ForeignKey("users.id"), nullable=False, index=True)
-    acknowledged_at = Column(DateTime(timezone=True), default=utc_now)
+    at = Column(DateTime(timezone=True), default=utc_now)
     note = Column(Text, default="", nullable=True)
 
     handover_version = relationship("HandoverVersion", back_populates="acknowledgements")
     user = relationship("User", back_populates="acknowledgements")
+
+    # SQLAlchemy synonyms so queries and models support both styles
+    handover_version_id = synonym("version_id")
+    acknowledged_at = synonym("at")
 
 
 class AuditLog(Base):
     __tablename__ = "audit_log"
 
     id = Column(String(50), primary_key=True, index=True)
-    user_id = Column(String(50), nullable=False)
+    actor = Column(String(50), nullable=False)  # User ID who triggered action
     action = Column(String(100), nullable=False)  # 'LOAD_DEMO', 'EXTRACT_CLAIMS', 'REVIEW_CLAIM', etc.
-    target_type = Column(String(50), nullable=False)  # 'claim', 'handover', 'gap', 'project'
-    target_id = Column(String(100), nullable=False)
-    timestamp = Column(DateTime(timezone=True), default=utc_now)
+    entity = Column(String(50), nullable=False)  # 'claim', 'handover', 'gap', 'project'
+    entity_id = Column(String(100), nullable=False)
+    before_json = Column(JSON, nullable=True)
+    after_json = Column(JSON, nullable=True)
+    at = Column(DateTime(timezone=True), default=utc_now)
     details = Column(Text, default="", nullable=True)
 
+    # SQLAlchemy synonyms so queries and models support both styles
+    user_id = synonym("actor")
+    target_type = synonym("entity")
+    target_id = synonym("entity_id")
+    timestamp = synonym("at")
+
+
+class ExtractionRun(Base):
+    __tablename__ = "extraction_runs"
+
+    id = Column(String(50), primary_key=True, index=True)
+    started_at = Column(DateTime(timezone=True), default=utc_now)
+    finished_at = Column(DateTime(timezone=True), nullable=True)
+    origin = Column(String(20), default="cache", nullable=False)  # 'llm', 'cache'
+    counts_json = Column(JSON, nullable=True)
+    error = Column(Text, nullable=True)

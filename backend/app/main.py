@@ -1,6 +1,8 @@
 import os
+import time
+import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -8,6 +10,13 @@ from app.config import settings
 from app.db import init_db, SessionLocal
 from app.fixtures.seed_data import seed_database
 from app.models import Project
+
+# Configure safe structured logger (never logs request bodies or API keys)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+logger = logging.getLogger("handovertrail")
 
 # Routers
 from app.routers import (
@@ -27,7 +36,7 @@ from app.routers import (
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Initialize SQLite tables
+    # Initialize SQLite tables (with WAL mode enabled on connect)
     init_db()
     # Check if DB has been seeded, if not seed it on startup
     db = SessionLocal()
@@ -58,6 +67,41 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# Structured Request/Response Logging Middleware (never logs request body or secrets)
+@app.middleware("http")
+async def safe_logging_middleware(request: Request, call_next):
+    start_time = time.perf_counter()
+    user_header = request.headers.get("x-user-id", "-")
+    # Sanitize user_header to avoid log injection
+    safe_user = "".join(c for c in user_header if c.isalnum() or c in "-_")[:30]
+
+    response = await call_next(request)
+    duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
+
+    logger.info(
+        f"[HTTP] {request.method} {request.url.path} -> {response.status_code} ({duration_ms}ms) user={safe_user}"
+    )
+    return response
+
+
+# Safe Global Exception Handler (returns safe JSON, no stack traces, no secrets)
+@app.exception_handler(Exception)
+async def safe_global_exception_handler(request: Request, exc: Exception):
+    if isinstance(exc, HTTPException):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"detail": exc.detail},
+            headers=exc.headers,
+        )
+    # Log internal error without exposing sensitive internals
+    logger.error(f"[ERROR] {request.method} {request.url.path}: {type(exc).__name__} - {str(exc)[:200]}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error. Please try again later."},
+    )
+
+
 # Health endpoint
 @app.get("/health")
 def health_check():
@@ -84,11 +128,16 @@ app.include_router(ask.router)
 
 
 # Static File Serving & Single-Service SPA Routing
-frontend_dist_path = os.path.abspath(settings.FRONTEND_DIR)
-if not os.path.isabs(settings.FRONTEND_DIR):
-    frontend_dist_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "..", settings.FRONTEND_DIR)
-    )
+frontend_dist_path = settings.FRONTEND_DIST
+if not os.path.isabs(frontend_dist_path):
+    # Resolve relative to project root or backend root
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    frontend_dist_path = os.path.abspath(os.path.join(base_dir, frontend_dist_path))
+    if not os.path.exists(frontend_dist_path):
+        # Fallback relative to backend folder
+        frontend_dist_path = os.path.abspath(
+            os.path.join(os.path.dirname(os.path.dirname(__file__)), settings.FRONTEND_DIST)
+        )
 
 if os.path.exists(frontend_dist_path) and os.path.exists(os.path.join(frontend_dist_path, "index.html")):
     # Mount assets folder if exists
@@ -115,4 +164,3 @@ else:
             "docs": "/api/docs",
             "note": "Frontend not yet built. Run 'make build' or start Vite dev server on port 5173.",
         }
-

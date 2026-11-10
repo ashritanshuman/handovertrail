@@ -36,9 +36,15 @@ def get_current_user(
 ) -> User:
     """
     Simulates identity and clearance based on X-User-Id header.
-    Defaults to 'arjun' (Successor, Clearance 1) if omitted.
+    Missing or unknown header -> 401 Unauthorized.
     """
-    user_id = (x_user_id or "arjun").lower().strip()
+    if not x_user_id or not x_user_id.strip():
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing X-User-Id header. Allowed demo users: riya, maya, arjun.",
+        )
+
+    user_id = x_user_id.lower().strip()
 
     # Look up in DB
     user = db.query(User).filter(User.id == user_id).first()
@@ -63,14 +69,21 @@ def get_current_user(
     return user
 
 
-def require_lead(user: User = Depends(get_current_user)) -> User:
-    """Enforces that the caller has lead role (e.g. Maya) for approving and editing."""
-    if user.role != "lead":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Permission denied: only an authorized project lead can perform this action.",
-        )
-    return user
+def require_role(*allowed_roles: str):
+    """Factory dependency requiring user to have one of the specified roles."""
+    def role_checker(user: User = Depends(get_current_user)) -> User:
+        if user.role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Permission denied: role '{user.role}' not permitted. Requires: {', '.join(allowed_roles)}.",
+            )
+        return user
+    return role_checker
+
+
+# Role helpers
+require_lead = require_role("lead")
+require_lead_or_leaver = require_role("lead", "leaver")
 
 
 T = TypeVar("T")
@@ -84,4 +97,3 @@ def filter_by_clearance(items: List[T], clearance: int) -> List[T]:
         if level <= clearance:
             filtered.append(item)
     return filtered
-

@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -8,29 +8,37 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     HOST: str = "0.0.0.0"
     PORT: int = int(os.getenv("PORT", "8080"))
-    
-    # Anthropic API Configuration
-    ANTHROPIC_API_KEY: str = ""
-    LLM_MODEL: str = "claude-sonnet-5-5"
-    
-    # Database
-    DATABASE_URL: str = "sqlite:///./handovertrail.db"
-    
-    # CORS Origins (comma-separated or list)
-    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173"
-    
-    # Frontend directory for single-service hosting in production
-    FRONTEND_DIR: str = os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "frontend", "dist")
+
+    # Gemini API Configuration (optional - fallback to deterministic cache when empty)
+    GEMINI_API_KEY: Optional[str] = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or ""
+    LLM_MODEL: str = os.getenv("LLM_MODEL", "gemini-2.5-flash")
+
+    # Database (SQLite with WAL mode)
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./handovertrail.db")
+
+    # Frontend dist directory
+    FRONTEND_DIST: str = os.getenv("FRONTEND_DIST", "../frontend/dist")
+
+    # CORS Origins
+    CORS_ORIGINS: str = os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173",
+    )
 
     model_config = SettingsConfigDict(
-        env_file=os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", ".env"),
+        env_file=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"),
         env_file_encoding="utf-8",
-        extra="ignore"
+        extra="ignore",
     )
 
     @property
     def cors_origins_list(self) -> List[str]:
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+
+    @property
+    def FRONTEND_DIR(self) -> str:
+        """Alias for backward compatibility."""
+        return self.FRONTEND_DIST
 
 
 settings = Settings()
