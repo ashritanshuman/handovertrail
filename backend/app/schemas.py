@@ -126,16 +126,21 @@ class QuestionAnswerRequest(BaseModel):
 class HandoverApproveRequest(BaseModel):
     project_id: str
     notes: Optional[str] = ""
+    acknowledge_unresolved: bool = False
 
 
 class HandoverVersionRead(BaseModel):
-    version: str
-    project_id: str
-    approved_by: str
-    approved_at: datetime
+    state: str = "approved"  # 'approved' or 'not_approved'
+    version: str = "1.0.0"
+    project_id: str = "campusconnect"
+    approved_by: Optional[str] = None
+    approved_at: Optional[datetime] = None
     notes: Optional[str] = None
-    viewer_clearance: int
-    claims: List[ClaimRead]
+    viewer_clearance: int = 1
+    claims: List[ClaimRead] = Field(default_factory=list)
+    sections: Optional[Dict[str, List[ClaimRead]]] = None
+    first_7_days: Optional[List[str]] = None
+    hidden_count: int = 0
     acknowledged: bool = False
 
 
@@ -153,6 +158,8 @@ class StatsResponse(BaseModel):
     open_gaps_count: int
     readiness_percentage: float
     can_approve: bool
+    extraction_origin: Optional[str] = "cache"
+    weekly_activity: Optional[Dict[str, int]] = None
 
 
 # ------------------ TIMELINE ------------------
@@ -163,6 +170,8 @@ class TimelineEvent(BaseModel):
     summary: str
     source_ref: str
     access_level: int
+    unresolved: bool = False
+    evidence_ids: List[str] = Field(default_factory=list)
 
 
 # ------------------ AUDIT LOG ------------------

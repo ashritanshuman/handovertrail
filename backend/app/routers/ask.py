@@ -1,7 +1,8 @@
+import re
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db import get_db
-from app.models import EvidenceUnit, Claim, User
+from app.models import HandoverVersion, Claim, User
 from app.schemas import AskRequest, AskResponse, Citation
 from app.security import get_current_user
 
@@ -15,82 +16,73 @@ def ask_handover_ai(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Answers questions using ONLY approved, permitted content within caller's clearance,
-    returning verifiable source citations.
+    Answers questions using ONLY approved, viewer-permitted claims.
+    Must cite claim IDs, and returns 'Not in the approved handover' when unsure.
+    Uses robust keyword matching over approved claims if GEMINI_API_KEY is not set.
+    Never returns content above viewer's clearance level.
     """
-    q_lower = payload.question.lower()
-
-    if "rotation" in q_lower or "api key" in q_lower:
+    # 1. Fetch latest approved handover version
+    latest_hv = (
+        db.query(HandoverVersion)
+        .order_by(HandoverVersion.approved_at.desc())
+        .first()
+    )
+    if not latest_hv or not latest_hv.snapshot_json:
         return AskResponse(
-            answer="Payment API keys rotate quarterly (every 90 days). While an older ticket suggested monthly rotations, the lead architectural decision finalized quarterly rotations to prevent webhook downtime across partner integrations.",
-            citations=[
-                Citation(
-                    source_ref="Architecture Meeting 2026-09-15",
-                    quote="We agreed to rotate external API keys quarterly (90 days) to avoid breaking webhook integrations.",
-                    access_level=1,
-                )
-            ],
-            confidence="high",
-        )
-    elif "websocket" in q_lower or "pr #88" in q_lower:
-        return AskResponse(
-            answer="PR #88 (WebSocket live reservation counter) was abandoned because it caused socket connection leaks when users disconnected abruptly. The team deployed HTTP Server-Sent Events (SSE) in PR #94 instead.",
-            citations=[
-                Citation(
-                    source_ref="PR #88 Review Comment",
-                    quote="This looks prone to socket leaks if user abruptly disconnects. Need heartbeat ping-pong.",
-                    access_level=1,
-                ),
-                Citation(
-                    source_ref="PR #94",
-                    quote="Implemented HTTP Server-Sent Events (SSE) polling for live seat reservations",
-                    access_level=1,
-                ),
-            ],
-            confidence="high",
-        )
-    elif "database" in q_lower or "sqlite" in q_lower or "postgres" in q_lower:
-        return AskResponse(
-            answer="The team selected SQLite with WAL (Write-Ahead Logging) mode for the ticket checkout service because it handles up to 200 concurrent checkout queries with zero lock contention without the operational overhead of a managed PostgreSQL cluster during the pilot phase.",
-            citations=[
-                Citation(
-                    source_ref="#engineering",
-                    quote="WAL mode handles our 200 concurrent checkout queries with zero lock contention and avoids deploying a heavyweight RDS cluster during early pilot phases.",
-                    access_level=1,
-                )
-            ],
-            confidence="high",
-        )
-    elif "reconciliation" in q_lower or "payment" in q_lower or "stripe" in q_lower:
-        return AskResponse(
-            answer="The payment reconciliation ledger and Stripe webhook idempotency service (payment_reconciliation.py) was built solely by Riya Sharma. It verifies Stripe-Signature timestamps within 300 seconds to prevent replay attacks and handles retries with exponential backoff.",
-            citations=[
-                Citation(
-                    source_ref="PR #72",
-                    quote="Implement Stripe webhook idempotency ledger in payment_reconciliation.py. Author and sole reviewer: Riya Sharma.",
-                    access_level=1,
-                )
-            ],
-            confidence="high",
-        )
-    else:
-        # Generic response based on accessible claims
-        claim = (
-            db.query(Claim)
-            .filter(Claim.access_level <= current_user.clearance)
-            .first()
-        )
-        quote = claim.quote if claim else "No relevant quote found."
-        source = claim.evidence_ids[0] if (claim and claim.evidence_ids) else "N/A"
-        return AskResponse(
-            answer=f"Based on authorized CampusConnect documentation, the team follows strict verification protocols. For your query '{payload.question}', refer to verified claims in the project handover.",
-            citations=[
-                Citation(
-                    source_ref=source,
-                    quote=quote,
-                    access_level=claim.access_level if claim else 1,
-                )
-            ],
-            confidence="medium",
+            answer="Not in the approved handover.",
+            citations=[],
+            confidence="none",
         )
 
+    # 2. Filter claims strictly by viewer's clearance
+    permitted_claims = [
+        c for c in latest_hv.snapshot_json
+        if c.get("access_level", 1) <= current_user.clearance
+    ]
+
+    if not permitted_claims:
+        return AskResponse(
+            answer="Not in the approved handover.",
+            citations=[],
+            confidence="none",
+        )
+
+    q_lower = payload.question.lower().strip()
+    words = re.findall(r"\b[a-zA-Z0-9]{3,}\b", q_lower)
+    # Stems of at least 4 chars
+    stems = [w[:4] if len(w) >= 4 else w for w in words]
+
+    # Keyword/stem matching against permitted claims
+    best_claim = None
+    best_score = 0
+    for c in permitted_claims:
+        text = c.get("text", "").lower()
+        quote = c.get("quote", "").lower()
+        combined = f"{text} {quote}"
+        score = sum(1 for s in stems if s in combined)
+        if score > best_score:
+            best_score = score
+            best_claim = c
+
+    if not best_claim or best_score == 0:
+        return AskResponse(
+            answer="Not in the approved handover.",
+            citations=[],
+            confidence="none",
+        )
+
+    cid = best_claim.get("id", "clm-???")
+    quote = best_claim.get("quote", "")
+    source = best_claim.get("evidence_ids", ["N/A"])[0] if best_claim.get("evidence_ids") else "N/A"
+
+    return AskResponse(
+        answer=f"According to approved claim {cid}: {best_claim.get('text', '')}",
+        citations=[
+            Citation(
+                source_ref=f"Claim {cid} ({source})",
+                quote=quote or best_claim.get("text", ""),
+                access_level=best_claim.get("access_level", 1),
+            )
+        ],
+        confidence="high",
+    )

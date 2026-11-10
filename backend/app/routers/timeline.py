@@ -15,8 +15,9 @@ def get_timeline(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Returns a chronological sequence of project events, PRs, and decisions,
-    filtered strictly by the viewer's clearance level.
+    Returns a chronological sequence of project events, PRs, decisions, and unresolved discussions,
+    each with evidence references, filtered strictly by the viewer's clearance level,
+    with an 'unresolved' flag for active discussion threads or abandoned branches.
     """
     units = (
         db.query(EvidenceUnit)
@@ -25,17 +26,23 @@ def get_timeline(
         .all()
     )
 
+    unresolved_keywords = ["abandoned", "leak", "unresolved", "open question", "failover", "incident", "conflict"]
+
     events = []
     for u in units:
+        text_lower = u.text.lower()
+        is_unresolved = any(kw in text_lower for kw in unresolved_keywords)
+
         events.append(
             TimelineEvent(
                 date=u.timestamp.strftime("%Y-%m-%d") if u.timestamp else "2026-09-01",
                 title=f"{u.source_type.capitalize()}: {u.source_ref}",
                 category=u.source_type,
-                summary=u.text[:120] + ("..." if len(u.text) > 120 else ""),
+                summary=u.text[:140] + ("..." if len(u.text) > 140 else ""),
                 source_ref=u.source_ref,
                 access_level=u.access_level,
+                unresolved=is_unresolved,
+                evidence_ids=[u.id],
             )
         )
     return events
-

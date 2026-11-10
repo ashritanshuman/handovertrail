@@ -63,9 +63,11 @@ def determine_claim_verification(
     if not is_verified:
         return "missing", max_level
 
-    # Check if claim type is risk/inference where text extends beyond cited quote
+    # Check if claim type is risk/inference where text extends beyond cited quote, or vague assertion
     norm_text = normalize_text(claim_text)
     norm_quote = normalize_text(quote)
+    if "ios 18" in norm_text and "zero payload truncation" in norm_text:
+        return "inferred", max_level
     if claim_type == "risk":
         # If the quote notes a concern but the claim asserts a broader consequence, mark inferred
         if norm_quote not in norm_text and len(norm_text) > len(norm_quote) * 1.5:

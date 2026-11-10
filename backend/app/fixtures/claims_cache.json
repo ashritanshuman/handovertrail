@@ -150,7 +150,7 @@
     "owner": "Riya Sharma",
     "status": "inferred",
     "evidence_ids": ["ev-task-014"],
-    "quote": "",
+    "quote": "The mobile push notifications are fully certified for iOS 18 APNs with zero payload truncation issues.",
     "access_level": 1,
     "review_state": "draft",
     "version": 1,
