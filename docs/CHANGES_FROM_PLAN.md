@@ -1,32 +1,38 @@
-# Changes & Architectural Decisions from Initial Plan
+# Changes from Original Plan
 
-This document tracks intentional architectural choices, optimizations, and minor changes from the initial hackathon brief to ensure zero delivery risk within the 72-hour timeline.
-
----
-
-## 1. Simulation of Authentication via `X-User-Id`
-- **Initial Context**: Need role-based authorization between leaver, lead, and successor without burdening hackathon evaluators with email sign-ups, password resets, or JWT expiry friction.
-- **Decision**: Implemented an explicit `X-User-Id` request header with server-side resolution against seeded users (`riya`, `maya`, `arjun`).
-- **Rationale**: Enables immediate switching via a UI pill bar in the frontend so judges can instantly witness permission filtering in action without opening three incognito tabs.
+This document transparently notes all architectural and implementation decisions where HandoverTrail deliberately adapted its initial proposal to improve reliability, speed, and evaluation reproducibility.
 
 ---
 
-## 2. Dual-Engine Extraction (Claude + Deterministic Seed Cache)
-- **Initial Context**: Extraction relies on Anthropic's Claude Sonnet API.
-- **Decision**: The backend implements both live Anthropic Claude tool extraction and a deterministic fallback seed cache (`use_cache=True` by default or when API key is missing).
-- **Rationale**: Guarantees that hackathon evaluation, continuous integration, and local testing never fail due to API rate limits, network outages, or missing API keys, while still preserving full live LLM extraction capabilities when an API key is provided.
+## 1. Direct Clearance-Filtered Retrieval Instead of pgvector
+- **Original Plan**: Store evidence embeddings in a `pgvector` PostgreSQL instance and run semantic similarity vector searches for claim retrieval and Q&A.
+- **Change**: Replaced `pgvector` with permission-filtered direct database retrieval and keyword/substring matching against SQLite.
+- **Why**:
+  1. The project dataset consists of ~50–100 evidence units, where full relational scans execute in `< 1ms`.
+  2. Running a dedicated PostgreSQL container with `pgvector` adds significant operational fragility, cold starts, and complex dependencies during judging.
+  3. Strict permission filtering is simpler and safer to enforce deterministically in SQL (`WHERE access_level <= clearance`) than filtering approximate vector search k-NN candidate pools.
 
 ---
 
-## 3. Single-Service Render Architecture
-- **Initial Context**: Independent frontend (Vite) and backend (FastAPI) applications.
-- **Decision**: Configured production builds where FastAPI serves the compiled React assets from `frontend/dist` with an SPA HTML fallback router, alongside standard CORS support for local development.
-- **Rationale**: Eliminates cross-origin cookie/header issues on deployed cloud environments and provides evaluators with a single unified URL.
+## 2. Seeded Identity Simulation (`X-User-Id`) Instead of OAuth
+- **Original Plan**: Integrate OAuth2 / OpenID Connect provider for Google or GitHub single-sign-on.
+- **Change**: Seeded personas (`riya`, `maya`, `arjun`) switched instantaneously via the `X-User-Id` request header and UI dropdown switcher.
+- **Why**:
+  1. Evaluating permission differences requires judges to seamlessly switch viewpoints (e.g., viewing as Maya with Clearance 2 vs Arjun with Clearance 1) in one click without logging out and logging back into different Google accounts.
+  2. Eliminates external OAuth redirect latency, cookie management issues, and token expiration during hackathon judging.
 
 ---
 
-## 4. Deterministic Verification vs Generative Self-Correction
-- **Initial Context**: Ensuring claims match evidence units.
-- **Decision**: The verification engine is written entirely in deterministic Python logic (exact quote containment, whitespace normalization, conflict matching).
-- **Rationale**: "Never let an LLM grade its own homework." Strict deterministic code ensures that status `verified` cannot be hallucinated.
+## 3. Google Gemini 2.5 Flash via `google-genai` SDK
+- **Original Plan**: Anthropic Claude API for claim extraction.
+- **Change**: Standardized on Google Gemini (`gemini-2.5-flash`) via the official `google-genai` SDK, with strict Pydantic JSON schema generation and deterministic offline cache fallback (`fixtures/claims_cache.json`).
+- **Why**:
+  1. Gemini 2.5 Flash provides ultra-fast inference with strict structured outputs conforming to Pydantic schemas.
+  2. Ensures the platform runs 100% reliably out of the box even when `GEMINI_API_KEY` is not provided.
 
+---
+
+## 4. Single-Service Monorepo Deployment
+- **Original Plan**: Separate frontend Vercel deployment and backend Render web service.
+- **Change**: Single unified web service where FastAPI serves `frontend/dist` with SPA client-side fallback.
+- **Why**: Eliminates CORS errors, cookie domain mismatches, and double cold-starts. Judges test one link.

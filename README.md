@@ -245,7 +245,7 @@ handovertrail/
 
 ---
 
-## 11. Team TchieSharks
+## 10. Team TchieSharks
 
 - **Ashrit Anshuman Pradhan** - System Architecture, Backend & Verifier Engine
 - **Kush Tayal** - Frontend UI/UX, Component Architecture & Analytics

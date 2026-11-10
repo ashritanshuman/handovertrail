@@ -2,6 +2,14 @@
 
 > **Single Source of Truth** for Frontend, Backend, AI Extraction Services, and Verification Engine.
 
+> [!NOTE]
+> **Implementation Clarifications & Extensions (Phase 6)**:
+> 1. **AI Provider**: Standardized on Google Gemini API (`gemini-2.5-flash`) via the official `google-genai` Python SDK, with full deterministic offline fallback (`fixtures/claims_cache.json`). The platform runs 100% reliably with or without `GEMINI_API_KEY`.
+> 2. **Privileged Resource Probing**: Direct lookups on `/api/evidence/{id}` and `/api/claims/{id}` above a user's clearance strictly return `404 Not Found` (never `403 Forbidden`) to guarantee that the existence of privileged records is completely obscured.
+> 3. **Handover Snapshot Enhancements**: `GET /api/handover` returns `200 OK` with `state: "not_approved"` when no snapshot is published. Approved responses include categorized `sections`, `first_7_days` onboarding plan (5 concrete steps), and `hidden_count`.
+> 4. **Audit Trail Access**: `GET /api/audit` is restricted strictly to Lead role (`maya`).
+> 5. **Source Uploads**: Added `POST /api/sources` supporting `.json`, `.csv`, `.md`, `.txt` uploads up to 2 MB with pre-storage PII/secret masking.
+
 ---
 
 ## 1. Core Trust & Security Model

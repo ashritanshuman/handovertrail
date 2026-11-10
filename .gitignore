@@ -29,8 +29,12 @@ ENV/
 *.sqlite
 *.sqlite3
 *.db
+*.db-shm
+*.db-wal
 backend/*.sqlite
 backend/*.db
+backend/*.db-shm
+backend/*.db-wal
 
 # Node / Frontend
 node_modules/
