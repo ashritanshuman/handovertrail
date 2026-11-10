@@ -66,6 +66,7 @@ pnpm-debug.log*
 # Antigravity / Agent Scratch
 .gemini/
 scratch/
+docs/
 
 frontend/design/stitch/
 design/
