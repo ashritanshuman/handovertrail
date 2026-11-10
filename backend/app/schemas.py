@@ -225,3 +225,4 @@ class ExtractResponse(BaseModel):
     inferred_count: int
     missing_count: int
     duration_ms: int
+    origin: str = "cache"

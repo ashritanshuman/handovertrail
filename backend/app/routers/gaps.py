@@ -4,9 +4,9 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.db import get_db
-from app.models import Question, User, AuditLog
+from app.models import Question, User, AuditLog, EvidenceUnit
 from app.schemas import QuestionRead, QuestionAnswerRequest
-from app.security import get_current_user
+from app.security import get_current_user, require_lead_or_leaver
 
 router = APIRouter(prefix="/api/gaps", tags=["Gaps"])
 
@@ -19,6 +19,7 @@ def list_gaps(
 ):
     """
     Returns knowledge gaps and questions requiring leaver answers.
+    Visible to all project members to understand open questions.
     """
     query = db.query(Question)
     if state:
@@ -32,10 +33,13 @@ def answer_gap(
     gap_id: str,
     payload: QuestionAnswerRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_lead_or_leaver),
 ):
     """
-    Records an answer to an open knowledge gap.
+    Records an answer to an open knowledge gap (leaver or lead only).
+    Stores answer, marks state as answered, and records the answer as new attributed evidence
+    (source_type: 'exit_interview', author: current_user.name, access_level: 2)
+    that the lead can use to resolve conflicts.
     """
     gap = db.query(Question).filter(Question.id == gap_id).first()
     if not gap:
@@ -49,13 +53,28 @@ def answer_gap(
     gap.answered_by = current_user.id
     gap.answered_at = datetime.now(timezone.utc)
 
+    # Record answer as new attributed evidence unit (source_type 'exit_interview', access_level 2)
+    new_ev = EvidenceUnit(
+        id=f"ev-interview-{uuid.uuid4().hex[:8]}",
+        project_id="campusconnect",
+        source_type="exit_interview",
+        source_ref=f"Exit Interview: Gap {gap.id}",
+        location=f"Q: {gap.text[:60]}...",
+        author=current_user.name or current_user.id,
+        timestamp=datetime.now(timezone.utc),
+        text=payload.answer,
+        access_level=2,
+        redactions_json=[],
+    )
+    db.add(new_ev)
+
     audit = AuditLog(
         id=f"aud-gap-{uuid.uuid4().hex[:12]}",
-        user_id=current_user.id,
+        actor=current_user.id,
         action="ANSWER_GAP",
-        target_type="gap",
-        target_id=gap_id,
-        details=f"User {current_user.id} provided answer to gap '{gap_id}'.",
+        entity="gap",
+        entity_id=gap_id,
+        details=f"User {current_user.id} provided exit interview answer for gap '{gap_id}'. Attributed evidence {new_ev.id} created.",
     )
     db.add(audit)
     db.commit()

@@ -6,6 +6,8 @@ from app.db import get_db
 from app.models import Claim, EvidenceUnit, User, AuditLog
 from app.schemas import ClaimRead, ClaimDetail, ClaimPatchRequest, EvidenceUnitRead, ConflictDetail
 from app.security import get_current_user, require_lead
+from app.services.verify import reverify_claim
+from app.services.conflicts import check_single_claim_conflict
 
 router = APIRouter(prefix="/api/claims", tags=["Claims"])
 
@@ -14,28 +16,39 @@ router = APIRouter(prefix="/api/claims", tags=["Claims"])
 def list_claims(
     type: Optional[str] = Query(None, description="Filter by claim type"),
     status_filter: Optional[str] = Query(None, alias="status", description="Filter by status (verified, inferred, conflicting, missing)"),
+    review_state: Optional[str] = Query(None, description="Filter by review state (draft, confirmed, rejected, edited)"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """
-    Lists claims filtered by type, status, and viewer's clearance level.
+    Lists claims strictly filtered by type, status, review_state, and viewer's clearance level.
+    Claims with access_level > viewer's clearance are excluded at the query level.
     """
     query = db.query(Claim).filter(Claim.access_level <= current_user.clearance)
-    
+
     if type:
         query = query.filter(Claim.type == type.lower())
     if status_filter:
         query = query.filter(Claim.status == status_filter.lower())
-        
+    if review_state:
+        query = query.filter(Claim.review_state == review_state.lower())
+
     claims = query.order_by(Claim.id.asc()).all()
     results = []
     for c in claims:
         conflict_details = None
         if c.status == "conflicting":
-            conflict_details = ConflictDetail(
-                statement_a="Issue #42: The payment provider API key must be rotated monthly every 30 days per PCI requirement.",
-                statement_b="Architecture Meeting 2026-09-15: We agreed to rotate external API keys quarterly (90 days) to avoid breaking webhook integrations."
-            )
+            conf_data = check_single_claim_conflict(c.text, c.quote)
+            if conf_data:
+                conflict_details = ConflictDetail(
+                    statement_a=conf_data["statement_a"],
+                    statement_b=conf_data["statement_b"],
+                )
+            else:
+                conflict_details = ConflictDetail(
+                    statement_a="Issue #42 (ev-github-004): Payment provider API key must be rotated monthly every 30 days per PCI requirement.",
+                    statement_b="12 Oct Meeting Notes (ev-notes-002): Agreed to rotate external API keys quarterly (90 days) to avoid breaking webhook integrations.",
+                )
         results.append(
             ClaimRead(
                 id=c.id,
@@ -63,20 +76,15 @@ def get_claim(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Returns single claim detail with supporting evidence units.
-    Enforces clearance check.
+    Returns single claim detail with its supporting evidence units.
+    If the claim does not exist or exceeds the viewer's clearance, returns 404 (never 403)
+    so existence of privileged content is never revealed.
     """
     claim = db.query(Claim).filter(Claim.id == claim_id).first()
-    if not claim:
+    if not claim or claim.access_level > current_user.clearance:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Claim '{claim_id}' not found.",
-        )
-        
-    if claim.access_level > current_user.clearance:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Forbidden: Claim access level exceeds your clearance.",
         )
 
     ev_ids = claim.evidence_ids or []
@@ -94,10 +102,17 @@ def get_claim(
 
     conflict_details = None
     if claim.status == "conflicting":
-        conflict_details = ConflictDetail(
-            statement_a="Issue #42: The payment provider API key must be rotated monthly every 30 days per PCI requirement.",
-            statement_b="Architecture Meeting 2026-09-15: We agreed to rotate external API keys quarterly (90 days) to avoid breaking webhook integrations."
-        )
+        conf_data = check_single_claim_conflict(claim.text, claim.quote)
+        if conf_data:
+            conflict_details = ConflictDetail(
+                statement_a=conf_data["statement_a"],
+                statement_b=conf_data["statement_b"],
+            )
+        else:
+            conflict_details = ConflictDetail(
+                statement_a="Issue #42 (ev-github-004): Payment provider API key must be rotated monthly every 30 days per PCI requirement.",
+                statement_b="12 Oct Meeting Notes (ev-notes-002): Agreed to rotate external API keys quarterly (90 days) to avoid breaking webhook integrations.",
+            )
 
     return ClaimDetail(
         id=claim.id,
@@ -125,7 +140,10 @@ def update_claim(
     current_user: User = Depends(require_lead),  # Lead only!
 ):
     """
-    Updates, edits, or confirms a claim. Requires Lead role (e.g. Maya).
+    Updates, edits, or confirms a claim (lead only).
+    Actions: confirm | reject | edit (editing text/owner/type).
+    Edits set origin='human' and review_state='edited', bump version, re-run verification,
+    and write audit_log with before/after snapshots.
     """
     claim = db.query(Claim).filter(Claim.id == claim_id).first()
     if not claim:
@@ -134,29 +152,69 @@ def update_claim(
             detail=f"Claim '{claim_id}' not found.",
         )
 
-    if payload.text is not None:
+    before_snapshot = {
+        "text": claim.text,
+        "owner": claim.owner,
+        "type": claim.type,
+        "quote": claim.quote,
+        "status": claim.status,
+        "review_state": claim.review_state,
+        "version": claim.version,
+        "origin": claim.origin,
+    }
+
+    is_edited = False
+    if payload.text is not None and payload.text != claim.text:
         claim.text = payload.text
-        claim.review_state = "edited"
-    if payload.quote is not None:
+        is_edited = True
+    if payload.quote is not None and payload.quote != claim.quote:
         claim.quote = payload.quote
-    if payload.owner is not None:
+        is_edited = True
+    if payload.owner is not None and payload.owner != claim.owner:
         claim.owner = payload.owner
-    if payload.type is not None:
+        is_edited = True
+    if payload.type is not None and payload.type != claim.type:
         claim.type = payload.type
+        is_edited = True
+
+    if is_edited:
+        claim.origin = "human"
+        claim.review_state = "edited"
+
     if payload.review_state:
         claim.review_state = payload.review_state
         if payload.review_state == "confirmed" and claim.status == "conflicting":
+            # Human resolution of conflict
             claim.status = "verified"
+            claim.conflict_group_id = None
+        elif payload.review_state == "rejected":
+            claim.conflict_group_id = None
 
     claim.version += 1
-    
+
+    # Re-run deterministic verification
+    reverify_claim(claim, db)
+
+    after_snapshot = {
+        "text": claim.text,
+        "owner": claim.owner,
+        "type": claim.type,
+        "quote": claim.quote,
+        "status": claim.status,
+        "review_state": claim.review_state,
+        "version": claim.version,
+        "origin": claim.origin,
+    }
+
     audit = AuditLog(
         id=f"aud-patch-{uuid.uuid4().hex[:12]}",
-        user_id=current_user.id,
+        actor=current_user.id,
         action="REVIEW_CLAIM",
-        target_type="claim",
-        target_id=claim_id,
-        details=f"Lead {current_user.id} updated claim to state '{claim.review_state}' (version {claim.version}).",
+        entity="claim",
+        entity_id=claim_id,
+        before_json=before_snapshot,
+        after_json=after_snapshot,
+        details=f"Lead {current_user.id} updated claim to state '{claim.review_state}' (version {claim.version}, status {claim.status}).",
     )
     db.add(audit)
     db.commit()

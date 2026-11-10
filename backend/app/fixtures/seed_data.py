@@ -97,7 +97,7 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
     db.commit()
 
     # 4. Seed Extracted Claims
-    claims_data = extract_claims_from_units(raw_units, use_cache=True)
+    claims_data, origin = extract_claims_from_units(raw_units, use_cache=True)
     for c in claims_data:
         claim_obj = Claim(
             id=c["id"],
