@@ -101,3 +101,4 @@ export const PermissionDemo: React.FC = () => {
     </section>
   );
 };
+

@@ -102,3 +102,4 @@ export const ProductMockup: React.FC = () => {
     </div>
   );
 };
+

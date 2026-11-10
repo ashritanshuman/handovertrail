@@ -42,3 +42,4 @@ export const LandingFooter: React.FC = () => {
     </footer>
   );
 };
+

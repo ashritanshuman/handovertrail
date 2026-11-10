@@ -76,3 +76,4 @@ export const LandingNav: React.FC<LandingNavProps> = ({ onLoadDemo, isLoading })
     </header>
   );
 };
+

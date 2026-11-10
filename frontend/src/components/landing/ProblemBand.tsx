@@ -62,3 +62,4 @@ export const ProblemBand: React.FC = () => {
     </section>
   );
 };
+

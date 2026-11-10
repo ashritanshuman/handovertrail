@@ -70,3 +70,4 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onLoadDemo, isLoading 
     </section>
   );
 };
+
