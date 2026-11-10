@@ -115,7 +115,7 @@ flowchart TD
 ### One-Command Setup
 ```bash
 # Clone repository
-git clone https://github.com/TchieSharks/handovertrail.git
+git clone https://github.com/ashritanshuman/handovertrail
 cd handovertrail
 
 # Complete setup (backend virtualenv + pip + frontend npm)
