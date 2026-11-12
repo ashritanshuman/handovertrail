@@ -63,10 +63,7 @@ pnpm-debug.log*
 *.swo
 *~
 .DS_Store
-
-# Antigravity / Agent Scratch
 .gemini/
 scratch/
-
 frontend/design/stitch/
 design/
