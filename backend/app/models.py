@@ -95,6 +95,7 @@ class Question(Base):
     id = Column(String(50), primary_key=True, index=True)  # 'gap-001'
     project_id = Column(String(50), ForeignKey("projects.id"), default="campusconnect", nullable=False, index=True)
     claim_id = Column(String(50), ForeignKey("claims.id"), nullable=True, index=True)
+    conflict_group_id = Column(String(50), nullable=True, index=True)
     kind = Column(String(50), default="conflict", nullable=False)  # 'conflict', 'missing', 'low_evidence'
     text = Column(Text, nullable=False)
     answer = Column(Text, nullable=True)
@@ -174,3 +175,29 @@ class ExtractionRun(Base):
     origin = Column(String(20), default="cache", nullable=False)  # 'llm', 'cache'
     counts_json = Column(JSON, nullable=True)
     error = Column(Text, nullable=True)
+
+
+class ConflictGroup(Base):
+    __tablename__ = "conflict_groups"
+
+    id = Column(String(50), primary_key=True, index=True)  # 'cg-api-key-rotation'
+    project_id = Column(String(50), ForeignKey("projects.id"), default="campusconnect", nullable=False, index=True)
+    topic = Column(String(150), nullable=True, index=True)  # Groups related conflicts
+    attribute = Column(String(50), nullable=False)  # 'period', 'owner', 'date', 'status', 'tool_choice'
+    entity = Column(String(150), nullable=False)  # e.g. 'API Key Rotation', 'Payment Recon'
+    type = Column(String(50), default="contradiction", nullable=False)  # 'contradiction', 'supersession'
+    confidence = Column(String(20), default="high", nullable=False)  # 'high', 'medium', 'low'
+    status = Column(String(30), default="open", nullable=False)  # 'open', 'resolved', 'dismissed', 'unresolved'
+    resolution_type = Column(String(30), nullable=True)  # 'chose_claim', 'corrected', 'dismissed', 'left_unresolved'
+    resolved_claim_id = Column(String(50), nullable=True)
+    note = Column(Text, nullable=True)  # Lead explanation / reason
+    suggestion = Column(Text, nullable=True)  # Auto-generated supersession / resolution hint
+    resolved_by = Column(String(50), nullable=True)
+    resolved_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=utc_now)
+
+    def __init__(self, **kwargs):
+        if "project_id" not in kwargs:
+            kwargs["project_id"] = "campusconnect"
+        super().__init__(**kwargs)
+

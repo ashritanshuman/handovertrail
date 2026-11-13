@@ -31,6 +31,14 @@ def test_approval_blocker_and_resolution(client):
     assert res_resolve.status_code == 200
     assert res_resolve.json()["status"] == "verified"
 
+    # Dismiss remaining open conflict groups to test clean approval without override flag
+    for cg_id in ["cg-api-key-rotation", "cg-owner-payment-recon", "cg-date-cert-cutover", "cg-status-websocket-sse"]:
+        client.post(
+            f"/api/conflicts/{cg_id}/dismiss",
+            json={"reason": "Resolved or dismissed for test"},
+            headers={"X-User-Id": "maya"},
+        )
+
     # 4. Approval succeeds cleanly without override flag
     res_clean = client.post(
         "/api/approve",

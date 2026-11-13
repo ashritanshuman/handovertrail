@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from app.config import settings
 
@@ -31,3 +31,11 @@ def get_db():
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+    # Ensure additive columns exist on pre-existing SQLite databases
+    if settings.DATABASE_URL.startswith("sqlite"):
+        with engine.connect() as conn:
+            try:
+                conn.execute(text("ALTER TABLE questions ADD COLUMN conflict_group_id VARCHAR(50)"))
+                conn.commit()
+            except Exception:
+                pass

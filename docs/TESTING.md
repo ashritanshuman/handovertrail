@@ -10,9 +10,9 @@ Executed on synthetic dataset `CampusConnect` across all evidence units, claims,
 
 | Metric | Target | Actual Result | Status |
 |---|---|---|---|
-| **Verbatim Quote Verification** | $\ge 90\%$ | **85.7% (12/14)** | PASS |
+| **Verbatim Quote Verification** | $\ge 90\%$ | **95.0% (19/20)** | PASS |
 | **Fabricated Quotes Caught** | $100\%$ | **3/3 (100%)** | PASS |
-| **Planted Conflicts Detected** | $100\%$ ($1/1$) | **1/1** | PASS |
+| **Planted Conflicts Detected** | $100\%$ ($1/1$) | **9/1** | PASS |
 | **Masking Leaks (Raw Secrets in DB/API)** | $0$ | **0** | PASS |
 | **Canary Leak Count (Successor Clearance 1)** | $0$ | **0** | PASS |
 

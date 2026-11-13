@@ -100,3 +100,24 @@ Operational decision: Daily SQLite database snapshots are uploaded to private S3
 
 Maya reviewed handover readiness. Confirmed that all claims must be verified with source evidence quotes and signed off before Arjun takes primary on-call rotation for the campus Spring Festival launch.
 
+---
+
+## Unit ev-notes-011: Sprint 31 Owner Transition Review
+- **Date**: 2026-10-26T14:00:00Z
+- **Location**: Meeting Rooms/Lead-Sync
+- **Author**: Maya Patel
+- **Access Level**: 2
+
+Maya Patel has assumed primary ownership of the payment reconciliation failover and Stripe webhook retry mechanics to prepare for Riya's departure.
+
+---
+
+## Unit ev-notes-012: iOS APNS Certificate Cutover Decision
+- **Date**: 2026-10-28T16:00:00Z
+- **Location**: Meeting Rooms/Mobile-Sync
+- **Author**: Maya Patel
+- **Access Level**: 1
+
+Decision on iOS APNS enterprise certificate cutover: Team agreed on November 15 as the hard cutover deadline to provide a two-week safety buffer before production expiration.
+
+
