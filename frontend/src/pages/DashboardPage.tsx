@@ -86,10 +86,12 @@ export const DashboardPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-[#d8d0c0]">
               <div className="flex items-center gap-2">
                 <h2 className="text-headline-section font-headline-section text-[#241d18] font-semibold">
-                  Open gaps
+                  Open gaps &amp; conflicts
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-label-caption font-label-caption bg-[#C9822B]/15 text-[#8F5105] border border-[#C9822B]/35 font-semibold">
-                  {openGapsCount} unresolved
+                  {typeof stats?.conflicts_open === "number" && stats.conflicts_open > 0
+                    ? `${stats.conflicts_open} conflicts · ${openGapsCount} gaps`
+                    : `${openGapsCount} unresolved`}
                 </span>
               </div>
               <AlertTriangle size={18} className="text-[#8F5105]" />
