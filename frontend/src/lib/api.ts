@@ -15,6 +15,12 @@ import {
   PlanItem,
   PreviewResponse,
   ShareCheckResponse,
+  VersionSummary,
+  VersionDetail,
+  VersionDiff,
+  AcknowledgementTrackingResponse,
+  PaginatedAuditLog,
+  AuditFilterParams,
 } from "../types";
 import {
   MOCK_PROJECT,
@@ -479,6 +485,7 @@ export const api = {
       quote?: string;
       owner?: string;
       type?: ClaimType;
+      note?: string;
     }
   ) =>
     request<Claim>(`/api/claims/${encodeURIComponent(id)}`, {
@@ -654,5 +661,56 @@ export const api = {
     request<PreviewResponse>(`/api/preview?mode=${mode}&project_id=campusconnect`),
 
   getShareCheck: () => request<ShareCheckResponse>("/api/preview/check?project_id=campusconnect"),
+
+  // Member 2: Version History, Visual Diff, Acknowledgement Tracking & Audit Log Viewer
+  getVersions: (projectId = "campusconnect") =>
+    request<VersionSummary[]>(`/api/versions?project_id=${encodeURIComponent(projectId)}`),
+
+  getVersionDetail: (versionStr: string, projectId = "campusconnect") =>
+    request<VersionDetail>(`/api/versions/${encodeURIComponent(versionStr)}?project_id=${encodeURIComponent(projectId)}`),
+
+  getVersionDiff: (fromVersion?: string, toVersion?: string, projectId = "campusconnect") => {
+    const params = new URLSearchParams({ project_id: projectId });
+    if (fromVersion) params.append("from", fromVersion);
+    if (toVersion) params.append("to", toVersion);
+    return request<VersionDiff>(`/api/versions/diff?${params.toString()}`);
+  },
+
+  getAcknowledgements: (version?: string, projectId = "campusconnect") => {
+    const params = new URLSearchParams({ project_id: projectId });
+    if (version) params.append("version", version);
+    return request<AcknowledgementTrackingResponse>(`/api/acknowledgements?${params.toString()}`);
+  },
+
+  getAuditPaginated: (params: AuditFilterParams) => {
+    const searchParams = new URLSearchParams();
+    searchParams.append("paginated", "true");
+    if (params.actor) searchParams.append("actor", params.actor);
+    if (params.action) searchParams.append("action", params.action);
+    if (params.entity) searchParams.append("entity", params.entity);
+    if (params.from) searchParams.append("from", params.from);
+    if (params.to) searchParams.append("to", params.to);
+    if (params.q) searchParams.append("q", params.q);
+    if (params.limit) searchParams.append("limit", params.limit.toString());
+    if (params.cursor) searchParams.append("cursor", params.cursor);
+    return request<PaginatedAuditLog>(`/api/audit?${searchParams.toString()}`);
+  },
+
+  getAuditExportUrl: (params: AuditFilterParams) => {
+    const searchParams = new URLSearchParams({ format: "csv" });
+    if (params.actor) searchParams.append("actor", params.actor);
+    if (params.action) searchParams.append("action", params.action);
+    if (params.entity) searchParams.append("entity", params.entity);
+    if (params.from) searchParams.append("from", params.from);
+    if (params.to) searchParams.append("to", params.to);
+    if (params.q) searchParams.append("q", params.q);
+    return `/api/audit/export?${searchParams.toString()}`;
+  },
+
+  seedHistoryDemo: () =>
+    request<{ status: string; message: string; versions: string[]; outdated_recipient: string }>(
+      "/api/demo/seed-history",
+      { method: "POST" }
+    ),
 };
 

@@ -6,6 +6,7 @@ import {
   ExternalLink,
   ArrowRight,
   PenTool,
+  AlertTriangle,
 } from "lucide-react";
 import { AppShell } from "../components/AppShell";
 import { FirstSevenDaysCard } from "../components/FirstSevenDaysCard";
@@ -132,6 +133,19 @@ export const HandoverPage: React.FC = () => {
           <div className="mt-5">
             <HiddenItemsBanner hiddenCount={handover?.hidden_count ?? 4} />
           </div>
+
+          {/* Outdated Version Notice Banner for Successor */}
+          {handover?.is_outdated && isSuccessor && (
+            <div className="mt-4 p-4 rounded-xl bg-[#FEF4E8] border border-[#F8D2A6] text-[#8F5105] flex items-start gap-3 shadow-xs animate-fade-in">
+              <AlertTriangle size={18} className="shrink-0 text-[#8F5105] mt-0.5" />
+              <div className="text-sm">
+                <strong className="font-semibold block">New version available: please acknowledge</strong>
+                <p className="text-xs text-[#8F5105]/90 mt-0.5">
+                  A newer approved handover version (v{handover.version}) has been ratified by Lead Maya since your previous acknowledgement. Please review the updated claims and re-acknowledge receipt below.
+                </p>
+              </div>
+            </div>
+          )}
         </header>
 
         {/* Content Sections */}

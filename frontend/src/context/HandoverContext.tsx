@@ -69,9 +69,9 @@ interface HandoverContextType {
     conflicting_count: number;
     duration_ms: number;
   }>;
-  confirmClaim: (id: string) => Promise<void>;
-  rejectClaim: (id: string) => Promise<void>;
-  editClaim: (id: string, text: string, quote?: string, type?: ClaimType) => Promise<void>;
+  confirmClaim: (id: string, note?: string) => Promise<void>;
+  rejectClaim: (id: string, note?: string) => Promise<void>;
+  editClaim: (id: string, text: string, quote?: string, type?: ClaimType, note?: string) => Promise<void>;
   answerGap: (id: string, answer: string) => Promise<void>;
   approveHandover: (notes: string) => Promise<void>;
   acknowledgeHandover: (note?: string) => Promise<void>;
@@ -250,13 +250,13 @@ export const HandoverProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  const confirmClaim = async (id: string) => {
+  const confirmClaim = async (id: string, note?: string) => {
     if (currentUser.role !== "lead") {
       showToast("Only Maya Patel (Lead) can confirm claims", "warning");
       return;
     }
     try {
-      const updated = await api.patchClaim(id, { review_state: "confirmed" });
+      const updated = await api.patchClaim(id, { review_state: "confirmed", note });
       setClaims((prev) => prev.map((c) => (c.id === id ? updated : c)));
       if (selectedClaim?.id === id) {
         setSelectedClaim(updated);
@@ -270,13 +270,13 @@ export const HandoverProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  const rejectClaim = async (id: string) => {
+  const rejectClaim = async (id: string, note?: string) => {
     if (currentUser.role !== "lead") {
       showToast("Only Maya Patel (Lead) can reject claims", "warning");
       return;
     }
     try {
-      const updated = await api.patchClaim(id, { review_state: "rejected" });
+      const updated = await api.patchClaim(id, { review_state: "rejected", note });
       setClaims((prev) => prev.map((c) => (c.id === id ? updated : c)));
       if (selectedClaim?.id === id) {
         setSelectedClaim(updated);
@@ -289,7 +289,7 @@ export const HandoverProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  const editClaim = async (id: string, text: string, quote?: string, type?: ClaimType) => {
+  const editClaim = async (id: string, text: string, quote?: string, type?: ClaimType, note?: string) => {
     if (currentUser.role !== "lead") {
       showToast("Only Maya Patel (Lead) can edit claims", "warning");
       return;
@@ -300,6 +300,7 @@ export const HandoverProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         text,
         quote,
         type,
+        note,
       });
       setClaims((prev) => prev.map((c) => (c.id === id ? updated : c)));
       if (selectedClaim?.id === id) {

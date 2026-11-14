@@ -8,6 +8,7 @@ import {
   GapsPage,
   HandoverPage,
   PreviewPage,
+  HistoryPage,
 } from "./pages";
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/gaps" element={<GapsPage />} />
           <Route path="/handover" element={<HandoverPage />} />
           <Route path="/preview" element={<PreviewPage />} />
+          <Route path="/history" element={<HistoryPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

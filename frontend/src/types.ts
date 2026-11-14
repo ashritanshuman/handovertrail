@@ -97,6 +97,7 @@ export interface HandoverVersion {
   plan?: PlanResponse | null;
   hidden_count?: number;
   acknowledged: boolean;
+  is_outdated?: boolean;
 }
 
 export interface StatsResponse {
@@ -297,4 +298,129 @@ export interface PreviewResponse {
   confidential_count: number;
   share_check?: ShareCheckResponse;
 }
+
+// ------------------ VERSION HISTORY, DIFF & AUDIT (MEMBER 2) ------------------
+export interface VersionSummary {
+  id: string;
+  version: string;
+  approved_by: string;
+  approved_at: string;
+  notes?: string;
+  claims_count: number;
+  status_counts: Record<string, number>;
+  is_current: boolean;
+  acknowledgement_summary: string;
+}
+
+export interface VersionDetail {
+  id: string;
+  version: string;
+  project_id: string;
+  approved_by: string;
+  approved_at: string;
+  notes?: string;
+  viewer_clearance: number;
+  claims: Claim[];
+  sections?: Record<string, Claim[]>;
+  first_7_days?: string[];
+  hidden_count: number;
+  is_current: boolean;
+}
+
+export interface FieldChange {
+  field: string;
+  old_value: any;
+  new_value: any;
+}
+
+export interface ClaimDiff {
+  id: string;
+  type: ClaimType | string;
+  text: string;
+  old_text?: string;
+  owner: string;
+  old_owner?: string;
+  status: ClaimStatus | string;
+  old_status?: string;
+  review_state: ReviewState | string;
+  old_review_state?: string;
+  access_level: number;
+  evidence_ids: string[];
+  quote?: string;
+  field_changes?: FieldChange[];
+  changed_by?: string;
+  changed_at?: string;
+  note?: string;
+}
+
+export interface VersionDiff {
+  from_version: string;
+  to_version: string;
+  from_approved_at?: string;
+  to_approved_at?: string;
+  added: ClaimDiff[];
+  removed: ClaimDiff[];
+  changed: ClaimDiff[];
+  unchanged_count: number;
+  total_from: number;
+  total_to: number;
+}
+
+export interface RecipientAckStatus {
+  user_id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: "acknowledged" | "pending" | "outdated";
+  acknowledged_at?: string | null;
+  note?: string;
+  previously_acknowledged_version?: string | null;
+}
+
+export interface AcknowledgementTrackingResponse {
+  current_version: string | null;
+  inspected_version: string | null;
+  total_recipients: number;
+  acknowledged_count: number;
+  pending_count: number;
+  outdated_count: number;
+  recipients: RecipientAckStatus[];
+}
+
+export interface AuditLogDetail {
+  id: string;
+  user_id: string;
+  action: string;
+  target_type: string;
+  target_id: string;
+  timestamp: string;
+  details?: string;
+  actor?: string;
+  entity?: string;
+  entity_id?: string;
+  before_json?: any;
+  after_json?: any;
+  summary?: string;
+}
+
+export interface PaginatedAuditLog {
+  items: AuditLogDetail[];
+  total: number;
+  limit: number;
+  cursor?: string | null;
+  has_more: boolean;
+}
+
+export interface AuditFilterParams {
+  actor?: string;
+  action?: string;
+  entity?: string;
+  from?: string;
+  to?: string;
+  q?: string;
+  limit?: number;
+  cursor?: string;
+  paginated?: boolean;
+}
+
 
