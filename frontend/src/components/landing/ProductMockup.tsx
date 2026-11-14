@@ -36,7 +36,7 @@ export const ProductMockup: React.FC = () => {
   const [activeClaim, setActiveClaim] = useState<Claim>(SAMPLE_CLAIM);
 
   return (
-    <div className="mt-14 max-w-[1080px] mx-auto text-left relative animate-fade-in">
+    <div className="mt-14 max-w-[67.5rem] mx-auto text-left relative animate-fade-in">
       {/* Floating Proof Chip 1: Top Left */}
       <div className="absolute -top-4 -left-3 sm:-left-6 z-20 bg-white border border-[#d8d0c0] rounded-full px-3.5 py-1.5 shadow-[0_8px_20px_-4px_rgba(70,63,58,0.12)] flex items-center gap-2 text-xs font-medium text-[#241d18]">
         <span className="w-4 h-4 rounded-full bg-[#5F7A61]/15 text-[#38523A] flex items-center justify-center font-bold text-xs">

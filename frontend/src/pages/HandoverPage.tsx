@@ -103,7 +103,7 @@ export const HandoverPage: React.FC = () => {
 
   return (
     <AppShell>
-      <div className="w-full max-w-[880px] mx-auto py-4 md:py-8 flex-1">
+      <div className="w-full max-w-[55rem] mx-auto py-4 md:py-8 flex-1">
         {/* Document Header & Metadata */}
         <header className="mb-8">
           <div className="flex items-center gap-2 text-label-mono-metadata font-label-mono-metadata text-[#6B635E] tracking-wider uppercase mb-2">

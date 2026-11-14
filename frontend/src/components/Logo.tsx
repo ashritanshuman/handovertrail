@@ -25,7 +25,8 @@ export const Logo: React.FC<LogoProps> = ({
   imgClassName = "",
   onClick,
 }) => {
-  const pixelSize = typeof size === "number" ? size : SIZE_MAP[size] || 38;
+  const baseSize = typeof size === "number" ? size : SIZE_MAP[size] || 38;
+  const pixelSize = Math.round(baseSize * 1.333333);
 
   return (
     <div
