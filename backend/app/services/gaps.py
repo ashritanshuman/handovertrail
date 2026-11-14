@@ -352,9 +352,10 @@ def record_interview_skip(
     question.answered_by = current_user.id
     question.answered_at = datetime.now(timezone.utc)
 
+    skip_reason = reason or "I don't recall"
     after_snapshot = {
         "state": "skipped",
-        "reason": reason or "I don't recall",
+        "reason": skip_reason,
         "skipped_by": current_user.id,
     }
 
@@ -366,7 +367,7 @@ def record_interview_skip(
         entity_id=question_id,
         before_json=before_snapshot,
         after_json=after_snapshot,
-        details=f"User {current_user.id} skipped exit interview question '{question_id}'. Reason: {reason or 'I don\'t recall'}",
+        details=f"User {current_user.id} skipped exit interview question '{question_id}'. Reason: {skip_reason}",
     )
     db.add(audit)
     db.commit()

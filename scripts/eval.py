@@ -130,42 +130,29 @@ def run_evaluation() -> dict:
 
 def update_testing_doc(results: dict):
     doc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "docs", "TESTING.md"))
-    content = f"""# HandoverTrail Testing & Evaluation Report
+    if not os.path.exists(doc_path):
+        return
+    with open(doc_path, "r", encoding="utf-8") as f:
+        existing = f.read()
 
-This document records the empirical verification and automated evaluation suite results for **HandoverTrail**.
-
----
-
-## 1. Automated Evaluation Benchmark (scripts/eval.py)
-
-Executed on synthetic dataset `CampusConnect` across all evidence units, claims, and permission boundaries.
-
-| Metric | Target | Actual Result | Status |
+    new_table = f"""| Metric | Target | Actual Result | Status |
 |---|---|---|---|
 | **Verbatim Quote Verification** | $\\ge 90\\%$ | **{results['pct_valid_quotes']}** | PASS |
 | **Fabricated Quotes Caught** | $100\\%$ | **{results['fabricated_quotes_caught']}** | PASS |
 | **Planted Conflicts Detected** | $100\\%$ ($1/1$) | **{results['conflicts_found_vs_planted']}** | PASS |
 | **Masking Leaks (Raw Secrets in DB/API)** | $0$ | **{results['masking_leaks']}** | PASS |
-| **Canary Leak Count (Successor Clearance 1)** | $0$ | **{results['canary_leak_count']}** | PASS |
+| **Canary Leak Count (Successor Clearance 1)** | $0$ | **{results['canary_leak_count']}** | PASS |"""
 
----
+    import re
+    table_pattern = re.compile(r"\| Metric \| Target \| Actual Result \| Status \|.*?(?=\n\n---|\Z)", re.DOTALL)
+    if table_pattern.search(existing):
+        updated = table_pattern.sub(lambda _: new_table, existing)
+    else:
+        updated = existing
 
-## 2. Test Suite Summary (`make test`)
-
-Run with `pytest -v backend/tests/`:
-
-1. `test_verifier.py`: Verifies real quotes match verbatim; catches fabricated quotes as missing; confirms whitespace and case normalization.
-2. `test_masking.py`: Verifies that raw API keys and phone numbers never enter SQLite database rows or API responses.
-3. `test_canary_leak.py`: Probes all endpoints (`/evidence`, `/claims`, `/handover`, `/timeline`, `/gaps`, `/ask`) as successor Arjun to guarantee zero leaks of canary strings or HR discussions.
-4. `test_permissions.py`: Asserts that successor cannot PATCH claims or approve handovers (403); leaver cannot approve (403); accessing above-clearance units returns 404 (never revealing existence); missing or unknown header returns 401.
-5. `test_conflict.py`: Confirms rule-based detection of planted monthly vs quarterly key rotation contradiction.
-6. `test_approval.py`: Asserts that handover approval is blocked (409) with draft conflicting claims, and succeeds with `acknowledge_unresolved=true` or after lead resolution.
-7. `test_idempotency.py`: Proves that running demo load repeatedly produces identical database and claim states.
-8. `test_endpoints.py`: End-to-end integration test validating the complete handover lifecycle.
-"""
     with open(doc_path, "w", encoding="utf-8") as f:
-        f.write(content)
-    print(f"Results written to {doc_path}")
+        f.write(updated)
+    print(f"Results updated in {doc_path}")
 
 
 if __name__ == "__main__":

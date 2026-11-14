@@ -79,4 +79,29 @@ The test suite was extended with 10 new rigorous test cases across 2 new test mo
    - `test_audit_export_csv_and_formula_protection`: Validates `GET /api/audit/export?format=csv` streaming output, RFC 4180 headers, and formula-injection defenses (cells starting with `=`, `+`, `-`, or `@` are safely prefixed with `'`).
    - `test_canary_leak_protection_audit`: Proves level-3 canary strings are masked as `[REDACTED]` in audit before/after JSON structures and CSV exports; verifies 403 Forbidden gates for non-lead callers.
 
+---
+
+## 5. Member 1 Test Suite Extension (Conflict Resolution & Exit Interview)
+
+The test suite was extended with 12 new test cases across 3 test modules plus canary leak extensions:
+
+1. **`test_conflicts.py`**:
+   - `test_detect_all_four_planted_conflicts`: Confirms deterministic multi-attribute detection across all 4 planted conflicts (rotation period, module ownership, cutover date, status/supersession).
+   - `test_list_and_get_conflicts_as_lead`: Confirms Lead Maya retrieves all conflict groups with topics, suggestions, and cited evidence quotes.
+   - `test_conflict_filtering_by_status_and_type`: Validates filtering by status (`open`, `resolved`, `dismissed`, `unresolved`) and type (`contradiction`, `supersession`).
+   - `test_conflicts_access_control`: Verifies strict RBAC where Arjun is blocked (403), Riya is blocked (403), and missing auth returns 401.
+
+2. **`test_interview.py`**:
+   - `test_interview_session_retrieval`: Asserts exit-interview session returns prioritized questions (conflicts first, gaps second) with side-by-side quotes.
+   - `test_answer_interview_question_with_masking`: Confirms answers are sanitized for PII/secrets before storage and saved as attributed `EvidenceUnit` (access level 2).
+   - `test_skip_interview_question`: Validates skip flow with reason and reload persistence.
+
+3. **`test_resolution.py`**:
+   - `test_resolve_conflict_chose_claim`: Validates resolution via choosing an existing claim (`review_state="confirmed"`, competitors `rejected`).
+   - `test_resolve_conflict_corrected`: Validates synthesized corrected claim creation (`origin="human"`) with deterministic re-verification.
+   - `test_dismiss_conflict_group`: Asserts false-positive dismissal with mandatory rationale.
+   - `test_leave_conflict_unresolved`: Asserts explicit deferral with mandatory rationale.
+   - `test_approval_gating_with_open_conflicts`: Proves open or unresolved conflicts block approval with HTTP 409 Conflict.
+
+
 
