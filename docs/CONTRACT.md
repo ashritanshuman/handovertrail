@@ -816,4 +816,201 @@ Submits leaver answer. Masks sensitive content pre-storage, persists answer as a
 Marks question `skipped` ("I don't remember"), records `interview_skipped` audit entry, and preserves progress across reloads.
 - **Request Body**: `{"reason": "I don't recall"}`
 
+---
 
+## 9. First-7-Days Plan Generator & Preview-as-Successor (Member 3: Amreesh)
+
+### 26. `POST /api/plan/generate`
+Generates a deterministic 7-day onboarding action plan for the successor, tailored to role and focus areas. Lead only.
+
+- **Headers**: `X-User-Id: maya`
+- **Request Body**:
+```json
+{
+  "project_id": "campusconnect",
+  "role_title": "Backend Engineer",
+  "focus_areas": ["Stripe", "Vault", "Redis", "APNs"]
+}
+```
+- **Response `200 OK`**:
+```json
+{
+  "id": "plan-campusconnect-a1b2c3d4",
+  "project_id": "campusconnect",
+  "version_id": null,
+  "status": "draft",
+  "role_title": "Backend Engineer",
+  "focus_areas": ["Stripe", "Vault", "Redis", "APNs"],
+  "items": [
+    {
+      "id": "item-d1-01",
+      "day": 1,
+      "title": "Transfer ownership from departing engineer: Implement Stripe webhook idempotency ledger in payment_reconciliation.py",
+      "why_it_matters": "Previously maintained by Riya Sharma and requires active successor takeover.",
+      "category": "Handover",
+      "priority": "High",
+      "effort": "Medium",
+      "claim_ids": ["clm-003"],
+      "evidence_refs": ["ev-github-002"],
+      "source_label": "Github #002",
+      "is_pinned": false,
+      "done": false
+    }
+  ],
+  "is_stale": false,
+  "generated_at": "2026-11-14T10:30:00Z",
+  "published_at": null,
+  "completed_count": 0,
+  "total_items": 14
+}
+```
+
+---
+
+### 27. `GET /api/plan`
+Retrieves the onboarding plan.
+- **Lead (`maya`)**: returns latest draft or published plan.
+- **Successor (`arjun`)**: returns ONLY the published plan attached to approved handover, filtered by clearance (items citing claims with `access_level > 1` are excluded).
+- **Leaver (`riya`)**: read-only draft plan.
+
+- **Response `200 OK`**: `PlanResponse` schema.
+
+---
+
+### 28. `PATCH /api/plan/items/{id}`
+Updates an item's day, title, rationale, category, priority, effort, or pin status in the draft plan. Lead only.
+
+- **Headers**: `X-User-Id: maya`
+- **Request Body**:
+```json
+{
+  "day": 2,
+  "title": "Pair with Riya on Redis worker queue isolation",
+  "why_it_matters": "Critical orientation task before code freeze.",
+  "is_pinned": true
+}
+```
+- **Response `200 OK`**: Updated `PlanResponse`.
+
+---
+
+### 29. `DELETE /api/plan/items/{id}`
+Removes an item from the draft plan. Lead only.
+
+- **Headers**: `X-User-Id: maya`
+- **Response `200 OK`**: Updated `PlanResponse`.
+
+---
+
+### 30. `POST /api/plan/publish`
+Attaches the draft plan to the latest approved handover version and marks it published. Lead only.
+- Requires approved handover version.
+- Evaluates Share Check: rejects with `409 Conflict` if any `block` severity findings exist.
+- Requires `acknowledge_warnings: true` if `warn` severity findings exist.
+
+- **Headers**: `X-User-Id: maya`
+- **Request Body**:
+```json
+{
+  "project_id": "campusconnect",
+  "acknowledge_warnings": true
+}
+```
+- **Response `200 OK`**: `PlanResponse` with `status: "published"`.
+
+---
+
+### 31. `PATCH /api/plan/items/{id}/progress`
+Toggles checkbox completion status for the current user. Successor checklist tracking.
+
+- **Headers**: `X-User-Id: arjun`
+- **Request Body**:
+```json
+{
+  "done": true
+}
+```
+- **Response `200 OK`**:
+```json
+{
+  "status": "success",
+  "item_id": "item-d1-01",
+  "done": true,
+  "user_id": "arjun",
+  "updated_at": "2026-11-14T10:35:00Z"
+}
+```
+
+---
+
+### 32. `GET /api/preview`
+Lead-only preview-as-successor endpoint. Simulates the successor view (`arjun`, Clearance 1) by executing the exact clearance-filter and handover-partitioning pipeline.
+
+- **Query Params**: `mode=draft|approved` (default: `draft`)
+- **Headers**: `X-User-Id: maya`
+- **Response `200 OK`**:
+```json
+{
+  "mode": "draft",
+  "target_user": {
+    "id": "arjun",
+    "name": "Arjun Rao",
+    "role": "successor",
+    "clearance": 1,
+    "email": "arjun.rao@campusconnect.dev"
+  },
+  "handover": {
+    "state": "draft",
+    "version": "Draft (Unapproved)",
+    "project_id": "campusconnect",
+    "viewer_clearance": 1,
+    "claims": [...],
+    "sections": {...},
+    "first_7_days": [...],
+    "plan": {...},
+    "hidden_count": 4,
+    "acknowledged": false
+  },
+  "hidden_items": [
+    {
+      "id": "clm-014",
+      "type": "task",
+      "title": "Transition bonus & exit review",
+      "access_level": 2,
+      "reason": "Lead-only clearance"
+    }
+  ],
+  "confidential_count": 1,
+  "share_check": {
+    "can_publish": true,
+    "block_count": 0,
+    "warn_count": 2,
+    "info_count": 3,
+    "findings": [...]
+  }
+}
+```
+
+---
+
+### 33. `GET /api/preview/check`
+Runs automated confidentiality and safety checks over candidate handover claims and plan items. Lead only.
+
+- **Headers**: `X-User-Id: maya`
+- **Response `200 OK`**:
+```json
+{
+  "can_publish": true,
+  "block_count": 0,
+  "warn_count": 1,
+  "info_count": 2,
+  "findings": [
+    {
+      "severity": "warn",
+      "category": "Redaction Placeholder",
+      "message": "Claim contains redacted placeholder token.",
+      "location": "claim:clm-003"
+    }
+  ]
+}
+```
