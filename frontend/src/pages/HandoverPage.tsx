@@ -13,8 +13,36 @@ import { HiddenItemsBanner } from "../components/HiddenItemsBanner";
 import { useHandover } from "../context/HandoverContext";
 
 export const HandoverPage: React.FC = () => {
-  const { project, handover, currentUser, switchUser, acknowledgeHandover } = useHandover();
+  const {
+    project,
+    handover,
+    currentUser,
+    switchUser,
+    acknowledgeHandover,
+    openEvidenceDrawer,
+    claims,
+  } = useHandover();
   const [acknowledging, setAcknowledging] = useState(false);
+
+  const handleSelectClaim = (claimId: string) => {
+    const claim = claims.find((c) => c.id === claimId) || {
+      id: claimId,
+      project_id: "campusconnect",
+      type: "task",
+      text: `Claim ${claimId}`,
+      owner: "Team",
+      status: "verified",
+      evidence_ids: [],
+      quote: "",
+      access_level: 1,
+      review_state: "confirmed",
+      version: 1,
+      origin: "cache",
+    };
+    if (openEvidenceDrawer) {
+      openEvidenceDrawer(claim as any);
+    }
+  };
 
   const isApproved = project?.handover_state === "approved" || handover !== null;
   const isSuccessor = currentUser.role === "successor";
@@ -102,14 +130,14 @@ export const HandoverPage: React.FC = () => {
 
           {/* Redaction Notice Banner */}
           <div className="mt-5">
-            <HiddenItemsBanner hiddenCount={4} />
+            <HiddenItemsBanner hiddenCount={handover?.hidden_count ?? 4} />
           </div>
         </header>
 
         {/* Content Sections */}
         <div className="space-y-6">
           {/* Section 1: First 7 Days Orientation Checklist */}
-          <FirstSevenDaysCard />
+          <FirstSevenDaysCard plan={handover?.plan} onSelectClaim={handleSelectClaim} />
 
           {/* Section 2: What You Now Own */}
           <section className="bg-white border border-[#d8d0c0] rounded-2xl p-6 md:p-8 shadow-[0_1px_2px_rgba(70,63,58,0.06)]">

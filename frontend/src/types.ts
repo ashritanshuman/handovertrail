@@ -92,6 +92,10 @@ export interface HandoverVersion {
   notes?: string;
   viewer_clearance: number;
   claims: Claim[];
+  sections?: Record<string, Claim[]>;
+  first_7_days?: string[];
+  plan?: PlanResponse | null;
+  hidden_count?: number;
   acknowledged: boolean;
 }
 
@@ -224,3 +228,73 @@ export interface AuditLogEntry {
   timestamp: string;
   details?: string;
 }
+
+// ------------------ FIRST-7-DAYS PLAN & PREVIEW (MEMBER 3) ------------------
+export type PlanCategory = "Understand" | "Fix" | "Decide" | "Contact" | "Handover";
+export type PlanPriority = "High" | "Medium" | "Low";
+export type PlanEffort = "Short" | "Medium" | "Long";
+
+export interface PlanItem {
+  id: string;
+  day: number;
+  title: string;
+  why_it_matters: string;
+  category: PlanCategory;
+  priority: PlanPriority;
+  effort: PlanEffort;
+  claim_ids: string[];
+  evidence_refs: string[];
+  source_label: string;
+  is_pinned?: boolean;
+  done?: boolean;
+}
+
+export interface PlanResponse {
+  id: string;
+  project_id: string;
+  version_id?: string | null;
+  status: "draft" | "published";
+  role_title: string;
+  focus_areas: string[];
+  items: PlanItem[];
+  is_stale: boolean;
+  generated_at: string;
+  published_at?: string | null;
+  completed_count: number;
+  total_items: number;
+}
+
+export type ShareCheckSeverity = "block" | "warn" | "info";
+
+export interface ShareCheckFinding {
+  severity: ShareCheckSeverity;
+  category: string;
+  message: string;
+  location: string;
+}
+
+export interface ShareCheckResponse {
+  can_publish: boolean;
+  block_count: number;
+  warn_count: number;
+  info_count: number;
+  findings: ShareCheckFinding[];
+}
+
+export interface HiddenItemDetail {
+  id: string;
+  type: string;
+  title: string;
+  access_level: number;
+  reason: string;
+}
+
+export interface PreviewResponse {
+  mode: "draft" | "approved";
+  target_user: User;
+  handover: HandoverVersion;
+  hidden_items: HiddenItemDetail[];
+  confidential_count: number;
+  share_check?: ShareCheckResponse;
+}
+

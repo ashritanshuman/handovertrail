@@ -11,6 +11,10 @@ import {
   ClaimType,
   ConflictGroup,
   InterviewSession,
+  PlanResponse,
+  PlanItem,
+  PreviewResponse,
+  ShareCheckResponse,
 } from "../types";
 import {
   MOCK_PROJECT,
@@ -610,5 +614,45 @@ export const api = {
         body: JSON.stringify({ reason: reason || "I don't recall" }),
       }
     ),
+
+  // Member 3: First-7-Days Plan & Preview APIs
+  generatePlan: (role_title?: string, focus_areas?: string[]) =>
+    request<PlanResponse>("/api/plan/generate", {
+      method: "POST",
+      body: JSON.stringify({ project_id: "campusconnect", role_title, focus_areas }),
+    }),
+
+  getPlan: () => request<PlanResponse>("/api/plan?project_id=campusconnect"),
+
+  updatePlanItem: (itemId: string, patch: Partial<PlanItem>) =>
+    request<PlanResponse>(`/api/plan/items/${encodeURIComponent(itemId)}`, {
+      method: "PATCH",
+      body: JSON.stringify(patch),
+    }),
+
+  deletePlanItem: (itemId: string) =>
+    request<PlanResponse>(`/api/plan/items/${encodeURIComponent(itemId)}`, {
+      method: "DELETE",
+    }),
+
+  publishPlan: (acknowledge_warnings = false) =>
+    request<PlanResponse>("/api/plan/publish", {
+      method: "POST",
+      body: JSON.stringify({ project_id: "campusconnect", acknowledge_warnings }),
+    }),
+
+  togglePlanProgress: (itemId: string, done: boolean) =>
+    request<{ status: string; item_id: string; done: boolean }>(
+      `/api/plan/items/${encodeURIComponent(itemId)}/progress`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ done }),
+      }
+    ),
+
+  getPreview: (mode: "draft" | "approved" = "draft") =>
+    request<PreviewResponse>(`/api/preview?mode=${mode}&project_id=campusconnect`),
+
+  getShareCheck: () => request<ShareCheckResponse>("/api/preview/check?project_id=campusconnect"),
 };
 
