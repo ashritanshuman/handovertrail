@@ -59,3 +59,22 @@ def test_canary_leak_protection(client):
     assert res_probe.status_code == 404
     assert canary_l3 not in res_probe.text
 
+    # Member 3: Generate and publish plan, assert Arjun cannot see any canary or HR phrases in plan
+    client.post("/api/plan/generate", json={"project_id": "campusconnect"}, headers={"X-User-Id": "maya"})
+    client.post("/api/plan/publish", json={"project_id": "campusconnect", "acknowledge_warnings": True}, headers={"X-User-Id": "maya"})
+
+    res_plan = client.get("/api/plan", headers={"X-User-Id": "arjun"})
+    assert res_plan.status_code == 200
+    plan_body = res_plan.text
+    assert canary_l3 not in plan_body, "Canary Level 3 leaked in /api/plan to Arjun!"
+    assert canary_l2 not in plan_body, "Canary Level 2 leaked in /api/plan to Arjun!"
+    for phrase in hr_sensitive_phrases:
+        assert phrase not in plan_body, f"HR confidential phrase '{phrase}' leaked in /api/plan to Arjun!"
+
+    # Arjun calling preview gets 403 with no leaks
+    res_prev_leak = client.get("/api/preview?mode=draft", headers={"X-User-Id": "arjun"})
+    assert res_prev_leak.status_code == 403
+    assert canary_l3 not in res_prev_leak.text
+    assert canary_l2 not in res_prev_leak.text
+
+
