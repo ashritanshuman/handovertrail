@@ -138,6 +138,7 @@ def approve_handover(
         action="APPROVE_HANDOVER",
         entity="handover",
         entity_id=handover_id,
+        after_json={"note": payload.notes or "", "version": version_str},
         details=f"Lead {current_user.id} approved handover version {version_str} with {len(claims_snapshot)} claims.",
     )
     db.add(audit)
@@ -252,6 +253,16 @@ def get_approved_handover(
         .first()
     )
 
+    is_outdated = False
+    if not ack:
+        has_earlier_ack = (
+            db.query(Acknowledgement)
+            .filter(Acknowledgement.user_id == current_user.id)
+            .first()
+        )
+        if has_earlier_ack:
+            is_outdated = True
+
     return HandoverVersionRead(
         state="approved",
         version=hv.version,
@@ -266,6 +277,7 @@ def get_approved_handover(
         plan=plan_response,
         hidden_count=rendered["hidden_count"],
         acknowledged=bool(ack),
+        is_outdated=is_outdated,
     )
 
 
@@ -278,8 +290,16 @@ def acknowledge_handover(
 ):
     """
     Records successor receipt and acknowledgement of the approved handover.
+    Only the latest approved version may be acknowledged.
     Idempotent.
     """
+    latest_hv = db.query(HandoverVersion).order_by(HandoverVersion.approved_at.desc()).first()
+    if not latest_hv:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No approved handover versions exist to acknowledge.",
+        )
+
     hv = None
     if payload.handover_version_id:
         hv = (
@@ -291,14 +311,19 @@ def acknowledge_handover(
             )
             .first()
         )
-    if not hv:
-        # Fallback to latest approved version
-        hv = db.query(HandoverVersion).order_by(HandoverVersion.approved_at.desc()).first()
         if not hv:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Handover version '{payload.handover_version_id or 'latest'}' not found.",
+                detail=f"Handover version '{payload.handover_version_id}' not found.",
             )
+        # Check if caller tried to acknowledge an older superseded version
+        if hv.id != latest_hv.id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Cannot acknowledge superseded version '{hv.version}'. Only the latest approved version ('{latest_hv.version}') may be acknowledged.",
+            )
+    else:
+        hv = latest_hv
 
     note_text = payload.notes or payload.note or ""
     ack_id = f"ack-{current_user.id}-{hv.id}"
@@ -331,6 +356,7 @@ def acknowledge_handover(
         action="ACKNOWLEDGE",
         entity="handover",
         entity_id=hv.id,
+        after_json={"note": note_text, "version": hv.version},
         details=f"User {current_user.id} acknowledged handover version {hv.version}.",
     )
     db.add(audit)

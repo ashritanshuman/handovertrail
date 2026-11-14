@@ -240,6 +240,12 @@ def update_claim(
         "version": claim.version,
         "origin": claim.origin,
     }
+    if payload.note:
+        after_snapshot["note"] = payload.note
+
+    audit_details = f"Lead {current_user.id} updated claim to state '{claim.review_state}' (version {claim.version}, status {claim.status})."
+    if payload.note:
+        audit_details += f" Reason: {payload.note}"
 
     audit = AuditLog(
         id=f"aud-patch-{uuid.uuid4().hex[:12]}",
@@ -249,7 +255,7 @@ def update_claim(
         entity_id=claim_id,
         before_json=before_snapshot,
         after_json=after_snapshot,
-        details=f"Lead {current_user.id} updated claim to state '{claim.review_state}' (version {claim.version}, status {claim.status}).",
+        details=audit_details,
     )
     db.add(audit)
     db.commit()
