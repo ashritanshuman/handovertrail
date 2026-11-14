@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CheckCircle2,
   AlertTriangle,
@@ -33,6 +33,17 @@ export const ConflictDetailPanel: React.FC<ConflictDetailPanelProps> = ({
   const [correctedText, setCorrectedText] = useState("");
   const [correctedQuote, setCorrectedQuote] = useState("");
   const [correctedType, setCorrectedType] = useState<ClaimType>("decision");
+
+  // Close modal on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && activeModal) {
+        setActiveModal(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeModal]);
 
   const handleResolveChoseClaim = async () => {
     if (!selectedClaimId) return;
