@@ -98,3 +98,4 @@ def test_conflicts_access_control(client):
 
     res_no_header = client.get("/api/conflicts")
     assert res_no_header.status_code == 401
+

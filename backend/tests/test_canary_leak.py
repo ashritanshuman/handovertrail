@@ -23,6 +23,9 @@ def test_canary_leak_protection(client):
         "/api/handover",
         "/api/timeline",
         "/api/gaps",
+        "/api/conflicts",
+        "/api/conflicts/cg-api-key-rotation",
+        "/api/interview",
     ]
 
     for ep in get_endpoints:
@@ -32,6 +35,12 @@ def test_canary_leak_protection(client):
         assert canary_l2 not in body, f"Canary Level 2 leaked in {ep} to Arjun!"
         for phrase in hr_sensitive_phrases:
             assert phrase not in body, f"HR confidential phrase '{phrase}' leaked in {ep} to Arjun!"
+
+    # Level-3 canary must appear nowhere, even for Lead Maya or Leaver Riya
+    for persona in ["maya", "riya"]:
+        for ep in ["/api/conflicts", "/api/interview", "/api/claims", "/api/gaps"]:
+            res_p = client.get(ep, headers={"X-User-Id": persona})
+            assert canary_l3 not in res_p.text, f"Canary Level 3 leaked in {ep} to {persona}!"
 
     # POST /api/ask as Arjun
     res_ask = client.post(
