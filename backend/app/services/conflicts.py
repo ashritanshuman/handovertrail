@@ -157,6 +157,23 @@ def sync_conflict_groups(db: Session, project_id: str = "campusconnect") -> List
             db.add(new_group)
             existing_group = new_group
 
+            audit = AuditLog(
+                id=f"aud-cdet-{uuid.uuid4().hex[:12]}",
+                actor="system",
+                action="conflict_detected",
+                entity="conflict_group",
+                entity_id=group_id,
+                before_json={},
+                after_json={
+                    "topic": rule["topic"],
+                    "entity": rule["entity"],
+                    "attribute": rule["attribute"],
+                    "status": "open",
+                },
+                details=f"Conflict detected on entity '{rule['entity']}' (attribute: {rule['attribute']}).",
+            )
+            db.add(audit)
+
         # If group is open, ensure matching claims have conflicting status & conflict_group_id
         if existing_group.status == "open":
             for mc in matching_claims:

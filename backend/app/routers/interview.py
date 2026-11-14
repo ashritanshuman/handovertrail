@@ -77,3 +77,4 @@ def skip_interview_question(
         "skipped_by": q.answered_by,
         "message": f"Question '{q.id}' skipped.",
     }
+

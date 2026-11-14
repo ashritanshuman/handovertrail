@@ -50,6 +50,12 @@ def answer_gap(
             detail=f"Gap '{gap_id}' not found.",
         )
 
+    if len(payload.answer) > 5000:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Answer exceeds maximum allowed length of 5000 characters.",
+        )
+
     masked_ans = mask_text(payload.answer.strip())
     gap.answer = masked_ans
     gap.state = "answered"

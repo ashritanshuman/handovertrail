@@ -178,3 +178,4 @@ def mark_conflict_unresolved(
     Lead only.
     """
     return leave_conflict_unresolved(db, conflict_id, payload, current_user)
+

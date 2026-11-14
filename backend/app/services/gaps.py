@@ -272,6 +272,12 @@ def record_interview_answer(
             detail=f"Question '{question_id}' not found.",
         )
 
+    if len(raw_answer) > 5000:
+        raise HTTPException(
+            status_code=422,
+            detail="Answer exceeds maximum allowed length of 5000 characters.",
+        )
+
     clean_answer = mask_text(raw_answer.strip())
     if not clean_answer:
         raise HTTPException(
