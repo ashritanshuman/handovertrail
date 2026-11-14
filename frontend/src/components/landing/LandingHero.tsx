@@ -21,13 +21,13 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onLoadDemo, isLoading 
         </div>
 
         {/* Giant Editorial Serif Headline */}
-        <h1 className="text-4xl sm:text-6xl md:text-[72px] leading-[1.08] tracking-tight text-[#241d18] font-serif font-normal max-w-4xl mx-auto">
+        <h1 className="text-4xl sm:text-6xl md:text-[4.5rem] leading-[1.08] tracking-tight text-[#241d18] font-serif font-normal max-w-4xl mx-auto">
           Hand over what the documents{" "}
           <span className="italic text-[#8d3b2a] font-serif">never captured.</span>
         </h1>
 
         {/* Subline */}
-        <p className="text-subline font-subline text-[#5C544F] max-w-[580px] mx-auto leading-relaxed mt-6 font-normal">
+        <p className="text-subline font-subline text-[#5C544F] max-w-[36.25rem] mx-auto leading-relaxed mt-6 font-normal">
           HandoverTrail turns scattered repos, chats and meeting notes into a source-linked handover
           that a human approves and each person sees only what they are allowed to see.
         </p>
