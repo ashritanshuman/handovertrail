@@ -6,7 +6,7 @@ interface InlineEditDialogProps {
   claim: Claim | null;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (id: string, text: string, quote?: string, type?: ClaimType) => Promise<void>;
+  onSave: (id: string, text: string, quote?: string, type?: ClaimType, note?: string) => Promise<void>;
 }
 
 export const InlineEditDialog: React.FC<InlineEditDialogProps> = ({
@@ -20,6 +20,7 @@ export const InlineEditDialog: React.FC<InlineEditDialogProps> = ({
   const [text, setText] = useState(claim.text);
   const [quote, setQuote] = useState(claim.quote || "");
   const [type, setType] = useState<ClaimType>(claim.type);
+  const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +28,7 @@ export const InlineEditDialog: React.FC<InlineEditDialogProps> = ({
     if (!text.trim()) return;
     setSaving(true);
     try {
-      await onSave(claim.id, text, quote, type);
+      await onSave(claim.id, text, quote, type, note.trim() || undefined);
       onClose();
     } catch (err) {
       console.error(err);
@@ -94,6 +95,20 @@ export const InlineEditDialog: React.FC<InlineEditDialogProps> = ({
               type="text"
               value={quote}
               onChange={(e) => setQuote(e.target.value)}
+              className="w-full rounded-[10px] border border-[#d8d0c0] p-2.5 text-body-default font-body-default text-[#241d18] focus:border-[#241d18] focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-label-caption font-label-caption text-[#241d18] font-medium mb-1.5">
+              Reason / Rationale (optional)
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. Updated per architecture review or Q4 security policy"
+              value={note}
+              maxLength={500}
+              onChange={(e) => setNote(e.target.value)}
               className="w-full rounded-[10px] border border-[#d8d0c0] p-2.5 text-body-default font-body-default text-[#241d18] focus:border-[#241d18] focus:outline-none"
             />
           </div>

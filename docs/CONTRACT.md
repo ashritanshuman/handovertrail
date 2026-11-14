@@ -1014,3 +1014,246 @@ Runs automated confidentiality and safety checks over candidate handover claims 
   ]
 }
 ```
+
+---
+
+## 10. Version History, Acknowledgement Tracking, and Audit-Log Viewer (Member 2: Kush)
+
+This section defines the API contract for Improvement 2: Version History, Visual Semantic Diffing, Multi-Stakeholder Acknowledgement Tracking, and the Compliance Audit-Log Viewer.
+
+### 34. `GET /api/versions`
+Lists all approved handover versions for the project.
+- **Headers**: `X-User-Id: maya` (Lead) or `X-User-Id: riya` (Leaver). `arjun` (Successor) -> `403 Forbidden`.
+- **Query Params**: `project_id` (default: `"campusconnect"`)
+- **Response `200 OK` (Lead: Full Summaries)**:
+```json
+[
+  {
+    "id": "hv-v1.1.0",
+    "version": "1.1.0",
+    "approved_by": "maya",
+    "approved_at": "2026-11-14T10:30:00Z",
+    "notes": "Updated rotation frequency to quarterly per PCI review.",
+    "claims_count": 18,
+    "status_counts": {
+      "verified": 14,
+      "inferred": 4
+    },
+    "is_current": true,
+    "acknowledgement_summary": "0 of 1 acknowledged"
+  },
+  {
+    "id": "hv-v1.0.0",
+    "version": "1.0.0",
+    "approved_by": "maya",
+    "approved_at": "2026-11-12T09:00:00Z",
+    "notes": "Initial baseline handover release.",
+    "claims_count": 18,
+    "status_counts": {
+      "verified": 13,
+      "inferred": 5
+    },
+    "is_current": false,
+    "acknowledgement_summary": "1 of 1 acknowledged"
+  }
+]
+```
+*(Leaver Riya receives metadata only: `claims_count: 0`, `status_counts: {}`, `acknowledgement_summary: "Protected"`)*.
+
+---
+
+### 35. `GET /api/versions/{version}`
+Returns the frozen read-only snapshot for a specific handover version, strictly filtered by viewer clearance.
+- **Headers**: `X-User-Id: maya` (Lead only -> `403 Forbidden` if not lead)
+- **Path Parameter**: `version` (e.g. `"1.0.0"`, `"1.1.0"`, or `"hv-v1.0.0"`)
+- **Response `200 OK`**:
+```json
+{
+  "id": "hv-v1.0.0",
+  "version": "1.0.0",
+  "project_id": "campusconnect",
+  "approved_by": "maya",
+  "approved_at": "2026-11-12T09:00:00Z",
+  "notes": "Initial baseline handover release.",
+  "viewer_clearance": 2,
+  "claims": [],
+  "sections": {
+    "decisions": [],
+    "tasks": [],
+    "risks": []
+  },
+  "first_7_days": [],
+  "hidden_count": 0,
+  "is_current": false
+}
+```
+
+---
+
+### 36. `GET /api/versions/diff`
+Computes a field-level semantic diff between two approved handover versions.
+- **Headers**: `X-User-Id: maya` (Lead only)
+- **Query Params**:
+  - `from`: Version string (e.g. `"1.0.0"`). Defaults to previous approved version.
+  - `to`: Version string (e.g. `"1.1.0"`). Defaults to latest approved version.
+  - `project_id`: (default: `"campusconnect"`)
+- **Response `200 OK`**:
+```json
+{
+  "from_version": "1.0.0",
+  "to_version": "1.1.0",
+  "from_approved_at": "2026-11-12T09:00:00Z",
+  "to_approved_at": "2026-11-14T10:30:00Z",
+  "added": [],
+  "removed": [
+    {
+      "id": "clm-005",
+      "type": "task",
+      "text": "Deprecated legacy sync job",
+      "owner": "Riya Sharma",
+      "status": "inferred",
+      "review_state": "rejected",
+      "access_level": 1
+    }
+  ],
+  "changed": [
+    {
+      "id": "clm-004",
+      "type": "decision",
+      "text": "External API keys rotate quarterly (90 days) per PCI update.",
+      "old_text": "External API keys rotate monthly (30 days) per PCI requirement.",
+      "owner": "Arjun Rao",
+      "old_owner": "Riya Sharma",
+      "status": "verified",
+      "old_status": "conflicting",
+      "review_state": "confirmed",
+      "old_review_state": "draft",
+      "access_level": 1,
+      "field_changes": [
+        {
+          "field": "text",
+          "old_value": "External API keys rotate monthly (30 days) per PCI requirement.",
+          "new_value": "External API keys rotate quarterly (90 days) per PCI update."
+        },
+        {
+          "field": "owner",
+          "old_value": "Riya Sharma",
+          "new_value": "Arjun Rao"
+        }
+      ],
+      "changed_by": "maya",
+      "changed_at": "2026-11-14T10:15:00Z",
+      "note": "Updated per Q4 security compliance review."
+    }
+  ],
+  "unchanged_count": 17,
+  "total_from": 18,
+  "total_to": 17
+}
+```
+
+---
+
+### 37. `GET /api/acknowledgements`
+Returns receipt tracking across all project successors for an inspected version.
+- **Headers**: `X-User-Id: maya` (Lead only)
+- **Query Params**:
+  - `version`: Optional version string (defaults to current approved version)
+  - `project_id`: (default: `"campusconnect"`)
+- **Response `200 OK`**:
+```json
+{
+  "current_version": "1.1.0",
+  "inspected_version": "1.1.0",
+  "total_recipients": 1,
+  "acknowledged_count": 0,
+  "pending_count": 0,
+  "outdated_count": 1,
+  "recipients": [
+    {
+      "user_id": "arjun",
+      "name": "Arjun Rao",
+      "email": "arjun.rao@campusconnect.dev",
+      "role": "successor",
+      "status": "outdated",
+      "acknowledged_at": "2026-11-12T14:30:00Z",
+      "note": "Acknowledged initial v1.0.0 release.",
+      "previously_acknowledged_version": "1.0.0"
+    }
+  ]
+}
+```
+*(When a recipient acknowledges the current version, `status` becomes `"acknowledged"`; if no version has ever been acknowledged, `status` is `"pending"`)*.
+
+---
+
+### 38. `GET /api/audit` (Extended with Filters & Pagination)
+Returns the immutable system audit log, backward-compatible with legacy callers while supporting server-side filtering, keyword search, and cursor pagination.
+- **Headers**: `X-User-Id: maya` (Lead only)
+- **Query Params**:
+  - `actor`: Filter by actor (`maya`, `riya`, `arjun`, `system`)
+  - `action`: Filter by action (`REVIEW_CLAIM`, `APPROVE_HANDOVER`, `ACKNOWLEDGE`, `conflict_resolved`, `interview_answered`, etc.)
+  - `entity`: Filter by target entity (`claim`, `handover`, `conflict_group`, `gap`, `plan`)
+  - `from`: ISO start datetime
+  - `to`: ISO end datetime
+  - `q`: Free-text search across details, actor, action, and entity IDs
+  - `limit`: Page size limit (default: 100, max: 200)
+  - `cursor`: Datetime cursor for forward pagination
+  - `paginated`: Boolean. If `false` (default), returns `List[AuditLogDetailRead]` for backward compatibility. If `true`, returns paginated response envelope.
+- **Response `200 OK` (when `paginated=true`)**:
+```json
+{
+  "items": [
+    {
+      "id": "aud-appr-abc123",
+      "user_id": "maya",
+      "action": "APPROVE_HANDOVER",
+      "target_type": "handover",
+      "target_id": "hv-v1.1.0",
+      "timestamp": "2026-11-14T10:30:00Z",
+      "details": "Lead maya approved handover version 1.1.0 with 17 claims.",
+      "actor": "maya",
+      "entity": "handover",
+      "entity_id": "hv-v1.1.0",
+      "before_json": null,
+      "after_json": {
+        "note": "Updated rotation frequency to quarterly per PCI review.",
+        "version": "1.1.0"
+      },
+      "summary": "maya approved and published handover hv-v1.1.0 (Note: Updated rotation frequency to quarterly per PCI review.)"
+    }
+  ],
+  "total": 42,
+  "limit": 25,
+  "cursor": "2026-11-14T10:15:00Z",
+  "has_more": true
+}
+```
+
+---
+
+### 39. `GET /api/audit/export`
+Streams the filtered audit trail as an RFC 4180 CSV file with mandatory clearance redaction and formula injection defenses.
+- **Headers**: `X-User-Id: maya` (Lead only)
+- **Query Params**: `format=csv`, `actor`, `action`, `entity`, `from`, `to`, `q`
+- **Response `200 OK`**:
+  - `Content-Type`: `text/csv`
+  - `Content-Disposition`: `attachment; filename="handovertrail_audit_YYYYMMDD_HHMMSS.csv"`
+  - **CSV Injection Defense**: Cells starting with `=`, `+`, `-`, or `@` are safely prefixed with `'` (single quote).
+  - **Redaction**: Level-3 content or sensitive canaries are sanitized to `[REDACTED]`.
+
+---
+
+### 40. `POST /api/demo/seed-history`
+Demo helper that creates a two-version history (v1.0.0 and v1.1.0) with an outdated acknowledgement for Arjun and audit trail entries with rationale notes.
+- **Headers**: `X-User-Id: maya` (Lead only)
+- **Response `200 OK`**:
+```json
+{
+  "status": "success",
+  "message": "Demo history successfully seeded with versions 1.0.0 and 1.1.0 and outdated acknowledgement.",
+  "versions": ["1.0.0", "1.1.0"],
+  "outdated_recipient": "arjun"
+}
+```
+

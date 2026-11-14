@@ -63,8 +63,8 @@ export const ReviewPage: React.FC = () => {
   const conflictingCount = claims.filter((c) => c.status === "conflicting").length;
   const reviewPct = totalClaims > 0 ? Math.round((reviewedCount / totalClaims) * 100) : 0;
 
-  const handleEditSave = async (id: string, text: string, quote?: string, type?: ClaimType) => {
-    await editClaim(id, text, quote, type);
+  const handleEditSave = async (id: string, text: string, quote?: string, type?: ClaimType, note?: string) => {
+    await editClaim(id, text, quote, type, note);
   };
 
   const handleApprove = async (notes: string) => {

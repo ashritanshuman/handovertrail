@@ -36,6 +36,7 @@ from app.routers import (
     interview,
     plan,
     preview,
+    versions,
 )
 
 
@@ -135,6 +136,7 @@ app.include_router(conflicts.router)
 app.include_router(interview.router)
 app.include_router(plan.router)
 app.include_router(preview.router)
+app.include_router(versions.router)
 
 
 # Static File Serving & Single-Service SPA Routing

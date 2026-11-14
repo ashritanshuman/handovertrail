@@ -97,6 +97,7 @@ class ClaimPatchRequest(BaseModel):
     quote: Optional[str] = None
     owner: Optional[str] = None
     type: Optional[ClaimType] = None
+    note: Optional[str] = Field(None, max_length=500)
 
 
 # ------------------ QUESTION / GAP ------------------
@@ -207,6 +208,7 @@ class HandoverVersionRead(BaseModel):
     plan: Optional[PlanResponse] = None
     hidden_count: int = 0
     acknowledged: bool = False
+    is_outdated: Optional[bool] = False
 
 
 class AcknowledgeRequest(BaseModel):
@@ -441,4 +443,119 @@ class InterviewSessionResponse(BaseModel):
 
 class InterviewSkipRequest(BaseModel):
     reason: Optional[str] = "I don't recall"
+
+
+# ------------------ VERSION HISTORY, DIFF & AUDIT (MEMBER 2) ------------------
+class VersionSummaryRead(BaseModel):
+    id: str
+    version: str
+    approved_by: str
+    approved_at: datetime
+    notes: Optional[str] = ""
+    claims_count: int = 0
+    status_counts: Dict[str, int] = Field(default_factory=dict)
+    is_current: bool = False
+    acknowledgement_summary: str = "0 of 0 acknowledged"
+
+
+class VersionDetailRead(BaseModel):
+    id: str
+    version: str
+    project_id: str
+    approved_by: str
+    approved_at: datetime
+    notes: Optional[str] = ""
+    viewer_clearance: int = 2
+    claims: List[ClaimRead] = Field(default_factory=list)
+    sections: Optional[Dict[str, List[ClaimRead]]] = None
+    first_7_days: Optional[List[str]] = None
+    hidden_count: int = 0
+    is_current: bool = False
+
+
+class FieldChange(BaseModel):
+    field: str
+    old_value: Any
+    new_value: Any
+
+
+class ClaimDiffItem(BaseModel):
+    id: str
+    type: str
+    text: str
+    old_text: Optional[str] = None
+    owner: str
+    old_owner: Optional[str] = None
+    status: str
+    old_status: Optional[str] = None
+    review_state: str
+    old_review_state: Optional[str] = None
+    access_level: int = 1
+    evidence_ids: List[str] = Field(default_factory=list)
+    quote: Optional[str] = ""
+    field_changes: Optional[List[FieldChange]] = None
+    changed_by: Optional[str] = None
+    changed_at: Optional[str] = None
+    note: Optional[str] = None
+
+
+class VersionDiffResponse(BaseModel):
+    from_version: str
+    to_version: str
+    from_approved_at: Optional[str] = None
+    to_approved_at: Optional[str] = None
+    added: List[ClaimDiffItem] = Field(default_factory=list)
+    removed: List[ClaimDiffItem] = Field(default_factory=list)
+    changed: List[ClaimDiffItem] = Field(default_factory=list)
+    unchanged_count: int = 0
+    total_from: int = 0
+    total_to: int = 0
+
+
+class RecipientAckStatus(BaseModel):
+    user_id: str
+    name: str
+    email: str
+    role: str
+    status: str  # 'acknowledged', 'pending', 'outdated'
+    acknowledged_at: Optional[str] = None
+    note: Optional[str] = None
+    previously_acknowledged_version: Optional[str] = None
+
+
+class AcknowledgementTrackingResponse(BaseModel):
+    current_version: Optional[str] = None
+    inspected_version: Optional[str] = None
+    total_recipients: int = 0
+    acknowledged_count: int = 0
+    pending_count: int = 0
+    outdated_count: int = 0
+    recipients: List[RecipientAckStatus] = Field(default_factory=list)
+
+
+class AuditLogDetailRead(BaseModel):
+    id: str
+    user_id: str
+    action: str
+    target_type: str
+    target_id: str
+    timestamp: datetime
+    details: Optional[str] = None
+    actor: Optional[str] = None
+    entity: Optional[str] = None
+    entity_id: Optional[str] = None
+    before_json: Optional[Any] = None
+    after_json: Optional[Any] = None
+    summary: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AuditPageResponse(BaseModel):
+    items: List[AuditLogDetailRead] = Field(default_factory=list)
+    total: int = 0
+    limit: int = 100
+    cursor: Optional[str] = None
+    has_more: bool = False
+
 

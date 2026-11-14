@@ -9,6 +9,7 @@ from app.models import (
     Claim,
     Question,
     HandoverVersion,
+    Acknowledgement,
     AuditLog,
     ExtractionRun,
     ConflictGroup,
@@ -36,6 +37,7 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
         db.query(ConflictGroup).delete()
         db.query(Claim).delete()
         db.query(EvidenceUnit).delete()
+        db.query(Acknowledgement).delete()
         db.query(HandoverVersion).delete()
         db.query(ExtractionRun).delete()
         db.query(Project).delete()

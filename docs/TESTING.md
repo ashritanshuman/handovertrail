@@ -59,3 +59,24 @@ The test suite was extended with 13 new test cases across 3 new test modules plu
 4. **Canary Leak Extension (`test_canary_leak.py`)**:
    - Extended to assert that `CANARY-LEVEL3-DO-NOT-LEAK`, `CANARY-LEVEL2-HR`, and HR transition bonus phrases never appear in `/api/plan` or `/api/preview` responses requested as Arjun.
 
+---
+
+## 4. Member 2 Test Suite Extension (Version History, Acknowledgement Tracking & Audit Viewer)
+
+The test suite was extended with 10 new rigorous test cases across 2 new test modules plus canary leak and formula injection protection tests:
+
+1. **`test_versions.py`**:
+   - `test_list_versions_permissions`: Verifies Maya (Lead) receives full version summaries and status distributions; Riya (Leaver) receives metadata-only view with counts masked; Arjun (Successor) receives 403 Forbidden; missing/unknown credentials receive 401 Unauthorized.
+   - `test_version_diff_added_removed_changed`: Seeds V1.0.0 and V1.1.0 with edited claim statements, reassigned owners, and rejected claims; confirms field-level diff precision, old vs new values, audit author attribution (`changed_by`), and rationale capture (`audit.after_json.note`).
+   - `test_acknowledgement_tracking_status`: Tests full multi-version lifecycle: initial `pending` state -> `acknowledged` after successor sign-off on V1.0.0 -> automatically transition to `outdated` when Lead approves V1.1.0 -> refusal of attempts to acknowledge superseded versions (400 Bad Request) -> `acknowledged` after re-acknowledging V1.1.0.
+   - `test_seed_history_demo_helper`: Validates the `POST /api/demo/seed-history` helper, confirming immediate creation of versions 1.0.0 and 1.1.0 with outdated state for Arjun.
+   - `test_canary_leak_protection_versions`: Tests that `CANARY-LEVEL3-DO-NOT-LEAK` never appears in version lists, frozen snapshots, diffs, or acknowledgement tracking for any persona.
+
+2. **`test_audit_viewer.py`**:
+   - `test_audit_log_backward_compatibility`: Asserts that `GET /api/audit` without query parameters continues to return `List[AuditLogDetailRead]`, perfectly preserving backward compatibility with legacy test suites and consumers.
+   - `test_audit_log_filtering_and_search`: Verifies multi-attribute filtering by `actor`, `action`, `entity`, and free-text keyword search `q`.
+   - `test_audit_log_pagination`: Tests server-side cursor pagination with bounded page limits (`limit=2`), verifying total count, `has_more` boolean, and cursor continuation across pages.
+   - `test_audit_export_csv_and_formula_protection`: Validates `GET /api/audit/export?format=csv` streaming output, RFC 4180 headers, and formula-injection defenses (cells starting with `=`, `+`, `-`, or `@` are safely prefixed with `'`).
+   - `test_canary_leak_protection_audit`: Proves level-3 canary strings are masked as `[REDACTED]` in audit before/after JSON structures and CSV exports; verifies 403 Forbidden gates for non-lead callers.
+
+
