@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { PlanItem, PlanCategory, PlanPriority, PlanEffort } from "../../types";
 import { PlanItemCard } from "./PlanItemCard";
@@ -60,6 +60,16 @@ export const PlanBoard: React.FC<PlanBoardProps> = ({
     });
     setEditingItem(null);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && editingItem) {
+        setEditingItem(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [editingItem]);
 
   const days = [1, 2, 3, 4, 5, 6, 7];
   const itemsByDay: Record<number, PlanItem[]> = {

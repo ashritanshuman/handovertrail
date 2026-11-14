@@ -169,10 +169,10 @@ def run_share_check(
                 "location": f"claim:{cid}",
             })
 
-        # Single evidence citation (INFO)
+        # Single evidence citation (WARN)
         if len(evidence_ids) == 1:
             findings.append({
-                "severity": "info",
+                "severity": "warn",
                 "category": "Single Evidence Citation",
                 "message": f"Claim verified by a single evidence citation ({evidence_ids[0]}).",
                 "location": f"claim:{cid}",

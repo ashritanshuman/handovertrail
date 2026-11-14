@@ -150,6 +150,19 @@ def generate_plan(
         .first()
     )
 
+    # Preserve any items pinned in the existing draft plan during regeneration
+    if existing_plan and existing_plan.items_json:
+        pinned_items = [it for it in existing_plan.items_json if it.get("is_pinned")]
+        if pinned_items:
+            pinned_cids = {cid for it in pinned_items for cid in (it.get("claim_ids") or [])}
+            # Retain generated items that don't collide with pinned claim IDs, then add pinned items
+            merged_items = [
+                it for it in plan_items
+                if not any(cid in pinned_cids for cid in (it.get("claim_ids") or []))
+            ]
+            merged_items.extend(pinned_items)
+            plan_items = merged_items
+
     now = datetime.now(timezone.utc)
     if not existing_plan:
         plan_id = f"plan-{payload.project_id}-{uuid.uuid4().hex[:8]}"
@@ -496,13 +509,32 @@ def update_item_progress(
             detail="No published plan found to track progress against.",
         )
 
-    # Verify item exists in plan
+    # Verify item exists in plan and is visible to current user's clearance
     items = plan.items_json or []
-    if not any(it.get("id") == item_id for it in items):
+    target_item = next((it for it in items if it.get("id") == item_id), None)
+    if not target_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Item '{item_id}' not found in published plan.",
         )
+
+    # Check cited claims clearance: hidden items return 404 to prevent discovery via guessing
+    cited_ids = target_item.get("claim_ids") or []
+    if cited_ids:
+        claims_lookup = {
+            c.id: c
+            for c in db.query(Claim)
+            .filter(Claim.project_id == project_id, Claim.id.in_(cited_ids))
+            .all()
+        }
+        if any(
+            claims_lookup.get(cid) and claims_lookup[cid].access_level > current_user.clearance
+            for cid in cited_ids
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Item '{item_id}' not found in published plan.",
+            )
 
     prog_id = f"prog-{plan.id}-{item_id}-{current_user.id}"
     prog = db.query(PlanProgress).filter(PlanProgress.id == prog_id).first()

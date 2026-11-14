@@ -217,12 +217,15 @@ def get_successor_preview(
         findings=[ShareCheckFinding(**f) for f in raw_findings],
     )
 
+    confidential_ev_count = sum(1 for e in ev_units if e.access_level >= 3)
+    total_confidential = rendered["confidential_count"] + confidential_ev_count
+
     return PreviewResponse(
         mode=mode,
         target_user=target_user,
         handover=handover_read,
         hidden_items=hidden_items_out,
-        confidential_count=rendered["confidential_count"],
+        confidential_count=total_confidential,
         share_check=share_check_resp,
     )
 
