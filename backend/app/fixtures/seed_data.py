@@ -12,6 +12,8 @@ from app.models import (
     AuditLog,
     ExtractionRun,
     ConflictGroup,
+    HandoverPlan,
+    PlanProgress,
 )
 from app.services.ingest import ingest_demo_data
 from app.services.extract import extract_claims_from_units
@@ -27,6 +29,8 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
     Idempotent and resets cleanly.
     """
     if force_reset:
+        db.query(PlanProgress).delete()
+        db.query(HandoverPlan).delete()
         db.query(AuditLog).delete()
         db.query(Question).delete()
         db.query(ConflictGroup).delete()

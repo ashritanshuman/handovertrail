@@ -8,6 +8,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     JSON,
+    Boolean,
 )
 from sqlalchemy.orm import relationship, synonym
 from app.db import Base
@@ -200,4 +201,38 @@ class ConflictGroup(Base):
         if "project_id" not in kwargs:
             kwargs["project_id"] = "campusconnect"
         super().__init__(**kwargs)
+
+
+class HandoverPlan(Base):
+    __tablename__ = "handover_plans"
+
+    id = Column(String(50), primary_key=True, index=True)  # 'plan-campusconnect-v1.0'
+    project_id = Column(String(50), ForeignKey("projects.id"), nullable=False, index=True)
+    version_id = Column(String(50), ForeignKey("handover_versions.id"), nullable=True, index=True)
+    status = Column(String(20), default="draft", nullable=False)  # 'draft', 'published'
+    role_title = Column(String(100), default="Software Engineer", nullable=False)
+    focus_areas = Column(JSON, default=list, nullable=False)  # e.g. ["Backend", "Payments", "Vault"]
+    items_json = Column(JSON, default=list, nullable=False)
+    generated_at = Column(DateTime(timezone=True), default=utc_now)
+    generated_by = Column(String(50), ForeignKey("users.id"), nullable=False)
+    published_at = Column(DateTime(timezone=True), nullable=True)
+
+    project = relationship("Project")
+    handover_version = relationship("HandoverVersion")
+    progress_records = relationship("PlanProgress", back_populates="plan", cascade="all, delete-orphan")
+
+
+class PlanProgress(Base):
+    __tablename__ = "plan_progress"
+
+    id = Column(String(50), primary_key=True, index=True)  # 'prog-<plan_id>-<item_id>-<user_id>'
+    plan_id = Column(String(50), ForeignKey("handover_plans.id"), nullable=False, index=True)
+    item_id = Column(String(50), nullable=False, index=True)
+    user_id = Column(String(50), ForeignKey("users.id"), nullable=False, index=True)
+    done = Column(Boolean, default=False, nullable=False)
+    at = Column(DateTime(timezone=True), default=utc_now)
+
+    plan = relationship("HandoverPlan", back_populates="progress_records")
+    user = relationship("User")
+
 
