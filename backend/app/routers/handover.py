@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db import get_db
-from app.models import HandoverVersion, Acknowledgement, Claim, User, AuditLog
+from app.models import HandoverVersion, Acknowledgement, Claim, User, AuditLog, ConflictGroup
 from app.schemas import (
     HandoverApproveRequest,
     HandoverVersionRead,
@@ -38,18 +38,33 @@ def approve_handover(
         .all()
     )
 
-    # 1. Check for unresolved blockers (draft conflicting or draft missing claims)
-    blockers = [
+    # 1. Check for unresolved blockers (draft conflicting or draft missing claims, and open conflict groups)
+    claim_blockers = [
         f"{c.id} ({c.type}): {c.text[:50]}... [{c.status}]"
         for c in all_project_claims
         if c.review_state == "draft" and c.status in ("conflicting", "missing")
     ]
 
+    open_conflicts = (
+        db.query(ConflictGroup)
+        .filter(
+            ConflictGroup.project_id == payload.project_id,
+            ConflictGroup.status.in_(["open", "unresolved"]),
+        )
+        .all()
+    )
+    conflict_blockers = [
+        f"ConflictGroup {cg.id} ({cg.topic}): {cg.entity} [{cg.status}]"
+        for cg in open_conflicts
+    ]
+
+    blockers = claim_blockers + conflict_blockers
+
     if blockers and not payload.acknowledge_unresolved:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
-                "message": "Cannot approve handover: unresolved draft conflicting or missing claims exist.",
+                "message": "Cannot approve handover: unresolved draft conflicting claims or open conflict groups exist.",
                 "blockers": blockers,
                 "hint": "Resolve the conflicts/gaps or pass acknowledge_unresolved=true to override.",
             },

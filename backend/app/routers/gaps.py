@@ -8,6 +8,7 @@ from app.db import get_db
 from app.models import Question, User, AuditLog, EvidenceUnit
 from app.schemas import QuestionRead, QuestionAnswerRequest
 from app.security import get_current_user, require_lead_or_leaver
+from app.services.masking import mask_text
 
 router = APIRouter(prefix="/api/gaps", tags=["Gaps"])
 
@@ -49,7 +50,14 @@ def answer_gap(
             detail=f"Gap '{gap_id}' not found.",
         )
 
-    gap.answer = payload.answer
+    if len(payload.answer) > 5000:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Answer exceeds maximum allowed length of 5000 characters.",
+        )
+
+    masked_ans = mask_text(payload.answer.strip())
+    gap.answer = masked_ans
     gap.state = "answered"
     gap.answered_by = current_user.id
     gap.answered_at = datetime.now(timezone.utc)
@@ -63,7 +71,7 @@ def answer_gap(
         location=f"Q: {gap.text[:60]}...",
         author=current_user.name or current_user.id,
         timestamp=datetime.now(timezone.utc),
-        text=payload.answer,
+        text=masked_ans,
         access_level=2,
         redactions_json=[],
     )

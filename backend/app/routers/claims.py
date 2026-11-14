@@ -65,6 +65,7 @@ def list_claims(
                 version=c.version,
                 origin=c.origin,
                 conflict_details=conflict_details,
+                conflict_group_id=c.conflict_group_id,
             )
         )
     return results
@@ -129,6 +130,7 @@ def get_claim(
         version=claim.version,
         origin=claim.origin,
         conflict_details=conflict_details,
+        conflict_group_id=claim.conflict_group_id,
         supporting_evidence=supporting_evidence,
     )
 

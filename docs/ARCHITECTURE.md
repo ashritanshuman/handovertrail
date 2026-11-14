@@ -82,3 +82,28 @@ flowchart TD
 ### 6. Single-Service Monorepo Deployment
 - **Decision**: FastAPI serves both the REST API under `/api` and the built static frontend assets from `frontend/dist` with SPA client routing fallback to `index.html`.
 - **Why**: Judges receive a single URL on Render/Railway. No CORS setup issues, zero deployment desynchronization.
+
+---
+
+## 3. Round 3: Conflict-Resolution & Exit-Interview Architecture
+
+### 1. Multi-Attribute Deterministic Conflict Engine
+- **Topics & Rules**:
+  - `cg-api-key-rotation` (period): 30-day monthly rotation vs 90-day quarterly rotation.
+  - `cg-owner-payment-recon` (owner): Riya sole-owner vs Maya assumed primary failover owner.
+  - `cg-date-cert-cutover` (date): Nov 30 certificate expiration vs Nov 15 internal cutover deadline.
+  - `cg-status-websocket-sse` (status/supersession): WebSocket deployed vs abandoned for SSE polling.
+- **Supersession Hints**: Detects when a later decision or PR supersedes an older task, surfacing advice to the lead without auto-resolving.
+
+### 2. Leaver Exit Interview (Riya)
+- **Privacy & Pre-Storage Masking**: Leaver responses are passed through `services/masking.py` before hitting persistent storage, guaranteeing zero raw token leaks.
+- **Attributed Level-2 Evidence**: Recorded answers generate new `EvidenceUnit` items (`source_type="exit_interview"`, `access_level=2`) visible only to Lead Maya and Leaver Riya, but hidden from Successor Arjun.
+- **State Persistence**: Answers and skips are tracked across demo reloads in `questions` and audit logs (`interview_answered`, `interview_skipped`).
+
+### 3. Lead Resolution Engine (Maya)
+- **Atomic Operations**:
+  - `chose_claim`: Marks chosen claim `confirmed`, `origin="human"`, increments version, reverifies deterministically, and marks other claims `rejected`.
+  - `corrected`: Synthesizes a new human claim with combined evidence citations, increments version, and marks original claims `rejected`.
+  - `dismiss`: Marks conflict `dismissed` with mandatory reason and recomputes verification on linked claims.
+  - `leave_unresolved`: Marks conflict `unresolved` with mandatory note, blocking clean handover approval.
+- **Approval Blocker**: `POST /api/approve` raises HTTP 409 Conflict if any conflict group is `open` or `unresolved`, unless `acknowledge_unresolved=True` is explicitly supplied.

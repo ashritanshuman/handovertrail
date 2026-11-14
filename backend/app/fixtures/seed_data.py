@@ -11,10 +11,12 @@ from app.models import (
     HandoverVersion,
     AuditLog,
     ExtractionRun,
+    ConflictGroup,
 )
 from app.services.ingest import ingest_demo_data
 from app.services.extract import extract_claims_from_units
 from app.services.gaps import identify_knowledge_gaps
+from app.services.conflicts import sync_conflict_groups
 from app.security import SEEDED_USERS
 
 
@@ -27,6 +29,7 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
     if force_reset:
         db.query(AuditLog).delete()
         db.query(Question).delete()
+        db.query(ConflictGroup).delete()
         db.query(Claim).delete()
         db.query(EvidenceUnit).delete()
         db.query(HandoverVersion).delete()
@@ -123,6 +126,7 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
         q_obj = Question(
             id=g["id"],
             claim_id=g.get("claim_id"),
+            conflict_group_id=g.get("conflict_group_id"),
             kind=g.get("kind", "conflict"),
             text=g["text"],
             state=g.get("state", "open"),
@@ -131,6 +135,9 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
         )
         db.merge(q_obj)
     db.commit()
+
+    # 5b. Sync Conflict Groups
+    conflict_groups = sync_conflict_groups(db, "campusconnect")
 
     # Record initial extraction run
     run = ExtractionRun(
@@ -149,7 +156,7 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
         action="LOAD_DEMO",
         entity="project",
         entity_id="campusconnect",
-        details=f"Loaded {len(ev_models)} evidence units, {len(claims_data)} claims, {len(gaps_data)} gaps.",
+        details=f"Loaded {len(ev_models)} evidence units, {len(claims_data)} claims, {len(gaps_data)} gaps, {len(conflict_groups)} conflicts.",
     )
     db.add(audit)
     db.commit()
@@ -160,5 +167,6 @@ def seed_database(db: Session, force_reset: bool = True) -> dict:
         "evidence_count": len(ev_models),
         "claims_loaded": len(claims_data),
         "gaps_loaded": len(gaps_data),
+        "conflicts_loaded": len(conflict_groups),
         "message": "CampusConnect synthetic dataset loaded successfully with planted conflicts, secrets, and orphan tasks.",
     }

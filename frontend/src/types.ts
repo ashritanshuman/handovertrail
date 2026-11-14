@@ -68,6 +68,7 @@ export interface Claim {
   version: number;
   origin: ClaimOrigin;
   conflict_details?: ConflictDetail;
+  conflict_group_id?: string;
   supporting_evidence?: EvidenceUnit[];
 }
 
@@ -122,6 +123,84 @@ export interface StatsResponse {
   open_gaps_count: number;
   readiness_percentage: number;
   can_approve: boolean;
+  conflicts_open?: number;
+  conflicts_resolved?: number;
+  conflicts_dismissed?: number;
+  conflicts_unresolved?: number;
+  extraction_origin?: string;
+}
+
+// ------------------ CONFLICTS & INTERVIEW (MEMBER 1) ------------------
+export type ConflictStatus = "open" | "resolved" | "dismissed" | "unresolved";
+export type ConflictResolutionType = "chose_claim" | "corrected" | "dismissed" | "left_unresolved";
+
+export interface ConflictClaimSummary {
+  id: string;
+  text: string;
+  quote: string;
+  source_ref?: string;
+  source_type?: string;
+  author?: string;
+  access_level: number;
+  review_state: string;
+  status: string;
+}
+
+export interface LeaverAnswerSummary {
+  question_id: string;
+  answer: string;
+  answered_by?: string;
+  answered_at?: string;
+}
+
+export interface ConflictGroup {
+  id: string;
+  project_id: string;
+  topic?: string;
+  attribute: string;
+  entity: string;
+  type: "contradiction" | "supersession" | "ambiguous" | string;
+  confidence: "high" | "medium" | "low" | string;
+  status: ConflictStatus;
+  resolution_type?: ConflictResolutionType;
+  resolved_claim_id?: string;
+  note?: string;
+  suggestion?: string;
+  resolved_by?: string;
+  resolved_at?: string;
+  created_at: string;
+  claims: ConflictClaimSummary[];
+  leaver_answer?: LeaverAnswerSummary;
+}
+
+export interface InterviewQuoteItem {
+  label: string;
+  source_ref: string;
+  author: string;
+  date: string;
+  quote: string;
+}
+
+export interface InterviewQuestion {
+  id: string;
+  kind: string;
+  topic?: string;
+  conflict_group_id?: string;
+  text: string;
+  state: "open" | "answered" | "skipped";
+  quotes: InterviewQuoteItem[];
+  quick_options: string[];
+  answer?: string | null;
+  answered_at?: string | null;
+}
+
+export interface InterviewSession {
+  session_id: string;
+  leaver_name: string;
+  total_count: number;
+  answered_count: number;
+  skipped_count: number;
+  questions: InterviewQuestion[];
 }
 
 export interface TimelineEvent {

@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from typing import Dict, Any, List
 from collections import defaultdict
 from sqlalchemy.orm import Session
-from app.models import Claim, Question, EvidenceUnit, ExtractionRun, User
+from app.models import Claim, Question, EvidenceUnit, ExtractionRun, User, ConflictGroup
 
 
 def compute_handover_stats(db: Session, current_user: User) -> Dict[str, Any]:
@@ -37,7 +37,13 @@ def compute_handover_stats(db: Session, current_user: User) -> Dict[str, Any]:
     if total > 0:
         readiness = round((confirmed_or_verified / total) * 100, 1)
 
-    can_approve = (by_status.get("conflicting", 0) == 0) and (readiness >= 50.0)
+    # Conflict group counters
+    conflicts_open = db.query(ConflictGroup).filter(ConflictGroup.status == "open").count()
+    conflicts_resolved = db.query(ConflictGroup).filter(ConflictGroup.status == "resolved").count()
+    conflicts_dismissed = db.query(ConflictGroup).filter(ConflictGroup.status == "dismissed").count()
+    conflicts_unresolved = db.query(ConflictGroup).filter(ConflictGroup.status == "unresolved").count()
+
+    can_approve = (conflicts_open == 0 and by_status.get("conflicting", 0) == 0) and (readiness >= 50.0)
 
     # Last extraction run origin
     last_run = db.query(ExtractionRun).order_by(ExtractionRun.started_at.desc()).first()
@@ -61,5 +67,9 @@ def compute_handover_stats(db: Session, current_user: User) -> Dict[str, Any]:
         "can_approve": can_approve,
         "extraction_origin": extraction_origin,
         "weekly_activity": dict(weekly_activity),
+        "conflicts_open": conflicts_open,
+        "conflicts_resolved": conflicts_resolved,
+        "conflicts_dismissed": conflicts_dismissed,
+        "conflicts_unresolved": conflicts_unresolved,
     }
 

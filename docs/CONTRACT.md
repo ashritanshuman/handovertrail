@@ -628,3 +628,192 @@ Queries project knowledge using permitted, approved content only, returning cita
 3. **Exact Quote Validation**: A claim cannot transition to `status: verified` unless the backend verification service matches its `quote` substring inside an authorized evidence text.
 4. **Lead-Only Mutations**: Calling `PATCH /api/claims/{id}` or `POST /api/approve` with a user whose role is not `lead` returns HTTP `403 Forbidden`.
 
+---
+
+## 8. Conflicts and Interview Specification (Member 1 - Round 3)
+
+This section establishes the contract for Improvement 1: Full Conflict-Resolution Workflow with Exit-Interview Questions.
+
+### Audit Action Names Contract (Shared with Member 2)
+All mutations write to `audit_log` with the exact action identifiers and place any human reason or note in `after_json["note"]`:
+- `conflict_detected`: Written when detection identifies new or re-evaluated conflict groups.
+- `conflict_resolved`: Written when team lead resolves via `chose_claim` or `corrected`.
+- `conflict_dismissed`: Written when team lead dismisses a conflict group (`after_json.note` holds reason).
+- `conflict_left_unresolved`: Written when team lead explicitly defers a conflict (`after_json.note` holds reason).
+- `interview_answered`: Written when leaver submits exit interview answer (attributed evidence created).
+- `interview_skipped`: Written when leaver skips an interview question.
+
+### Endpoints
+
+#### 17. `POST /api/conflicts/detect` (Lead Only)
+Runs or re-runs deterministic conflict detection across all ingested evidence and active claims.
+- **Headers**: `X-User-Id: maya` (Lead only -> `403 Forbidden` if not lead)
+- **Response `200 OK`**:
+```json
+{
+  "status": "success",
+  "project_id": "campusconnect",
+  "conflicts_detected": 4,
+  "open_conflicts": 4
+}
+```
+
+#### 18. `GET /api/conflicts` (Lead Only)
+Lists conflict groups filtered by `status` (`open`, `resolved`, `dismissed`, `unresolved`) and/or `type`. Grouped by `topic`.
+- **Headers**: `X-User-Id: maya` (Lead only -> `403 Forbidden` for leaver/successor)
+- **Query Params**: `status` (optional), `type` (optional)
+- **Response `200 OK`**:
+```json
+[
+  {
+    "id": "cg-api-key-rotation",
+    "project_id": "campusconnect",
+    "topic": "Security & Credential Management",
+    "attribute": "period",
+    "entity": "Payment Provider API Key",
+    "type": "contradiction",
+    "confidence": "high",
+    "status": "open",
+    "resolution_type": null,
+    "resolved_claim_id": null,
+    "note": null,
+    "suggestion": "Leaver notes clarify 90-day Vault lease in sprint notes; matches Claim B.",
+    "resolved_by": null,
+    "resolved_at": null,
+    "created_at": "2026-11-10T14:40:00Z",
+    "claims": [
+      {
+        "id": "clm-004",
+        "text": "Payment provider API key must rotate monthly every 30 days per PCI requirement.",
+        "quote": "Payment provider API key must be rotated monthly every 30 days",
+        "source_ref": "Issue #42",
+        "source_type": "github",
+        "author": "Maya Patel",
+        "access_level": 1,
+        "review_state": "draft"
+      },
+      {
+        "id": "clm-004b",
+        "text": "Vault TTL configured to 2160h (90 days / quarterly) for CAS tokens.",
+        "quote": "rotate external API keys quarterly (90 days) to avoid breaking webhook integrations",
+        "source_ref": "12 Oct Meeting Notes",
+        "source_type": "meeting_notes",
+        "author": "Riya Sharma",
+        "access_level": 1,
+        "review_state": "draft"
+      }
+    ],
+    "leaver_answer": {
+      "question_id": "gap-001",
+      "answer": "Production uses 90-day Vault TTL. 30-day rotation was dropped to prevent CAS token invalidations.",
+      "answered_by": "riya",
+      "answered_at": "2026-11-10T15:00:00Z"
+    }
+  }
+]
+```
+
+#### 19. `GET /api/conflicts/{id}` (Lead Only)
+Returns detailed conflict record. Returns `404 Not Found` if missing or if underlying claims/evidence exceed caller's clearance.
+
+#### 20. `POST /api/conflicts/{id}/resolve` (Lead Only)
+Resolves conflict group via `chose_claim` or `corrected`.
+- **Headers**: `X-User-Id: maya`
+- **Request Body (Choose Claim)**:
+```json
+{
+  "resolution_type": "chose_claim",
+  "chosen_claim_id": "clm-004b",
+  "note": "Reconciled against production Vault configuration."
+}
+```
+- **Request Body (Corrected Claim)**:
+```json
+{
+  "resolution_type": "corrected",
+  "corrected_claim": {
+    "text": "External API keys rotate quarterly (90 days) per production Vault lease policy.",
+    "quote": "rotate external API keys quarterly (90 days)",
+    "type": "decision",
+    "owner": "Maya Patel"
+  },
+  "note": "Entered synthesized policy based on exit interview feedback."
+}
+```
+- **Response `200 OK`**:
+```json
+{
+  "status": "resolved",
+  "conflict_id": "cg-api-key-rotation",
+  "resolution_type": "chose_claim",
+  "resolved_claim_id": "clm-004b",
+  "message": "Conflict resolved and claims re-verified successfully."
+}
+```
+- **Errors**: `409 Conflict` if already resolved or dismissed.
+
+#### 21. `POST /api/conflicts/{id}/dismiss` (Lead Only)
+Dismisses conflict as a non-issue (false positive or non-conflicting variation). Requires non-empty reason.
+- **Request Body**: `{"reason": "Wording variation only; both mechanisms operate in complementary tiers."}`
+
+#### 22. `POST /api/conflicts/{id}/leave-unresolved` (Lead Only)
+Explicitly marks conflict as deferred/unresolved. Blocks handover approval unless `acknowledge_unresolved=true`.
+- **Request Body**: `{"reason": "Requires VP Engineering sign-off on vendor SLA before finalizing."}`
+
+#### 23. `GET /api/interview` (Leaver or Lead)
+Returns ordered exit-interview session questions with progress counts (`answered_count`, `skipped_count`, `total_count`).
+- **Headers**: `X-User-Id: riya` (or `maya`) -> `403 Forbidden` for successor `arjun`.
+- **Response `200 OK`**:
+```json
+{
+  "session_id": "interview-riya",
+  "leaver_name": "Riya Sharma",
+  "total_count": 6,
+  "answered_count": 2,
+  "skipped_count": 1,
+  "questions": [
+    {
+      "id": "gap-001",
+      "kind": "conflict",
+      "topic": "Security & Credential Management",
+      "conflict_group_id": "cg-api-key-rotation",
+      "text": "Issue #42 says API keys rotate monthly (30 days), while 12 Oct notes say quarterly (90 days). Which policy is currently active in production?",
+      "state": "open",
+      "quotes": [
+        {
+          "label": "Issue #42 (GitHub)",
+          "source_ref": "Issue #42",
+          "author": "Maya Patel",
+          "date": "28 Sep",
+          "quote": "Payment provider API key must be rotated monthly every 30 days per PCI requirement."
+        },
+        {
+          "label": "Meeting notes, 12 Oct",
+          "source_ref": "12 Oct Meeting Notes",
+          "author": "Riya Sharma",
+          "date": "12 Oct",
+          "quote": "Vault TTL configured to 2160h (90 days / quarterly) because 30-day rotation causes student union CAS auth token invalidation timeouts."
+        }
+      ],
+      "quick_options": [
+        "Quarterly (90 days) in production",
+        "Monthly (30 days) per RFC standard",
+        "Neither; manually rotated on expiry",
+        "I don't recall / Need to check Vault console"
+      ],
+      "answer": null,
+      "answered_at": null
+    }
+  ]
+}
+```
+
+#### 24. `POST /api/interview/{id}/answer` (Leaver or Lead)
+Submits leaver answer. Masks sensitive content pre-storage, persists answer as attributed evidence (`source_type="exit_interview"`, `access_level=2`), marks question `answered`, and logs `interview_answered`.
+- **Request Body**: `{"answer": "Production Vault TTL is 90 days. We dropped 30 days to prevent CAS auth drops."}`
+
+#### 25. `POST /api/interview/{id}/skip` (Leaver or Lead)
+Marks question `skipped` ("I don't remember"), records `interview_skipped` audit entry, and preserves progress across reloads.
+- **Request Body**: `{"reason": "I don't recall"}`
+
+

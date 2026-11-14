@@ -9,6 +9,8 @@ import {
   EvidenceUnit,
   ReviewState,
   ClaimType,
+  ConflictGroup,
+  InterviewSession,
 } from "../types";
 import {
   MOCK_PROJECT,
@@ -18,6 +20,8 @@ import {
   MOCK_TIMELINE,
   MOCK_HANDOVER,
   MOCK_AUDIT,
+  MOCK_CONFLICTS,
+  MOCK_INTERVIEW,
 } from "./mockData";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
@@ -69,6 +73,8 @@ let localMockClaims = [...MOCK_CLAIMS];
 let localMockGaps = [...MOCK_GAPS];
 let localMockHandover: HandoverVersion | null = { ...MOCK_HANDOVER };
 let localMockStats = { ...MOCK_STATS };
+let localMockConflicts = [...MOCK_CONFLICTS];
+let localMockInterview = { ...MOCK_INTERVIEW, questions: [...MOCK_INTERVIEW.questions] };
 
 function handleMockRequest<T>(path: string, options: RequestInit): Promise<T> {
   const method = (options.method || "GET").toUpperCase();
@@ -287,6 +293,131 @@ function handleMockRequest<T>(path: string, options: RequestInit): Promise<T> {
         } as unknown as T);
       }
 
+      // 17. POST /api/conflicts/detect
+      if (path === "/api/conflicts/detect" && method === "POST") {
+        return resolve(localMockConflicts as unknown as T);
+      }
+
+      // 18. GET /api/conflicts
+      if (path.startsWith("/api/conflicts") && method === "GET") {
+        const parts = path.split("?")[0].split("/").filter(Boolean);
+        if (parts.length === 3) {
+          const cid = parts[2];
+          const found = localMockConflicts.find((c) => c.id === cid);
+          return found ? resolve(found as unknown as T) : reject(new Error("Conflict not found"));
+        }
+        return resolve(localMockConflicts as unknown as T);
+      }
+
+      // 19. POST /api/conflicts/{id}/resolve
+      if (path.includes("/api/conflicts/") && path.endsWith("/resolve") && method === "POST") {
+        const cid = path.split("/")[3];
+        const body = JSON.parse((options.body as string) || "{}");
+        const idx = localMockConflicts.findIndex((c) => c.id === cid);
+        if (idx !== -1) {
+          localMockConflicts[idx] = {
+            ...localMockConflicts[idx],
+            status: "resolved",
+            resolution_type: body.resolution_type,
+            resolved_claim_id: body.chosen_claim_id || "clm-human-mock",
+            resolved_by: userId,
+            resolved_at: new Date().toISOString(),
+          };
+        }
+        return resolve({
+          status: "resolved",
+          conflict_id: cid,
+          resolution_type: body.resolution_type,
+          resolved_claim_id: body.chosen_claim_id || "clm-human-mock",
+          message: "Conflict resolved successfully.",
+        } as unknown as T);
+      }
+
+      // 20. POST /api/conflicts/{id}/dismiss
+      if (path.includes("/api/conflicts/") && path.endsWith("/dismiss") && method === "POST") {
+        const cid = path.split("/")[3];
+        const body = JSON.parse((options.body as string) || "{}");
+        const idx = localMockConflicts.findIndex((c) => c.id === cid);
+        if (idx !== -1) {
+          localMockConflicts[idx] = {
+            ...localMockConflicts[idx],
+            status: "dismissed",
+            resolution_type: "dismissed",
+            note: body.reason,
+            resolved_by: userId,
+            resolved_at: new Date().toISOString(),
+          };
+        }
+        return resolve({
+          status: "dismissed",
+          conflict_id: cid,
+          message: "Conflict dismissed.",
+        } as unknown as T);
+      }
+
+      // 21. POST /api/conflicts/{id}/leave-unresolved
+      if (path.includes("/api/conflicts/") && path.endsWith("/leave-unresolved") && method === "POST") {
+        const cid = path.split("/")[3];
+        const body = JSON.parse((options.body as string) || "{}");
+        const idx = localMockConflicts.findIndex((c) => c.id === cid);
+        if (idx !== -1) {
+          localMockConflicts[idx] = {
+            ...localMockConflicts[idx],
+            status: "unresolved",
+            resolution_type: "left_unresolved",
+            note: body.reason,
+            resolved_by: userId,
+            resolved_at: new Date().toISOString(),
+          };
+        }
+        return resolve({
+          status: "unresolved",
+          conflict_id: cid,
+          message: "Conflict marked unresolved.",
+        } as unknown as T);
+      }
+
+      // 22. GET /api/interview
+      if (path === "/api/interview" && method === "GET") {
+        return resolve(localMockInterview as unknown as T);
+      }
+
+      // 23. POST /api/interview/{id}/answer
+      if (path.startsWith("/api/interview/") && path.endsWith("/answer") && method === "POST") {
+        const qid = path.split("/")[3];
+        const body = JSON.parse((options.body as string) || "{}");
+        const q = localMockInterview.questions.find((x) => x.id === qid);
+        if (q) {
+          q.state = "answered";
+          q.answer = body.answer;
+          q.answered_at = new Date().toISOString();
+        }
+        localMockInterview.answered_count = localMockInterview.questions.filter((x) => x.state === "answered").length;
+        return resolve({
+          status: "answered",
+          question_id: qid,
+          state: "answered",
+          answer: body.answer,
+          message: "Answer recorded.",
+        } as unknown as T);
+      }
+
+      // 24. POST /api/interview/{id}/skip
+      if (path.startsWith("/api/interview/") && path.endsWith("/skip") && method === "POST") {
+        const qid = path.split("/")[3];
+        const q = localMockInterview.questions.find((x) => x.id === qid);
+        if (q) {
+          q.state = "skipped";
+        }
+        localMockInterview.skipped_count = localMockInterview.questions.filter((x) => x.state === "skipped").length;
+        return resolve({
+          status: "skipped",
+          question_id: qid,
+          state: "skipped",
+          message: "Question skipped.",
+        } as unknown as T);
+      }
+
       // Fallback
       return resolve({} as unknown as T);
     }, 120);
@@ -402,5 +533,82 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ project_id: "campusconnect", question }),
     }),
+
+  // Conflicts (Member 1)
+  detectConflicts: () =>
+    request<ConflictGroup[]>("/api/conflicts/detect", { method: "POST" }),
+
+  getConflicts: (statusFilter?: string, typeFilter?: string) => {
+    const params = new URLSearchParams();
+    if (statusFilter && statusFilter !== "all") params.set("status", statusFilter);
+    if (typeFilter && typeFilter !== "all") params.set("type", typeFilter);
+    const qs = params.toString() ? `?${params.toString()}` : "";
+    return request<ConflictGroup[]>(`/api/conflicts${qs}`);
+  },
+
+  getConflict: (id: string) =>
+    request<ConflictGroup>(`/api/conflicts/${encodeURIComponent(id)}`),
+
+  resolveConflict: (
+    id: string,
+    payload: {
+      resolution_type: "chose_claim" | "corrected";
+      chosen_claim_id?: string;
+      corrected_claim?: { text: string; quote?: string; type?: string; owner?: string };
+      note?: string;
+    }
+  ) =>
+    request<{
+      status: string;
+      conflict_id: string;
+      resolution_type: string;
+      resolved_claim_id?: string;
+      message: string;
+    }>(`/api/conflicts/${encodeURIComponent(id)}/resolve`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  dismissConflict: (id: string, reason: string) =>
+    request<{ status: string; conflict_id: string; message: string }>(
+      `/api/conflicts/${encodeURIComponent(id)}/dismiss`,
+      {
+        method: "POST",
+        body: JSON.stringify({ reason }),
+      }
+    ),
+
+  leaveConflictUnresolved: (id: string, reason: string) =>
+    request<{ status: string; conflict_id: string; message: string }>(
+      `/api/conflicts/${encodeURIComponent(id)}/leave-unresolved`,
+      {
+        method: "POST",
+        body: JSON.stringify({ reason }),
+      }
+    ),
+
+  // Exit Interview (Member 1)
+  getInterview: () => request<InterviewSession>("/api/interview"),
+
+  answerInterviewQuestion: (id: string, answer: string) =>
+    request<{
+      status: string;
+      question_id: string;
+      state: string;
+      answer: string;
+      message: string;
+    }>(`/api/interview/${encodeURIComponent(id)}/answer`, {
+      method: "POST",
+      body: JSON.stringify({ answer }),
+    }),
+
+  skipInterviewQuestion: (id: string, reason?: string) =>
+    request<{ status: string; question_id: string; state: string; message: string }>(
+      `/api/interview/${encodeURIComponent(id)}/skip`,
+      {
+        method: "POST",
+        body: JSON.stringify({ reason: reason || "I don't recall" }),
+      }
+    ),
 };
 

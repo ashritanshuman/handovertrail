@@ -13,4 +13,6 @@ ev-task-011,campusconnect,TASK-111,Jira Board/Sprint 29,Arjun Rao,2026-10-05T09:
 ev-task-012,campusconnect,TASK-112,Jira Board/Sprint 29,Maya Patel,2026-10-09T16:40:00Z,"Risk: In-person gate scanner battery drain and offline sync failure during outdoor stadium concerts.",1
 ev-task-013,campusconnect,TASK-113,Jira Board/Sprint 30,Riya Sharma,2026-10-13T11:00:00Z,"Decision: Store QR code signing keys in AWS KMS with automatic annual rotation.",1
 ev-task-014,campusconnect,TASK-118,Jira Board/Sprint 30,Riya Sharma,2026-10-15T15:00:00Z,"The mobile push notifications are fully certified for iOS 18 APNs with zero payload truncation issues.",1
+ev-task-015,campusconnect,TASK-119,Jira Board/Sprint 30,Arjun Rao,2026-10-18T10:00:00Z,"Task: WebSocket reservation pub-sub is deployed in production and active for student flash ticket drops.",1
+
 

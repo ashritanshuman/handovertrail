@@ -83,7 +83,7 @@ def test_lead_can_edit_and_approve(client):
     # Maya approving handover
     res_approve = client.post(
         "/api/approve",
-        json={"project_id": "campusconnect", "notes": "Handover approved by lead Maya."},
+        json={"project_id": "campusconnect", "notes": "Handover approved by lead Maya.", "acknowledge_unresolved": True},
         headers={"X-User-Id": "maya"},
     )
     assert res_approve.status_code == 200

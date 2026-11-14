@@ -82,6 +82,7 @@ class ClaimRead(ClaimBase):
     id: str
     project_id: str
     conflict_details: Optional[ConflictDetail] = None
+    conflict_group_id: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -161,6 +162,11 @@ class StatsResponse(BaseModel):
     can_approve: bool
     extraction_origin: Optional[str] = "cache"
     weekly_activity: Optional[Dict[str, int]] = None
+    conflicts_open: int = 0
+    conflicts_resolved: int = 0
+    conflicts_dismissed: int = 0
+    conflicts_unresolved: int = 0
+
 
 
 # ------------------ TIMELINE ------------------
@@ -236,3 +242,102 @@ class ExtractResponse(BaseModel):
     missing_count: int
     duration_ms: int
     origin: str = "cache"
+
+
+# ------------------ CONFLICTS & INTERVIEW (MEMBER 1) ------------------
+ConflictStatus = Literal["open", "resolved", "dismissed", "unresolved"]
+ConflictResolutionType = Literal["chose_claim", "corrected", "dismissed", "left_unresolved"]
+
+
+class ConflictClaimSummary(BaseModel):
+    id: str
+    text: str
+    quote: str
+    source_ref: Optional[str] = None
+    source_type: Optional[str] = None
+    author: Optional[str] = None
+    access_level: int = 1
+    review_state: str = "draft"
+    status: str = "conflicting"
+
+
+class LeaverAnswerSummary(BaseModel):
+    question_id: str
+    answer: str
+    answered_by: Optional[str] = None
+    answered_at: Optional[datetime] = None
+
+
+class ConflictGroupRead(BaseModel):
+    id: str
+    project_id: str
+    topic: Optional[str] = None
+    attribute: str
+    entity: str
+    type: str = "contradiction"
+    confidence: str = "high"
+    status: ConflictStatus = "open"
+    resolution_type: Optional[ConflictResolutionType] = None
+    resolved_claim_id: Optional[str] = None
+    note: Optional[str] = None
+    suggestion: Optional[str] = None
+    resolved_by: Optional[str] = None
+    resolved_at: Optional[datetime] = None
+    created_at: datetime
+    claims: List[ConflictClaimSummary] = Field(default_factory=list)
+    leaver_answer: Optional[LeaverAnswerSummary] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CorrectedClaimPayload(BaseModel):
+    text: str
+    quote: Optional[str] = ""
+    type: ClaimType = "decision"
+    owner: str = "Maya Patel"
+
+
+class ConflictResolveRequest(BaseModel):
+    resolution_type: Literal["chose_claim", "corrected"]
+    chosen_claim_id: Optional[str] = None
+    corrected_claim: Optional[CorrectedClaimPayload] = None
+    note: Optional[str] = ""
+
+
+class ConflictReasonRequest(BaseModel):
+    reason: str
+
+
+class InterviewQuoteItem(BaseModel):
+    label: str
+    source_ref: str
+    author: str
+    date: str
+    quote: str
+
+
+class InterviewQuestionRead(BaseModel):
+    id: str
+    kind: str = "conflict"
+    topic: Optional[str] = None
+    conflict_group_id: Optional[str] = None
+    text: str
+    state: str = "open"  # 'open', 'answered', 'skipped'
+    quotes: List[InterviewQuoteItem] = Field(default_factory=list)
+    quick_options: List[str] = Field(default_factory=list)
+    answer: Optional[str] = None
+    answered_at: Optional[datetime] = None
+
+
+class InterviewSessionResponse(BaseModel):
+    session_id: str
+    leaver_name: str
+    total_count: int
+    answered_count: int
+    skipped_count: int
+    questions: List[InterviewQuestionRead] = Field(default_factory=list)
+
+
+class InterviewSkipRequest(BaseModel):
+    reason: Optional[str] = "I don't recall"
+

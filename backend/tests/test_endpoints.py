@@ -27,14 +27,14 @@ def test_full_handover_workflow(client):
     assert conflict_claim is not None
     assert conflict_claim["conflict_details"] is not None
 
-    # 5. Lead resolves conflict
-    res_patch = client.patch(
-        f"/api/claims/{conflict_claim['id']}",
-        json={"review_state": "confirmed", "text": "External API keys rotate quarterly (90 days)."},
+    # 5. Lead resolves conflict via conflict resolution endpoint
+    res_resolve = client.post(
+        "/api/conflicts/cg-api-key-rotation/resolve",
+        json={"resolution_type": "chose_claim", "chosen_claim_id": "clm-004", "note": "Ratified quarterly rotation policy."},
         headers={"X-User-Id": "maya"},
     )
-    assert res_patch.status_code == 200
-    assert res_patch.json()["status"] == "verified"
+    assert res_resolve.status_code == 200
+    assert res_resolve.json()["status"] == "resolved"
 
     # 6. Gaps flow
     res_gaps = client.get("/api/gaps", headers={"X-User-Id": "riya"})
@@ -61,10 +61,10 @@ def test_full_handover_workflow(client):
     stats = res_stats.json()
     assert stats["readiness_percentage"] > 0
 
-    # 8. Lead approves handover
+    # 8. Lead approves handover (with acknowledge_unresolved=True for open planted items)
     res_approve = client.post(
         "/api/approve",
-        json={"project_id": "campusconnect", "notes": "Final handover approved by Maya Patel."},
+        json={"project_id": "campusconnect", "notes": "Final handover approved by Maya Patel.", "acknowledge_unresolved": True},
         headers={"X-User-Id": "maya"},
     )
     assert res_approve.status_code == 200
