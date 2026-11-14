@@ -160,3 +160,109 @@ def test_plan_api_permissions_and_lifecycle(client):
     ticked_item = next(it for it in res_arjun_reget.json()["items"] if it["id"] == test_item_id)
     assert ticked_item["done"] is True
     assert res_arjun_reget.json()["completed_count"] >= 1
+
+
+def test_plan_regeneration_preserves_pinned_items(client):
+    """Verifies that pinning an item to a day survives plan regeneration."""
+    client.post("/api/demo/load", json={"force_reset": True}, headers={"X-User-Id": "maya"})
+
+    # 1. Generate initial plan
+    res_init = client.post(
+        "/api/plan/generate",
+        json={"project_id": "campusconnect", "role_title": "Backend Engineer"},
+        headers={"X-User-Id": "maya"},
+    )
+    init_items = res_init.json()["items"]
+    target_item = init_items[0]
+
+    # 2. Pin item to Day 5 with a custom rationale
+    res_edit = client.patch(
+        f"/api/plan/items/{target_item['id']}",
+        json={"day": 5, "is_pinned": True, "title": "PINNED: Custom pairing session"},
+        headers={"X-User-Id": "maya"},
+    )
+    assert res_edit.status_code == 200
+
+    # 3. Regenerate plan for a completely different role
+    res_regen = client.post(
+        "/api/plan/generate",
+        json={"project_id": "campusconnect", "role_title": "DevOps SRE", "focus_areas": ["Docker", "K8s"]},
+        headers={"X-User-Id": "maya"},
+    )
+    assert res_regen.status_code == 200
+    regen_items = res_regen.json()["items"]
+
+    # Assert pinned item was preserved on Day 5 with its title and pin state
+    preserved = next((it for it in regen_items if it.get("claim_ids") == target_item["claim_ids"]), None)
+    assert preserved is not None
+    assert preserved["day"] == 5
+    assert preserved["is_pinned"] is True
+    assert "PINNED: Custom pairing session" in preserved["title"]
+
+
+def test_hidden_plan_item_probing_returns_404(client):
+    """Verifies that a successor cannot probe or toggle progress on hidden items (returns 404)."""
+    client.post("/api/demo/load", json={"force_reset": True}, headers={"X-User-Id": "maya"})
+
+    # Lead generates and edits an item to cite Level 2 claim
+    client.post(
+        "/api/plan/generate",
+        json={"project_id": "campusconnect"},
+        headers={"X-User-Id": "maya"},
+    )
+
+    # Approve and publish plan
+    client.patch(
+        "/api/claims/clm-004",
+        json={"review_state": "confirmed", "text": "External API keys rotate quarterly (90 days)."},
+        headers={"X-User-Id": "maya"},
+    )
+    client.post(
+        "/api/approve",
+        json={"project_id": "campusconnect", "acknowledge_unresolved": True},
+        headers={"X-User-Id": "maya"},
+    )
+    client.post(
+        "/api/plan/publish",
+        json={"project_id": "campusconnect", "acknowledge_warnings": True},
+        headers={"X-User-Id": "maya"},
+    )
+
+    # Lead fetches full plan (including items citing level 2 claims if any)
+    lead_plan = client.get("/api/plan", headers={"X-User-Id": "maya"}).json()
+
+    # Create synthetic item with Level 2 claim in DB to test probing
+    from tests.conftest import TestingSessionLocal
+    from app.models import HandoverPlan
+    db = TestingSessionLocal()
+    plan_record = db.query(HandoverPlan).filter(HandoverPlan.status == "published").first()
+    assert plan_record is not None
+    plan_items = list(plan_record.items_json)
+    plan_items.append({
+        "id": "item-hidden-l2",
+        "day": 1,
+        "title": "Secret HR discussion",
+        "why_it_matters": "Lead only",
+        "category": "Handover",
+        "priority": "High",
+        "effort": "Short",
+        "claim_ids": ["clm-014"],  # Level 2 claim in seed data
+        "evidence_refs": [],
+        "source_label": "HR #014",
+        "is_pinned": False,
+        "done": False,
+    })
+    plan_record.items_json = plan_items
+    from sqlalchemy.orm.attributes import flag_modified
+    flag_modified(plan_record, "items_json")
+    db.commit()
+    db.close()
+
+    # Arjun tries to probe progress on hidden item -> 404 Not Found (not 403 or 200)
+    res_probe = client.patch(
+        "/api/plan/items/item-hidden-l2/progress",
+        json={"done": True},
+        headers={"X-User-Id": "arjun"},
+    )
+    assert res_probe.status_code == 404
+    assert "not found" in res_probe.json()["detail"].lower()

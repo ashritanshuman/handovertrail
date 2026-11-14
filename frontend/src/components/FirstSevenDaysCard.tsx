@@ -91,9 +91,16 @@ export const FirstSevenDaysCard: React.FC<FirstSevenDaysCardProps> = ({
           <span className="w-6 h-6 rounded-md bg-[#F4F3EE] border border-[#d8d0c0] flex items-center justify-center text-label-mono-metadata font-label-mono-metadata text-[#241d18] font-semibold">
             01
           </span>
-          <h2 className="text-headline-section font-headline-section text-[#241d18] font-semibold">
-            First 7 Days Action Plan
-          </h2>
+          <div>
+            <h2 className="text-headline-section font-headline-section text-[#241d18] font-semibold">
+              First 7 Days Action Plan
+            </h2>
+            {activePlan?.role_title && (
+              <p className="text-xs font-mono text-[#6B635E]">
+                Plan for Arjun Rao, {activePlan.role_title}
+              </p>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-label-mono-metadata font-label-mono-metadata text-[#6B635E] font-medium">

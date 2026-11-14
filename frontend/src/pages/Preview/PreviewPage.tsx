@@ -61,6 +61,19 @@ export const PreviewPage: React.FC = () => {
     }
   }, [isLead, mode, fetchPreview]);
 
+  // Handle Escape key to close open modals
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (isRegenModalOpen) setIsRegenModalOpen(false);
+        if (isPublishDialogOpen) setIsPublishDialogOpen(false);
+        if (selectedClaim) setSelectedClaim(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isRegenModalOpen, isPublishDialogOpen, selectedClaim]);
+
   const handleModeChange = (newMode: "draft" | "approved") => {
     setMode(newMode);
   };
@@ -312,7 +325,7 @@ export const PreviewPage: React.FC = () => {
 
                 {plan?.role_title && (
                   <span className="text-xs font-mono text-[#6B635E] bg-[#F4F3EE] px-2.5 py-0.5 rounded border border-[#d8d0c0]">
-                    Role: {plan.role_title}
+                    Plan for Arjun Rao, {plan.role_title}
                   </span>
                 )}
               </div>
