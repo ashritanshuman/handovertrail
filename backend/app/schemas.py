@@ -123,6 +123,69 @@ class QuestionAnswerRequest(BaseModel):
     answer: str
 
 
+# ------------------ FIRST-7-DAYS PLAN & PREVIEW (MEMBER 3) ------------------
+PlanItemCategory = Literal["Understand", "Fix", "Decide", "Contact", "Handover"]
+PlanItemPriority = Literal["High", "Medium", "Low"]
+PlanItemEffort = Literal["Short", "Medium", "Long"]
+
+
+class PlanItem(BaseModel):
+    id: str
+    day: int = Field(ge=1, le=7)
+    title: str = Field(min_length=3, max_length=300)
+    why_it_matters: str = Field(default="", max_length=500)
+    category: PlanItemCategory = "Understand"
+    priority: PlanItemPriority = "Medium"
+    effort: PlanItemEffort = "Medium"
+    claim_ids: List[str] = Field(min_length=1)
+    evidence_refs: List[str] = Field(default_factory=list)
+    source_label: str = ""
+    is_pinned: bool = False
+    done: bool = False
+
+
+class PlanGenerateRequest(BaseModel):
+    project_id: str = "campusconnect"
+    role_title: Optional[str] = None
+    focus_areas: Optional[List[str]] = None
+
+
+class PlanItemPatchRequest(BaseModel):
+    day: Optional[int] = Field(default=None, ge=1, le=7)
+    title: Optional[str] = Field(default=None, min_length=3, max_length=300)
+    why_it_matters: Optional[str] = Field(default=None, max_length=500)
+    category: Optional[PlanItemCategory] = None
+    priority: Optional[PlanItemPriority] = None
+    effort: Optional[PlanItemEffort] = None
+    is_pinned: Optional[bool] = None
+
+
+class PlanProgressPatchRequest(BaseModel):
+    done: bool
+
+
+class PlanPublishRequest(BaseModel):
+    project_id: str = "campusconnect"
+    acknowledge_warnings: bool = False
+
+
+class PlanResponse(BaseModel):
+    id: str
+    project_id: str
+    version_id: Optional[str] = None
+    status: str = "draft"  # 'draft', 'published'
+    role_title: str
+    focus_areas: List[str] = Field(default_factory=list)
+    items: List[PlanItem] = Field(default_factory=list)
+    is_stale: bool = False
+    generated_at: datetime
+    published_at: Optional[datetime] = None
+    completed_count: int = 0
+    total_items: int = 0
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 # ------------------ HANDOVER VERSION ------------------
 class HandoverApproveRequest(BaseModel):
     project_id: str = "campusconnect"
@@ -141,6 +204,7 @@ class HandoverVersionRead(BaseModel):
     claims: List[ClaimRead] = Field(default_factory=list)
     sections: Optional[Dict[str, List[ClaimRead]]] = None
     first_7_days: Optional[List[str]] = None
+    plan: Optional[PlanResponse] = None
     hidden_count: int = 0
     acknowledged: bool = False
 
@@ -149,6 +213,43 @@ class AcknowledgeRequest(BaseModel):
     handover_version_id: Optional[str] = None
     note: Optional[str] = ""
     notes: Optional[str] = None
+
+
+# ------------------ SHARE CHECK & PREVIEW (MEMBER 3) ------------------
+ShareCheckSeverity = Literal["block", "warn", "info"]
+
+
+class ShareCheckFinding(BaseModel):
+    severity: ShareCheckSeverity
+    category: str
+    message: str
+    location: str
+
+
+class ShareCheckResponse(BaseModel):
+    can_publish: bool
+    block_count: int
+    warn_count: int
+    info_count: int
+    findings: List[ShareCheckFinding] = Field(default_factory=list)
+
+
+class HiddenItemDetail(BaseModel):
+    id: str
+    type: str
+    title: str
+    access_level: int
+    reason: str
+
+
+class PreviewResponse(BaseModel):
+    mode: str  # 'draft' or 'approved'
+    target_user: UserRead
+    handover: HandoverVersionRead
+    hidden_items: List[HiddenItemDetail] = Field(default_factory=list)
+    confidential_count: int = 0
+    share_check: Optional[ShareCheckResponse] = None
+
 
 
 # ------------------ STATS ------------------

@@ -40,6 +40,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children, minimal = false })
     { label: "Timeline", path: "/timeline" },
     { label: "Gaps", path: "/gaps" },
     { label: "Handover", path: "/handover" },
+    ...(currentUser.role === "lead" ? [{ label: "Preview", path: "/preview" }] : []),
   ];
 
   const isApproved = project?.handover_state === "approved" || handover !== null;

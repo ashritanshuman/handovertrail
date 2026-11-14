@@ -4,16 +4,31 @@ from typing import List, Dict, Any, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db import get_db
-from app.models import HandoverVersion, Acknowledgement, Claim, User, AuditLog, ConflictGroup
+from app.models import (
+    HandoverVersion,
+    Acknowledgement,
+    Claim,
+    User,
+    AuditLog,
+    ConflictGroup,
+    HandoverPlan,
+    PlanProgress,
+)
 from app.schemas import (
     HandoverApproveRequest,
     HandoverVersionRead,
     AcknowledgeRequest,
     ClaimRead,
     ConflictDetail,
+    PlanResponse,
+    PlanItem,
 )
 from app.security import get_current_user, require_lead
-from app.services.handover import partition_handover_sections, generate_first_7_days_plan
+from app.services.handover import (
+    partition_handover_sections,
+    generate_first_7_days_plan,
+    build_handover_view,
+)
 
 router = APIRouter(prefix="/api", tags=["Handover"])
 
@@ -171,24 +186,62 @@ def get_approved_handover(
         )
 
     raw_claims = hv.snapshot_json or []
-    visible_raw = []
-    hidden_count = 0
 
-    for c in raw_claims:
-        if c.get("access_level", 1) <= current_user.clearance:
-            visible_raw.append(c)
-        else:
-            hidden_count += 1
+    # Check for published plan attached to this handover
+    plan_dict = None
+    published_plan_record = (
+        db.query(HandoverPlan)
+        .filter(
+            HandoverPlan.project_id == hv.project_id,
+            HandoverPlan.status == "published",
+        )
+        .order_by(HandoverPlan.published_at.desc())
+        .first()
+    )
 
-    visible_claims = [ClaimRead(**c) for c in visible_raw]
+    if published_plan_record:
+        # Load user progress
+        progress_records = {
+            p.item_id: p.done
+            for p in db.query(PlanProgress).filter(
+                PlanProgress.plan_id == published_plan_record.id,
+                PlanProgress.user_id == current_user.id,
+            ).all()
+        }
+        items_with_progress = []
+        for it in (published_plan_record.items_json or []):
+            it_copy = dict(it)
+            it_copy["done"] = progress_records.get(it["id"], False)
+            items_with_progress.append(it_copy)
 
-    # Partition into sections and generate First 7 Days plan
-    sections_raw = partition_handover_sections(visible_raw)
+        plan_dict = {
+            "id": published_plan_record.id,
+            "project_id": published_plan_record.project_id,
+            "version_id": published_plan_record.version_id,
+            "status": published_plan_record.status,
+            "role_title": published_plan_record.role_title,
+            "focus_areas": published_plan_record.focus_areas or [],
+            "items": items_with_progress,
+            "is_stale": False,
+            "generated_at": published_plan_record.generated_at,
+            "published_at": published_plan_record.published_at,
+            "completed_count": sum(1 for it in items_with_progress if it["done"]),
+            "total_items": len(items_with_progress),
+        }
+
+    rendered = build_handover_view(
+        raw_claims=raw_claims,
+        viewer_clearance=current_user.clearance,
+        plan_obj=plan_dict,
+    )
+
+    visible_claims = [ClaimRead(**c) for c in rendered["visible_claims_raw"]]
     sections_read = {
         sec_name: [ClaimRead(**c) for c in c_list]
-        for sec_name, c_list in sections_raw.items()
+        for sec_name, c_list in rendered["sections_raw"].items()
     }
-    first_7_days = generate_first_7_days_plan(visible_raw)
+
+    plan_response = PlanResponse(**rendered["plan"]) if rendered["plan"] else None
 
     ack = (
         db.query(Acknowledgement)
@@ -209,8 +262,9 @@ def get_approved_handover(
         viewer_clearance=current_user.clearance,
         claims=visible_claims,
         sections=sections_read,
-        first_7_days=first_7_days,
-        hidden_count=hidden_count,
+        first_7_days=rendered["first_7_days"],
+        plan=plan_response,
+        hidden_count=rendered["hidden_count"],
         acknowledged=bool(ack),
     )
 

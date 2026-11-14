@@ -85,7 +85,7 @@ flowchart TD
 
 ---
 
-## 3. Round 3: Conflict-Resolution & Exit-Interview Architecture
+## 3. Round 3: Conflict-Resolution & Exit-Interview Architecture (Member 1: Ashrit)
 
 ### 1. Multi-Attribute Deterministic Conflict Engine
 - **Topics & Rules**:
@@ -107,3 +107,49 @@ flowchart TD
   - `dismiss`: Marks conflict `dismissed` with mandatory reason and recomputes verification on linked claims.
   - `leave_unresolved`: Marks conflict `unresolved` with mandatory note, blocking clean handover approval.
 - **Approval Blocker**: `POST /api/approve` raises HTTP 409 Conflict if any conflict group is `open` or `unresolved`, unless `acknowledge_unresolved=True` is explicitly supplied.
+
+---
+
+## 4. First-7-Days Plan Generator & Preview-as-Successor Architecture (Member 3: Amreesh)
+
+### Prioritization Algorithm & Transparent Weights
+The onboarding engine (`app/services/plan.py`) uses a rule-based, deterministic scoring function to evaluate candidate claims. Higher scores schedule actions earlier in the orientation sequence:
+
+| Factor | Weight | Rationale |
+|---|---|---|
+| **Unresolved Conflicts & Gaps** | `95` | Blocker decisions and contradictions require immediate clarity before code changes. |
+| **Critical Risks & SPOFs** | `85` | Single points of failure (e.g. unreviewed Stripe idempotency ledger) must be understood early. |
+| **Departing Engineer Tasks** | `80` | Tasks authored/owned by Riya Sharma must be transitioned while pairing is possible. |
+| **Single-Owner Areas / Bus Factor 1** | `75` | System modules with zero secondary review require direct successor walkthrough. |
+| **External Dependencies** | `60` | Integrations, APNs certificates, and webhook specifications. |
+| **Key Contacts / Stakeholders** | `55` | Vendor managers, university compliance liaisons, and technical owners. |
+| **Open Knowledge Questions** | `50` | Unanswered engineering queries extracted during analysis. |
+| **Foundational Decisions** | `35` | Ratified architectural context (e.g. SQLite WAL mode decision). |
+| **Role & Focus Areas Bonus** | `+25` | Tokens matching incoming role or focus areas (e.g. "Backend", "Payments", "Vault"). |
+
+### 7-Day Thematic Sequencing
+Plan items are grouped into 7 distinct days (target 2–4 items per day, balanced across the week):
+- **Day 1: Orientation & Core Ownership**: Pairing with departing engineer (`riya`) on core domains.
+- **Day 2: Critical Risks & Immediate Fixes**: High-severity risks, unreviewed ledgers, and emergency runbooks.
+- **Day 3: Architectural Conflicts & Decisions**: Key policy decisions (e.g. Vault TTL vs rotation intervals).
+- **Day 4: External Dependencies & Webhooks**: Upstream vendor integrations, Apple APNs renewal dates.
+- **Day 5: Partner Handshakes & Key Contacts**: FERPA privacy compliance officer, Stripe account manager.
+- **Day 6: Deep Dives & Code Reviews**: Low-level code inspections and test harness dry runs.
+- **Day 7: Operational Verification & Sign-off**: Final orientation readiness checklist and handover receipt.
+
+### Grounding & Zero-Hallucination Invariant
+Every generated plan item MUST cite at least one existing claim ID in the database (`len(item.claim_ids) >= 1`). Titles and rationales are deterministically constructed directly from claim texts and quotes. No external entities, deadlines, or dates are ever synthesized.
+
+### Unified Render & Filtering Pipeline
+To prevent discrepancies between preview and reality, `app/services/handover.py` exposes `build_handover_view(raw_claims, viewer_clearance, plan_obj)`.
+- When called by `GET /api/handover` as `arjun`, it runs with `viewer_clearance = 1`.
+- When called by `GET /api/preview` as `maya`, it runs with `viewer_clearance = 1` for target user `arjun`.
+- Plan items citing claims above the viewer's clearance are dynamically excluded and added to `hidden_count`.
+- **Mathematical guarantee**: For an approved snapshot, `preview(mode="approved")` output is byte-equivalent in visible claims and hidden counts to `handover(arjun)`.
+
+### Share Check Confidentiality Audit
+`app/services/share_check.py` scans candidate handover items and plan items prior to publication:
+- **Block**: Raw secrets (API keys, tokens), unmasked phone numbers, canary detection strings (`CANARY-LEVEL3-DO-NOT-LEAK`, `CANARY-LEVEL2-HR`), or access-level inconsistencies (Team claims with exclusively restricted evidence).
+- **Warn**: Redaction placeholders (`[REDACTED:...]`), unresolved conflicts, single-evidence citations.
+- **Info**: Clearance isolation counts (Level 2 items and Level 3 confidential counts).
+
