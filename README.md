@@ -55,9 +55,9 @@ HandoverTrail ingests project exports (Git, Jira, Meeting Notes, Slack), extract
 
 ## 3. Complete Product Workflow
 
-<video src="docs/assets/workflowvideo.mp4" poster="docs/assets/product_workflow.png" controls autoplay loop muted playsinline width="100%">
-  <a href="docs/assets/workflowvideo.mp4">▶ View Animated Product Workflow Video</a>
-</video>
+![HandoverTrail: Complete Product Workflow](docs/assets/workflow.gif)
+
+<sub>*Animated product walkthrough (10s continuous loop). You can also [view the full HD video](docs/assets/workflowvideo.mp4).*</sub>
 
 The end-to-end knowledge handover lifecycle coordinates four primary participants across 12 distinct stages:
 
