@@ -8,10 +8,10 @@
 [![Vite](https://img.shields.io/badge/Vite-5.0+-646CFF.svg?logo=vite&logoColor=white)](https://vitejs.dev)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)](https://python.org)
 [![Google Gemini](https://img.shields.io/badge/Google-Gemini%202.5%20Flash-4285F4.svg?logo=google&logoColor=white)](https://ai.google.dev)
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-46E3B7.svg?logo=render&logoColor=white)](https://handovertrail-uv3i.onrender.com/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Railway-0B0D0E.svg?logo=railway&logoColor=white)](https://handovertrail.up.railway.app/)
 [![Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E.svg?logo=railway&logoColor=white)](https://railway.com/)
 
-🌐 **Live Deployment**: [https://handovertrail-uv3i.onrender.com/](https://handovertrail-uv3i.onrender.com/) (Render) & Railway — Hosted as a unified single-container service (FastAPI + React SPA).
+🌐 **Live Deployment**: [https://handovertrail.up.railway.app/](https://handovertrail.up.railway.app/) (Railway) — Hosted as a unified single-container service (FastAPI + React SPA).
 
 ---
 
@@ -53,7 +53,22 @@ HandoverTrail ingests project exports (Git, Jira, Meeting Notes, Slack), extract
 
 ---
 
-## 3. Architecture
+## 3. Complete Product Workflow
+
+![HandoverTrail: Complete Product Workflow](docs/assets/product_workflow.png)
+
+The end-to-end knowledge handover lifecycle coordinates four primary participants across 12 distinct stages:
+
+1. **Team Lead (Maya)**: Connects source repositories (`1`), resolves quarantined cross-source contradictions (`6`), reviews and ratifies claims (`7`), formally approves the versioned handover snapshot (`8`), and conducts pre-flight successor previews and share audits before publication (`10`).
+2. **Leaver (Riya)**: Undergoes permission-filtered AI reconstruction and provides ground-truth answers in the guided Exit Interview (`5`), which are transformed into attributed evidence units.
+3. **System Engine**: Ingests and redacts secrets/PII (`2`), prompts LLM reconstruction over permitted evidence only (`3`), deterministically verifies verbatim quotes and clusters conflicts (`4`), and compiles the First-7-Days onboarding roadmap (`9`).
+4. **Successor (Arjun)**: Receives the strictly role-filtered, approved handover dossier (`11`) and tracks Day 1–7 orientation progress with formal receipt acknowledgements (`12`).
+
+> **Core Trust Rules**: Nothing shared before lead approval • Never verified without an exact quote • Confidential Level 3 items shown as aggregated count only • 100% synthetic data.
+
+---
+
+## 4. Architecture
 
 ```mermaid
 flowchart TD
@@ -94,7 +109,7 @@ flowchart TD
 
 ---
 
-## 4. Tech Stack & Architectural Rationale
+## 5. Tech Stack & Architectural Rationale
 
 - **Frontend**:
   - `React 18 + Vite + TypeScript`: Ultra-fast HMR, type safety, and modern bundle optimization.
@@ -111,11 +126,11 @@ flowchart TD
   - `Google Gemini API (gemini-2.5-flash)`: Structured extraction with JSON schema output via the official `google-genai` SDK and deterministic seed fallback (`fixtures/claims_cache.json`).
   - `Deterministic Verifier`: Pure Python verification — **no LLM grades its own homework**.
 - **Deployment**:
-  - Single Render/Railway web service: Multi-stage Docker container runs as non-root `appuser`. FastAPI serves the compiled React distribution from `frontend/dist` with client-side SPA routing fallback. Evaluators need only one URL.
+  - Single Railway web service: Multi-stage Docker container runs as non-root `appuser`. FastAPI serves the compiled React distribution from `frontend/dist` with client-side SPA routing fallback. Evaluators need only one URL.
 
 ---
 
-## 5. Quick Start (Get Running in 60 Seconds)
+## 6. Quick Start (Get Running in 60 Seconds)
 
 ### Prerequisites
 - Python 3.11 or 3.12 (`python3.12 -m venv venv`)
@@ -151,7 +166,7 @@ make seed
 
 ---
 
-## 6. Demo Walkthrough ("Start Here" 4 Steps)
+## 7. Demo Walkthrough ("Start Here" 4 Steps)
 
 ### Step 1: Ingest & The Three Clearance Realities
 1. Open `http://localhost:5173`.
@@ -183,7 +198,7 @@ make seed
 
 ---
 
-## 7. How the Trust Model Works
+## 8. How the Trust Model Works
 
 1. **Permission-Before-Generation**:
    - Evidence units above a user's clearance level are stripped *before* entering LLM context and before returning over the network.
@@ -196,7 +211,7 @@ make seed
 
 ---
 
-## 8. Project Structure
+## 9. Project Structure
 
 ```
 handovertrail/
@@ -209,6 +224,7 @@ handovertrail/
 ├── railway.json            # Railway deployment configuration
 ├── SECURITY_REPORT.md      # Comprehensive security audit & verification report
 ├── docs/
+│   ├── assets/             # Diagram assets & workflow illustrations
 │   ├── CONTRACT.md         # Single source of truth API & data contract
 │   ├── ARCHITECTURE.md     # In-depth architectural design
 │   ├── TESTING.md          # Test strategy & synthetic scenario tests
@@ -248,7 +264,7 @@ handovertrail/
 
 ---
 
-## 9. Honest Limitations
+## 10. Honest Limitations
 
 - **Simulated Auth via Header**: For hackathon speed and zero-friction evaluator testing, user identity is switched via the `X-User-Id` header rather than OAuth2 SSO or session cookies.
 - **Single-Node SQLite**: File-based SQLite with WAL mode is designed for single-node deployments; horizontal scaling requires migrating to PostgreSQL.
@@ -256,7 +272,7 @@ handovertrail/
 
 ---
 
-## 10. Team TchieSharks
+## 11. Team TchieSharks
 
 - **Ashrit Anshuman Pradhan** - System Architecture, Backend & Verifier Engine
 - **Kush Tayal** - Frontend UI/UX, Component Architecture & Analytics
